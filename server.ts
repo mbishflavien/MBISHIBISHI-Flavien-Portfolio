@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import fs from "fs/promises";
 
 dotenv.config();
 
@@ -27,12 +28,22 @@ async function startServer() {
     }
 
     try {
-      // Configure your email transport here
-      // For demo purposes, we'll use a mock transport or log it
-      // In production, you would use real credentials from process.env
-      
+      // 1. Log to console
       console.log("Received contact form submission:", { name, email, message });
 
+      // 2. Save to local file (as a backup/database)
+      const messagesPath = path.join(__dirname, "messages.json");
+      let messages = [];
+      try {
+        const data = await fs.readFile(messagesPath, "utf-8");
+        messages = JSON.parse(data);
+      } catch (e) {
+        // File doesn't exist yet
+      }
+      messages.push({ name, email, message, timestamp: new Date().toISOString() });
+      await fs.writeFile(messagesPath, JSON.stringify(messages, null, 2));
+
+      // 3. Attempt to send email
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -52,10 +63,9 @@ async function startServer() {
       // Only attempt to send if credentials are provided
       if (process.env.EMAIL_PASS) {
         await transporter.sendMail(mailOptions);
-        res.status(200).json({ message: "Email sent successfully" });
+        res.status(200).json({ message: "Message sent successfully via Email" });
       } else {
-        console.warn("EMAIL_PASS not set. Email not sent, but submission logged.");
-        res.status(200).json({ message: "Submission received (Demo Mode)" });
+        res.status(200).json({ message: "Message received and saved locally (Demo Mode)" });
       }
     } catch (error) {
       console.error("Error sending email:", error);

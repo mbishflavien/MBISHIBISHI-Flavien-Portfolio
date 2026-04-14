@@ -92,7 +92,7 @@ export const Background3D = ({ mouseX, mouseY, isDarkMode }: { mouseX: any, mous
       <Canvas
         camera={{ position: [0, 0, 10], fov: 45 }}
         dpr={[1, 2]}
-        gl={{ antialias: false, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       >
         <MouseSync mouseX={mouseX} mouseY={mouseY} mouse={mouse} />
         <Scene mouse={mouse} isDarkMode={isDarkMode} />
