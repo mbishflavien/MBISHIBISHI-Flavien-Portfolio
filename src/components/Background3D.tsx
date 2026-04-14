@@ -59,7 +59,7 @@ const Scene = ({ mouse, isDarkMode }: { mouse: React.MutableRefObject<[number, n
       <Blob position={[5, 3, -4]} color="#14b8a6" speed={2.2} distort={0.6} radius={0.8} isDarkMode={isDarkMode} />
       <Blob position={[0, 0, -5]} color="#f97316" speed={1.2} distort={0.4} radius={2} isDarkMode={isDarkMode} />
 
-      <EffectComposer>
+      <EffectComposer multisampling={0}>
         <Bloom 
           luminanceThreshold={isDarkMode ? 0.2 : 0.8} 
           mipmapBlur 

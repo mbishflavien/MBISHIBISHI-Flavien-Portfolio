@@ -13,16 +13,13 @@ import {
   BrainCircuit, 
   Terminal, 
   ChevronRight,
-  ChevronLeft,
   MapPin,
   Phone,
   GraduationCap,
   Briefcase,
   Award,
-  Languages,
   Menu,
   X,
-  Maximize2,
   CheckCircle2,
   AlertCircle,
   Sparkles
@@ -33,7 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 import { Background3D } from './Background3D';
@@ -564,28 +561,27 @@ const SKILLS: Skill[] = [
 
 // --- Components ---
 
+const HERO_BACKGROUNDS = [
+  "bg-primary/20",
+  "bg-blue-500/20",
+  "bg-purple-500/20",
+  "bg-emerald-500/20",
+  "bg-orange-500/20",
+  "bg-pink-500/20",
+];
+
 const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const imageUrl = "https://lh3.googleusercontent.com/d/12ZzNcydVq1YeuFHfoRhF-sUV-4muXUyE";
   const [bgIndex, setBgIndex] = useState(0);
 
-  const backgrounds = [
-    "bg-primary/20",
-    "bg-blue-500/20",
-    "bg-purple-500/20",
-    "bg-emerald-500/20",
-    "bg-orange-500/20",
-    "bg-pink-500/20",
-  ];
-
   useEffect(() => {
     const timer = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % backgrounds.length);
+      setBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
     }, 2000);
     return () => clearInterval(timer);
   }, []);
 
-  const currentBg = backgrounds[bgIndex];
-  const isUrl = currentBg.startsWith("url");
+  const currentBg = HERO_BACKGROUNDS[bgIndex];
 
   return (
     <div className="relative w-full max-w-3xl mx-auto aspect-square flex items-center justify-center">
@@ -1371,6 +1367,7 @@ export default function Portfolio() {
                   {errors.message && <p className="text-xs text-red-300 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.message}</p>}
                 </div>
                 <Button 
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full bg-white text-primary hover:bg-white/90 rounded-xl h-14 text-lg font-bold disabled:opacity-50"
                 >
@@ -1445,6 +1442,7 @@ export default function Portfolio() {
       {/* Project Detail Modal */}
       <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
         <DialogContent className="max-w-3xl rounded-3xl overflow-hidden p-0 border-none bg-background/95 backdrop-blur-xl">
+          <DialogTitle className="sr-only">Project Details: {selectedProject?.title}</DialogTitle>
           {selectedProject && (
             <div className="flex flex-col">
               <div className="relative aspect-video">
@@ -1515,6 +1513,7 @@ export default function Portfolio() {
       {/* Skill Detail Modal */}
       <Dialog open={!!selectedSkill} onOpenChange={() => setSelectedSkill(null)}>
         <DialogContent className="max-w-md rounded-3xl bg-background/95 backdrop-blur-xl border-primary/10">
+          <DialogTitle className="sr-only">Skill Details: {selectedSkill?.name}</DialogTitle>
           {selectedSkill && (
             <div className="p-6 space-y-6">
               <div className="flex items-center space-x-4">
