@@ -3,7 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Flavien MBISHIBISHI | Portfolio</title>
+    <script>
+      // Suppress benign Vite WebSocket errors in this environment
+      window.addEventListener('error', (e) => {
+        if (e.message && e.message.includes('failed to connect to websocket')) {
+          e.stopImmediatePropagation();
+        }
+      });
+      window.addEventListener('unhandledrejection', (e) => {
+        if (e.reason && e.reason.toString().includes('WebSocket closed without opened')) {
+          e.stopImmediatePropagation();
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
