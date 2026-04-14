@@ -186,7 +186,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       location: "Location",
       email_me: "Email Me",
       call_me: "Call Me",
-      build_great: "Let's build something great.",
+      build_great: "Get in touch",
       message_placeholder: "Your message here..."
     },
     footer: {
@@ -268,7 +268,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       location: "Mahali",
       email_me: "Nitumie Barua Pepe",
       call_me: "Nipigie Simu",
-      build_great: "Hebu tujenge kitu kikubwa.",
+      build_great: "Wasiliana nami",
       message_placeholder: "Ujumbe wako hapa..."
     },
     footer: {
@@ -350,7 +350,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       location: "Aho nherereye",
       email_me: "Nyandikira kuri Imeri",
       call_me: "Nkubita akadehe",
-      build_great: "Reka twubake ikintu gikomeye.",
+      build_great: "Twandikire",
       message_placeholder: "Ubutumwa bwawe hano..."
     },
     footer: {
@@ -442,7 +442,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       location: "Localisation",
       email_me: "M'envoyer un Email",
       call_me: "M'appeler",
-      build_great: "Construisons quelque chose de grand.",
+      build_great: "Contactez-moi",
       message_placeholder: "Votre message ici..."
     },
     footer: {
