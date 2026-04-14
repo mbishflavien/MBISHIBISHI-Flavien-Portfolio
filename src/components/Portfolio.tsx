@@ -181,7 +181,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       send: "Send Message",
       sending: "Sending...",
       success: "Message sent successfully!",
-      error: "Failed to send message. Please try again.",
+      error: "Failed to send message. Please try again or email me directly at flavmbish@gmail.com",
       phone: "Phone",
       location: "Location",
       email_me: "Email Me",
@@ -263,7 +263,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       send: "Tuma Ujumbe",
       sending: "Inatuma...",
       success: "Ujumbe umetumwa kwa mafanikio!",
-      error: "Imeshindwa kutuma ujumbe. Tafadhali jaribu tena.",
+      error: "Imeshindwa kutuma ujumbe. Tafadhali jaribu tena au nitumie barua pepe moja kwa moja kwa flavmbish@gmail.com",
       phone: "Simu",
       location: "Mahali",
       email_me: "Nitumie Barua Pepe",
@@ -345,7 +345,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       send: "Ohereza Ubutumwa",
       sending: "Irimo kohereza...",
       success: "Ubutumwa bwoherejwe neza!",
-      error: "Kwohereza ubutumwa byanze. Ongera ugerageze.",
+      error: "Kwohereza ubutumwa byanze. Ongera ugerageze cyangwa unyandikire kuri flavmbish@gmail.com",
       phone: "Terefoni",
       location: "Aho nherereye",
       email_me: "Nyandikira kuri Imeri",
@@ -437,7 +437,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       send: "Envoyer le Message",
       sending: "Envoi en cours...",
       success: "Message envoyé avec succès !",
-      error: "Échec de l'envoi du message. Veuillez réessayer.",
+      error: "Échec de l'envoi du message. Veuillez réessayer ou m'envoyer un e-mail directement à flavmbish@gmail.com",
       phone: "Téléphone",
       location: "Localisation",
       email_me: "M'envoyer un Email",
@@ -1390,9 +1390,17 @@ export default function Portfolio() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 rounded-xl bg-red-500/20 border border-red-500/50 text-red-100 flex items-center text-sm"
+                      className="p-4 rounded-xl bg-red-500/20 border border-red-500/50 text-red-100 flex flex-col gap-2 text-sm"
                     >
-                      <AlertCircle className="w-4 h-4 mr-2" /> {t.contact.error}
+                      <div className="flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" /> {t.contact.error}
+                      </div>
+                      <a 
+                        href="mailto:flavmbish@gmail.com" 
+                        className="text-primary hover:underline font-bold ml-6"
+                      >
+                        flavmbish@gmail.com
+                      </a>
                     </motion.div>
                   )}
                 </AnimatePresence>
