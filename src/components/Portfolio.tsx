@@ -22,7 +22,9 @@ import {
   X,
   CheckCircle2,
   AlertCircle,
-  Sparkles
+  Sparkles,
+  Maximize2,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +36,8 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/
 import { cn } from '@/lib/utils';
 
 import { Background3D } from './Background3D';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
 
 // --- Types ---
 type Language = 'en' | 'sw' | 'rw' | 'fr';
@@ -44,6 +48,7 @@ interface Translation {
     experience: string;
     skills: string;
     projects: string;
+    awards: string;
     contact: string;
     download_cv: string;
   };
@@ -88,6 +93,12 @@ interface Translation {
     subtitle: string;
     demo_unavailable: string;
   };
+  awards: {
+    title: string;
+    subtitle: string;
+    view_certificate: string;
+    hover_reveal: string;
+  };
   contact: {
     title: string;
     subtitle: string;
@@ -114,7 +125,7 @@ interface Translation {
 
 const TRANSLATIONS: Record<Language, Translation> = {
   en: {
-    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", contact: "Contact", download_cv: "Download CV" },
+    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", awards: "Awards", contact: "Contact", download_cv: "Download CV" },
     hero: {
       greeting: "Hi, I'm Flavien Mbishibishi",
       role: "Software Engineer & AI Enthusiast",
@@ -131,7 +142,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Education",
       stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
       experience_card: { title: "Experience", description: "Trainee Software Engineer at A2SV and Instructor at AUCA." },
-      certifications_card: { title: "Certifications", description: "Cisco NetOps, Hugging Face NLP, and more." }
+      certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, and more." }
     },
     experience: { 
       title: "Work Experience", 
@@ -172,6 +183,12 @@ const TRANSLATIONS: Record<Language, Translation> = {
       subtitle: "A selection of my recent work and academic projects.",
       demo_unavailable: "Live demo is currently unavailable. Check GitHub for source code!"
     },
+    awards: {
+      title: "Honors & Awards",
+      subtitle: "Certifications and recognitions for my professional growth and technical expertise.",
+      view_certificate: "View Certificate",
+      hover_reveal: "Hover to reveal"
+    },
     contact: {
       title: "Get in Touch",
       subtitle: "Have a project in mind? Let's build something amazing together.",
@@ -196,7 +213,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
     }
   },
   sw: {
-    nav: { about: "Kuhusu", experience: "Uzoefu", skills: "Ujuzi", projects: "Miradi", contact: "Wasiliana", download_cv: "Pakua CV" },
+    nav: { about: "Kuhusu", experience: "Uzoefu", skills: "Ujuzi", projects: "Miradi", awards: "Tuzo", contact: "Wasiliana", download_cv: "Pakua CV" },
     hero: {
       greeting: "Habari, mimi ni Flavien Mbishibishi",
       role: "Mhandisi wa Programu na Shauku ya AI",
@@ -213,7 +230,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Elimu",
       stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
       experience_card: { title: "Uzoefu", description: "Mhandisi wa Programu wa Mafunzo katika A2SV na Mkufunzi katika AUCA." },
-      certifications_card: { title: "Vyeti", description: "Cisco NetOps, Hugging Face NLP, na zaidi." }
+      certifications_card: { title: "Vyeti", description: "Cisco Networking Basics, Hugging Face NLP, na zaidi." }
     },
     experience: { 
       title: "Uzoefu wa Kazi", 
@@ -254,6 +271,12 @@ const TRANSLATIONS: Record<Language, Translation> = {
       subtitle: "Uteuzi wa kazi zangu za hivi karibuni na miradi ya kitaaluma.",
       demo_unavailable: "Onyesho la moja kwa moja halipatikani kwa sasa. Angalia GitHub kwa nambari ya chanzo!"
     },
+    awards: {
+      title: "Heshima na Tuzo",
+      subtitle: "Vyeti na utambuzi kwa ukuaji wangu wa kitaaluma na utaalamu wa kiufundi.",
+      view_certificate: "Angalia Cheti",
+      hover_reveal: "Peleka mshale kuona"
+    },
     contact: {
       title: "Wasiliana Nami",
       subtitle: "Una mradi akilini? Hebu tujenge kitu cha kushangaza pamoja.",
@@ -278,7 +301,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
     }
   },
   rw: {
-    nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", contact: "Twandikire", download_cv: "Kurura CV" },
+    nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", awards: "Ibihembo", contact: "Twandikire", download_cv: "Kurura CV" },
     hero: {
       greeting: "Muraho, nitwa Flavien Mbishibishi",
       role: "Injeniyeri w'Ibisobanuro n'Ubuhanga bw'Ubuhanga (AI)",
@@ -295,7 +318,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Amashuri",
       stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
       experience_card: { title: "Inararibonye", description: "Injeniyeri w'Ibisobanuro wimenyereza muri A2SV n'umwarimu muri AUCA." },
-      certifications_card: { title: "Impamyabumenyi", description: "Cisco NetOps, Hugging Face NLP, n'izindi." }
+      certifications_card: { title: "Impamyabumenyi", description: "Cisco Networking Basics, Hugging Face NLP, n'izindi." }
     },
     experience: { 
       title: "Inararibonye mu Kazi", 
@@ -336,6 +359,12 @@ const TRANSLATIONS: Record<Language, Translation> = {
       subtitle: "Guhitamo ibikorwa byanjye vuba aha n'imishinga yo kwiga.",
       demo_unavailable: "Kwereka uko bikora ntibishoboka ubu. Reba kuri GitHub kugira ngo ubone code!"
     },
+    awards: {
+      title: "Icyubahiro n'Ibihembo",
+      subtitle: "Impamyabumenyi n'ishimwe ku mikurire yanjye mu mwuga n'ubumenyi bwa tekiniki.",
+      view_certificate: "Reba Impamyabumenyi",
+      hover_reveal: "Kanda hano urebe"
+    },
     contact: {
       title: "Twandikire",
       subtitle: "Fite umushinga utekereza? Reka twubake ikintu gitangaje hamwe.",
@@ -365,6 +394,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       experience: "Expérience",
       skills: "Compétences",
       projects: "Projets",
+      awards: "Récompenses",
       contact: "Contact",
       download_cv: "Télécharger CV"
     },
@@ -384,7 +414,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Éducation",
       stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
       experience_card: { title: "Expérience", description: "Ingénieur logiciel stagiaire chez A2SV et instructeur à l'AUCA." },
-      certifications_card: { title: "Certifications", description: "Cisco NetOps, Hugging Face NLP, et plus encore." }
+      certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, et plus encore." }
     },
     experience: { 
       title: "Expérience Professionnelle", 
@@ -427,6 +457,12 @@ const TRANSLATIONS: Record<Language, Translation> = {
       title: "Projets Vedettes",
       subtitle: "Une sélection de mes travaux récents et projets académiques.",
       demo_unavailable: "La démo en direct est actuellement indisponible. Consultez GitHub pour le code source !"
+    },
+    awards: {
+      title: "Honneurs et Récompenses",
+      subtitle: "Certifications et reconnaissances pour ma croissance professionnelle et mon expertise technique.",
+      view_certificate: "Voir le Certificat",
+      hover_reveal: "Survoler pour révéler"
     },
     contact: {
       title: "Contactez-moi",
@@ -477,6 +513,15 @@ interface Skill {
   icon: React.ReactNode;
   level: number;
   details: string;
+  category: string;
+}
+
+interface AwardItem {
+  title: string;
+  issuer: string;
+  date: string;
+  image: string;
+  description: string;
   category: string;
 }
 
@@ -559,6 +604,41 @@ const SKILLS: Skill[] = [
   },
 ];
 
+const CERTIFICATIONS: AwardItem[] = [
+  {
+    title: "Hugging Face NLP Specialization",
+    issuer: "Hugging Face",
+    date: "2024",
+    image: "https://lh3.googleusercontent.com/d/1IK8tVbc8YpOHh0TCS2tI47QGakfoP3LX",
+    description: "Advanced training in Natural Language Processing using Transformers and state-of-the-art AI models.",
+    category: "AI/NLP"
+  },
+  {
+    title: "Cisco Networking Basics",
+    issuer: "Cisco",
+    date: "2024",
+    image: "https://lh3.googleusercontent.com/d/10UvsVsWK7WPptu1oH6PmR8hC8B_DRQM_",
+    description: "Validation of foundational knowledge in networking, covering basic concepts, security, and connectivity.",
+    category: "Networking"
+  },
+  {
+    title: "Introduction to Network Operations",
+    issuer: "Internet Society",
+    date: "2023",
+    image: "https://lh3.googleusercontent.com/d/1H_JbPQrP0MaDmnUdld53Q4YJNbdJWXG5",
+    description: "Foundational course on network operations, routing, and infrastructure management.",
+    category: "Networking"
+  },
+  {
+    title: "The Gym Certification",
+    issuer: "The Gym",
+    date: "2024",
+    image: "https://lh3.googleusercontent.com/d/1xTMmtQJOCws26nZrnzEGcxPHkmXfpFtQ",
+    description: "Professional certification in software engineering, coding, and digital skills development.",
+    category: "Software Engineering"
+  }
+];
+
 // --- Components ---
 
 const HERO_BACKGROUNDS = [
@@ -570,18 +650,33 @@ const HERO_BACKGROUNDS = [
   "bg-pink-500/20",
 ];
 
+const PROFILE_IMAGES = [
+  "https://lh3.googleusercontent.com/d/12ZzNcydVq1YeuFHfoRhF-sUV-4muXUyE",
+  "https://lh3.googleusercontent.com/d/1FcMCJDuIZ5P1AsVFMLNHr3xJtgAtVAiG",
+  "https://lh3.googleusercontent.com/d/1MZEKvz4yBv58oOPVwJiFIZaBd9Fk4s9K"
+];
+
 const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const imageUrl = "https://lh3.googleusercontent.com/d/12ZzNcydVq1YeuFHfoRhF-sUV-4muXUyE";
   const [bgIndex, setBgIndex] = useState(0);
+  const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const bgTimer = setInterval(() => {
       setBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
     }, 2000);
-    return () => clearInterval(timer);
+    
+    const imgTimer = setInterval(() => {
+      setImgIndex((prev) => (prev + 1) % PROFILE_IMAGES.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(bgTimer);
+      clearInterval(imgTimer);
+    };
   }, []);
 
   const currentBg = HERO_BACKGROUNDS[bgIndex];
+  const currentImg = PROFILE_IMAGES[imgIndex];
 
   return (
     <div className="relative w-full max-w-3xl mx-auto aspect-square flex items-center justify-center">
@@ -652,12 +747,21 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </AnimatePresence>
 
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10" />
-            <img
-              src={imageUrl}
-              alt="Flavien Mbishibishi"
-              className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-110"
-              referrerPolicy="no-referrer"
-            />
+            
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={imgIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.8 }}
+                src={currentImg}
+                alt="Flavien Mbishibishi"
+                className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+            </AnimatePresence>
+            
             {/* Overlay for better integration */}
             <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors duration-500 z-30" />
           </motion.div>
@@ -721,6 +825,8 @@ export default function Portfolio() {
   const [showDemoUnavailable, setShowDemoUnavailable] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
+  const [selectedAward, setSelectedAward] = useState<AwardItem | null>(null);
+  const [visitCount, setVisitCount] = useState<number | null>(null);
 
   const t = TRANSLATIONS[language];
 
@@ -735,6 +841,39 @@ export default function Portfolio() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
+
+  // Visit Counter Logic
+  useEffect(() => {
+    const visitDoc = doc(db, 'stats', 'visits');
+    
+    // Increment visit count once per session
+    const hasVisited = sessionStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      const incrementVisit = async () => {
+        try {
+          const docSnap = await getDoc(visitDoc);
+          if (docSnap.exists()) {
+            await updateDoc(visitDoc, { visits: increment(1) });
+          } else {
+            await setDoc(visitDoc, { visits: 1 });
+          }
+          sessionStorage.setItem('hasVisited', 'true');
+        } catch (error) {
+          console.error("Error updating visit count:", error);
+        }
+      };
+      incrementVisit();
+    }
+
+    // Listen for real-time updates
+    const unsubscribe = onSnapshot(visitDoc, (doc) => {
+      if (doc.exists()) {
+        setVisitCount(doc.data().visits);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
@@ -834,6 +973,7 @@ export default function Portfolio() {
     { name: t.nav.about, href: '#about' },
     { name: t.nav.skills, href: '#skills' },
     { name: t.nav.projects, href: '#projects' },
+    { name: t.nav.awards, href: '#awards' },
     { name: t.nav.experience, href: '#experience' },
     { name: t.nav.contact, href: '#contact' },
   ];
@@ -1247,6 +1387,70 @@ export default function Portfolio() {
           </div>
         </div>
       </section>
+      
+      {/* Honors & Awards Section */}
+      <section id="awards" className="py-16 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <SectionHeading subtitle={t.awards.subtitle}>
+            {t.awards.title}
+          </SectionHeading>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CERTIFICATIONS.map((award, index) => (
+              <motion.div
+                key={award.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card 
+                  className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/50 backdrop-blur-sm cursor-pointer"
+                  onClick={() => setSelectedAward(award)}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                    <img 
+                      src={award.image} 
+                      alt={award.title} 
+                      className="w-full h-full object-cover transition-all duration-700 blur-xl group-hover:blur-0 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-background/40 group-hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-6 text-center">
+                      <div className="group-hover:opacity-0 transition-opacity duration-300 flex flex-col items-center">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                          <Award className="w-6 h-6 text-primary" />
+                        </div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-foreground/70">{t.awards.hover_reveal}</p>
+                      </div>
+                      
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                        <Button variant="secondary" className="rounded-full shadow-xl">
+                          <Maximize2 className="w-4 h-4 mr-2" /> {t.awards.view_certificate}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-primary/80 backdrop-blur-md border-none">
+                        {award.category}
+                      </Badge>
+                    </div>
+                  </div>
+                  <CardHeader className="flex-grow">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs font-bold text-primary uppercase tracking-widest">{award.issuer}</span>
+                      <span className="text-xs font-mono text-foreground/50">{award.date}</span>
+                    </div>
+                    <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">{award.title}</CardTitle>
+                    <CardDescription className="mt-2 line-clamp-3">
+                      {award.description}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Experience Section */}
       <section id="experience" className="py-24">
@@ -1414,6 +1618,12 @@ export default function Portfolio() {
               <Code2 size={20} />
             </div>
             <p className="text-sm text-foreground/60 mt-1">© 2026 Flavien MBISHIBISHI. {t.footer.rights}</p>
+            {visitCount !== null && (
+              <div className="flex items-center justify-center md:justify-start space-x-2 text-xs text-foreground/40 mt-2">
+                <Users className="w-3 h-3" />
+                <span>{visitCount.toLocaleString()} visits</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center space-x-6">
             <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t.footer.privacy}</a>
@@ -1507,6 +1717,56 @@ export default function Portfolio() {
                       </Button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Award Detail Modal */}
+      <Dialog open={!!selectedAward} onOpenChange={() => setSelectedAward(null)}>
+        <DialogContent className="max-w-4xl rounded-3xl overflow-hidden p-0 border-none bg-background/95 backdrop-blur-xl">
+          <DialogTitle className="sr-only">Certificate: {selectedAward?.title}</DialogTitle>
+          {selectedAward && (
+            <div className="flex flex-col">
+              <div className="relative w-full bg-black flex items-center justify-center p-4 md:p-8">
+                <img 
+                  src={selectedAward.image} 
+                  alt={selectedAward.title} 
+                  className="max-w-full max-h-[70vh] object-contain shadow-2xl rounded-lg"
+                  referrerPolicy="no-referrer"
+                />
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  className="absolute top-4 right-4 rounded-full"
+                  onClick={() => setSelectedAward(null)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="p-8 space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <Badge className="mb-2">{selectedAward.category}</Badge>
+                    <h2 className="text-3xl font-bold tracking-tighter">{selectedAward.title}</h2>
+                    <p className="text-primary font-semibold">{selectedAward.issuer} • {selectedAward.date}</p>
+                  </div>
+                  <a href={selectedAward.image} target="_blank" rel="noopener noreferrer">
+                    <Button className="rounded-xl">
+                      <ExternalLink className="w-4 h-4 mr-2" /> Open Full Image
+                    </Button>
+                  </a>
+                </div>
+                <Separator />
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold flex items-center">
+                    <Award className="w-5 h-5 mr-2 text-primary" /> About this Certification
+                  </h3>
+                  <p className="text-foreground/80 leading-relaxed text-lg">
+                    {selectedAward.description}
+                  </p>
                 </div>
               </div>
             </div>

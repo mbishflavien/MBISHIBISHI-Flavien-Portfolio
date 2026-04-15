@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidStats(data) {
+      return data.visits is number && data.visits >= 0;
+    }
+
+    match /stats/visits {
+      allow read: if true;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['visits']) &&
+                     request.resource.data.visits == resource.data.visits + 1;
+      // Allow creation if it doesn't exist (e.g. first visit)
+      allow create: if request.resource.data.visits == 1;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "Stats": {
+      "title": "Stats",
+      "description": "Application statistics",
+      "type": "object",
+      "properties": {
+        "visits": {
+          "type": "number",
+          "description": "Total number of visits"
+        }
+      },
+      "required": ["visits"]
+    }
+  },
+  "firestore": {
+    "/stats/visits": {
+      "schema": "Stats",
+      "description": "Document tracking total website visits"
+    }
+  }
+}
