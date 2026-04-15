@@ -533,6 +533,7 @@ const PROJECTS: Project[] = [
     longDescription: "RapidAid AI is a cutting-edge emergency response system that leverages advanced Natural Language Processing to assist users during medical crises. It can identify symptoms, provide step-by-step first aid instructions, and automatically coordinate with local emergency services. Built with a focus on low-latency response and high accuracy in critical situations.",
     tags: ["Python", "OpenAI API", "Speech Recognition", "Healthcare AI"],
     image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
+    link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
     github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
     color: "from-red-500/20 to-orange-500/20",
     features: ["Real-time voice processing", "Emergency service integration", "Offline first-aid database", "Multi-language support"]
@@ -543,6 +544,7 @@ const PROJECTS: Project[] = [
     longDescription: "MediTrack utilizes state-of-the-art machine learning algorithms to analyze patient history, lifestyle factors, and clinical data to predict potential health risks before they become critical. The system provides actionable insights for both patients and healthcare providers, enabling proactive health management and early intervention.",
     tags: ["Python", "Machine Learning", "Scikit-learn", "Pandas"],
     image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
+    link: "https://kfh-hospital-1.onrender.com",
     github: "https://github.com/kezacardine/kfh_hospital",
     color: "from-blue-500/20 to-teal-500/20",
     features: ["Predictive risk modeling", "Patient data visualization", "Automated health reports", "Provider dashboard"]
@@ -1350,16 +1352,19 @@ export default function Portfolio() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                       <div className="flex space-x-3">
-                        <Button 
-                          size="icon" 
-                          variant="secondary" 
-                          className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-                          onClick={handleDemoClick}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
+                        {project.link && (
+                          <a href={project.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                            <Button 
+                              size="icon" 
+                              variant="secondary" 
+                              className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </a>
+                        )}
                         {project.github && (
-                          <a href={project.github} target="_blank" rel="noopener noreferrer">
+                          <a href={project.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                             <Button size="icon" variant="secondary" className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
                               <Github className="w-4 h-4" />
                             </Button>
@@ -1712,9 +1717,13 @@ export default function Portfolio() {
                           </Button>
                         </a>
                       )}
-                      <Button className="rounded-xl justify-start" onClick={handleDemoClick}>
-                        <ExternalLink className="w-4 h-4 mr-2" /> Launch Live Demo
-                      </Button>
+                      {selectedProject.link && (
+                        <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button className="rounded-xl justify-start w-full">
+                            <ExternalLink className="w-4 h-4 mr-2" /> Launch Live Demo
+                          </Button>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
