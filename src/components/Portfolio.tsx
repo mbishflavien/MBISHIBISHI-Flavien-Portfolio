@@ -24,7 +24,8 @@ import {
   AlertCircle,
   Sparkles,
   Maximize2,
-  Users
+  Users,
+  BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,6 +39,7 @@ import { cn } from '@/lib/utils';
 import { Background3D } from './Background3D';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
+import { trackPageView, trackCTAClick, trackSectionView } from '../lib/analytics';
 
 // --- Types ---
 type Language = 'en' | 'sw' | 'rw' | 'fr';
@@ -836,6 +838,10 @@ export default function Portfolio() {
   const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
+    trackPageView(window.location.pathname);
+  }, []);
+
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
@@ -946,6 +952,7 @@ export default function Portfolio() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    trackCTAClick('Contact Form Submit');
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -1042,7 +1049,7 @@ export default function Portfolio() {
               </Button>
             </div>
             
-            <a href="/Flavien_MBISHIBISHI_CV.pdf" download>
+            <a href="/Flavien_MBISHIBISHI_CV.pdf" download onClick={() => trackCTAClick('Download CV - Nav')}>
               <Button className="rounded-full">
                 {t.nav.download_cv} <Download className="ml-2 w-4 h-4" />
               </Button>
@@ -1080,7 +1087,7 @@ export default function Portfolio() {
                     {item.name}
                   </a>
                 ))}
-                <a href="/Flavien_MBISHIBISHI_CV.pdf" download className="w-full">
+                <a href="/Flavien_MBISHIBISHI_CV.pdf" download className="w-full" onClick={() => trackCTAClick('Download CV - Mobile Menu')}>
                   <Button className="w-full rounded-full py-6 text-lg">
                     {t.nav.download_cv} <Download className="ml-2 w-5 h-5" />
                   </Button>
@@ -1092,7 +1099,10 @@ export default function Portfolio() {
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+      <motion.section 
+        className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden"
+        onViewportEnter={() => trackSectionView('Hero')}
+      >
         {/* Hero Parallax Background Elements */}
         <div className="absolute inset-0 -z-10 pointer-events-none">
           <motion.div 
@@ -1162,10 +1172,10 @@ export default function Portfolio() {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="flex flex-wrap gap-4"
             >
-              <Button size="lg" className="rounded-full px-8 h-14 text-lg">
+              <Button size="lg" className="rounded-full px-8 h-14 text-lg" onClick={() => trackCTAClick('Hero - View My Work')}>
                 <a href="#projects">{t.hero.cta_projects}</a>
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg">
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg" onClick={() => trackCTAClick('Hero - Let\'s Talk')}>
                 <a href="#contact">{t.hero.cta_contact}</a>
               </Button>
             </motion.div>
@@ -1176,13 +1186,16 @@ export default function Portfolio() {
               transition={{ delay: 0.8 }}
               className="flex items-center space-x-6 pt-4"
             >
-              <a href="https://github.com/mbishflavien" className="text-foreground/60 hover:text-primary transition-colors">
+              <a href="https://github.com/mbishflavien" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Github')}>
                 <Github className="w-6 h-6" />
               </a>
-              <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" className="text-foreground/60 hover:text-primary transition-colors">
+              <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Linkedin')}>
                 <Linkedin className="w-6 h-6" />
               </a>
-              <a href="mailto:flavmbish@gmail.com" className="text-foreground/60 hover:text-primary transition-colors">
+              <a href="https://medium.com/@flavmbish" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Medium')}>
+                <BookOpen className="w-6 h-6" />
+              </a>
+              <a href="mailto:flavmbish@gmail.com" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Email')}>
                 <Mail className="w-6 h-6" />
               </a>
             </motion.div>
@@ -1197,10 +1210,14 @@ export default function Portfolio() {
             <HeroImage isDarkMode={isDarkMode} />
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* About Section */}
-      <section id="about" className="py-24 bg-muted/10 backdrop-blur-[2px]">
+      <motion.section 
+        id="about" 
+        className="py-24 bg-muted/10 backdrop-blur-[2px]"
+        onViewportEnter={() => trackSectionView('About')}
+      >
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -1261,10 +1278,14 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-24">
+      <motion.section 
+        id="skills" 
+        className="py-24"
+        onViewportEnter={() => trackSectionView('Skills')}
+      >
         <div className="container mx-auto px-4">
           <SectionHeading subtitle={t.skills.subtitle}>
             {t.skills.title}
@@ -1312,10 +1333,14 @@ export default function Portfolio() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-24 bg-muted/10 backdrop-blur-[2px]">
+      <motion.section 
+        id="projects" 
+        className="py-24 bg-muted/10 backdrop-blur-[2px]"
+        onViewportEnter={() => trackSectionView('Projects')}
+      >
         <div className="container mx-auto px-4">
           <SectionHeading subtitle={t.projects.subtitle}>
             {t.projects.title}
@@ -1391,10 +1416,14 @@ export default function Portfolio() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
       
       {/* Honors & Awards Section */}
-      <section id="awards" className="py-16 bg-primary/5">
+      <motion.section 
+        id="awards" 
+        className="py-16 bg-primary/5"
+        onViewportEnter={() => trackSectionView('Awards')}
+      >
         <div className="container mx-auto px-4">
           <SectionHeading subtitle={t.awards.subtitle}>
             {t.awards.title}
@@ -1455,10 +1484,14 @@ export default function Portfolio() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-24">
+      <motion.section 
+        id="experience" 
+        className="py-24"
+        onViewportEnter={() => trackSectionView('Experience')}
+      >
         <div className="container mx-auto px-4">
           <SectionHeading subtitle={t.experience.subtitle}>
             {t.experience.title}
@@ -1500,10 +1533,14 @@ export default function Portfolio() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24">
+      <motion.section 
+        id="contact" 
+        className="py-24"
+        onViewportEnter={() => trackSectionView('Contact')}
+      >
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto rounded-[3rem] bg-primary p-8 md:p-16 text-primary-foreground relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -1613,7 +1650,7 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="py-12 border-t">
@@ -1634,13 +1671,16 @@ export default function Portfolio() {
             <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t.footer.privacy}</a>
             <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t.footer.terms}</a>
             <div className="flex items-center space-x-4 ml-6">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <a href="https://github.com/mbishflavien"><Github className="w-5 h-5" /></a>
+              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Github')}>
+                <a href="https://github.com/mbishflavien" target="_blank" rel="noopener noreferrer"><Github className="w-5 h-5" /></a>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8"><Linkedin className="w-5 h-5" /></a>
+              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Linkedin')}>
+                <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" target="_blank" rel="noopener noreferrer"><Linkedin className="w-5 h-5" /></a>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Medium')}>
+                <a href="https://medium.com/@flavmbish" target="_blank" rel="noopener noreferrer"><BookOpen className="w-5 h-5" /></a>
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Email')}>
                 <a href="mailto:flavmbish@gmail.com"><Mail className="w-5 h-5" /></a>
               </Button>
             </div>
