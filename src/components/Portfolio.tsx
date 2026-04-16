@@ -306,7 +306,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
     nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", awards: "Ibihembo", contact: "Twandikire", download_cv: "Kurura CV" },
     hero: {
       greeting: "Muraho, nitwa Flavien Mbishibishi",
-      role: "Injeniyeri w'Ibisobanuro n'Ubuhanga bw'Ubuhanga (AI)",
+      role: "Injeniyeri wa Software n'Ubuhanga bw'Ubukorano (AI)",
       description: "Nkubaka ibisubizo by'ubuhanga mu guhuza ubuvuzi n'ikoranabuhanga. Ninzobere mu kubaka sisitemu zose n'izishingiye ku makuru.",
       cta_projects: "Reba Ibikorwa Byanjye",
       cta_contact: "Tuvugane",
@@ -327,7 +327,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       subtitle: "Urugendo rwanjye rw'umwuga n'umusanzu wanjye.",
       items: [
         {
-          role: "Injeniyeri w'Ibisobanuro wimenyereza",
+          role: "Injeniyeri wa Software wimenyereza",
           company: "A2SV",
           period: "Ukuboza 2025 – Kugeza ubu",
           description: [
@@ -345,7 +345,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
           ]
         },
         {
-          role: "Wimenyereza mu Kubaka Porogaramu",
+          role: "Kwimenyereza mu Kubaka Porogaramu",
           company: "The Gym Rwanda",
           period: "Gicurasi 2025 – Nzeri 2025",
           description: [
@@ -376,7 +376,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       send: "Ohereza Ubutumwa",
       sending: "Irimo kohereza...",
       success: "Ubutumwa bwoherejwe neza!",
-      error: "Kwohereza ubutumwa byanze. Irimo gufungura imeri yawe kugira ngo ubohereze...",
+      error: "Kwohereza ubutumwa byanze. Irimo gufungura imeri yawe kugira ngo ubwohereze...",
       phone: "Terefoni",
       location: "Aho nherereye",
       email_me: "Nyandikira kuri Imeri",
@@ -656,8 +656,7 @@ const HERO_BACKGROUNDS = [
 
 const PROFILE_IMAGES = [
   "https://lh3.googleusercontent.com/d/12ZzNcydVq1YeuFHfoRhF-sUV-4muXUyE",
-  "https://lh3.googleusercontent.com/d/1FcMCJDuIZ5P1AsVFMLNHr3xJtgAtVAiG",
-  "https://lh3.googleusercontent.com/d/1MZEKvz4yBv58oOPVwJiFIZaBd9Fk4s9K"
+  "https://lh3.googleusercontent.com/d/1FcMCJDuIZ5P1AsVFMLNHr3xJtgAtVAiG"
 ];
 
 const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
