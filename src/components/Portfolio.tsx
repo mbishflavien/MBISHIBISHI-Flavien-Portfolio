@@ -68,6 +68,7 @@ interface Translation {
     description: string;
     location: string;
     education: string;
+    education_period: string;
     stats: {
       experience: string;
       projects: string;
@@ -142,6 +143,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       description: "I am a dedicated Software Engineer with a strong foundation in data structures, algorithms, and full-stack development. My journey is driven by a desire to solve complex problems and create impactful digital experiences, particularly in the healthcare sector.",
       location: "Location",
       education: "Education",
+      education_period: "June 2024 - Present",
       stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
       experience_card: { title: "Experience", description: "Trainee Software Engineer at A2SV and Instructor at AUCA." },
       certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, and more." }
@@ -230,6 +232,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       description: "Mimi ni Mhandisi wa Programu aliyejitolea na msingi thabiti katika miundo ya data, algoriti, na ukuzaji wa mifumo kamili. Safari yangu inaongozwa na hamu ya kutatua matatatizo magumu na kuunda uzoefu wa kidijitali wenye athari, haswa katika sekta ya huduma ya afya.",
       location: "Mahali",
       education: "Elimu",
+      education_period: "Juni 2024 - Sasa",
       stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
       experience_card: { title: "Uzoefu", description: "Mhandisi wa Programu wa Mafunzo katika A2SV na Mkufunzi katika AUCA." },
       certifications_card: { title: "Vyeti", description: "Cisco Networking Basics, Hugging Face NLP, na zaidi." }
@@ -318,6 +321,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       description: "Ndi Injeniyeri w'Ibisobanuro wiyeguriye umurimo ufite urufatiro rakomeye mu miterere y'amakuru, algorithms, no kubaka sisitemu zose. Urugendo rwanjye ruyobowe n'icyifuzo cyo gukemura ibibazo bikomeye no guhanga uburambe bw'ikoranabuhanga bufite ingaruka, cyane cyane mu rwego rw'ubuvuzi.",
       location: "Aho nherereye",
       education: "Amashuri",
+      education_period: "Kamena 2024 - Kugeza ubu",
       stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
       experience_card: { title: "Inararibonye", description: "Injeniyeri w'Ibisobanuro wimenyereza muri A2SV n'umwarimu muri AUCA." },
       certifications_card: { title: "Impamyabumenyi", description: "Cisco Networking Basics, Hugging Face NLP, n'izindi." }
@@ -414,6 +418,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       description: "Je suis un ingénieur logiciel dévoué avec une solide base en structures de données, algorithmes et développement full-stack. Mon parcours est guidé par le désir de résoudre des problèmes complexes et de créer des expériences numériques percutantes, particulièrement dans le secteur de la santé.",
       location: "Localisation",
       education: "Éducation",
+      education_period: "Juin 2024 - Présent",
       stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
       experience_card: { title: "Expérience", description: "Ingénieur logiciel stagiaire chez A2SV et instructeur à l'AUCA." },
       certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, et plus encore." }
@@ -1244,6 +1249,7 @@ export default function Portfolio() {
                 <div className="space-y-1">
                   <p className="text-sm text-foreground/60 uppercase tracking-wider font-bold">{t.about.education}</p>
                   <p className="font-medium flex items-center"><GraduationCap className="w-4 h-4 mr-2 text-primary" /> BSc Software Engineering</p>
+                  <p className="text-xs text-foreground/60 ml-6">{t.about.education_period}</p>
                 </div>
               </div>
             </motion.div>
@@ -1309,16 +1315,18 @@ export default function Portfolio() {
                     </div>
                     <h3 className="text-xl font-bold">{skill.name}</h3>
                   </div>
-                  <span className="text-sm font-mono text-primary font-bold">{skill.level}%</span>
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${skill.level}%` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="h-full bg-primary rounded-full"
-                  />
+                <div className="space-y-3">
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${skill.level}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                      className="h-full bg-primary rounded-full"
+                    />
+                  </div>
+                  <p className="text-xs text-foreground/60 font-medium uppercase tracking-wider">{skill.category}</p>
                 </div>
               </motion.div>
             ))}

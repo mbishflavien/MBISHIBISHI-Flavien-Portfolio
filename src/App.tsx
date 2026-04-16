@@ -4,7 +4,13 @@
  */
 
 import Portfolio from './components/Portfolio';
+import { ChatBot } from './components/ChatBot';
 
 export default function App() {
-  return <Portfolio />;
+  return (
+    <>
+      <Portfolio />
+      <ChatBot />
+    </>
+  );
 }
