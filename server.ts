@@ -27,6 +27,9 @@ async function startServer() {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    const recipientEmail = process.env.EMAIL_USER || "flavmbish@gmail.com";
+    const emailPass = process.env.EMAIL_PASS;
+
     try {
       // 1. Log to console
       console.log("Received contact form submission:", { name, email, message });
@@ -44,32 +47,39 @@ async function startServer() {
       await fs.writeFile(messagesPath, JSON.stringify(messages, null, 2));
 
       // 3. Attempt to send email
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER || 'flavmbish@gmail.com',
-          pass: process.env.EMAIL_PASS // This should be an App Password
-        }
-      });
+      if (emailPass) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: recipientEmail,
+            pass: emailPass // This should be a Google App Password
+          }
+        });
 
-      const mailOptions = {
-        from: email,
-        to: 'flavmbish@gmail.com',
-        subject: `New Portfolio Message from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-        replyTo: email
-      };
+        const mailOptions = {
+          from: recipientEmail,
+          to: recipientEmail,
+          subject: `Portfolio Contact: ${name}`,
+          text: `You have a new message from your portfolio:\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+          replyTo: email
+        };
 
-      // Only attempt to send if credentials are provided
-      if (process.env.EMAIL_PASS) {
         await transporter.sendMail(mailOptions);
-        res.status(200).json({ message: "Message sent successfully via Email" });
+        console.log("Email sent successfully to", recipientEmail);
+        return res.status(200).json({ 
+          success: true, 
+          message: "Message sent successfully!" 
+        });
       } else {
-        res.status(200).json({ message: "Message received and saved locally (Demo Mode)" });
+        console.warn("EMAIL_PASS not configured. Message saved locally but email not sent.");
+        return res.status(200).json({ 
+          success: true, 
+          message: "Message received! (Developer note: EMAIL_PASS not set, email sending skipped)" 
+        });
       }
     } catch (error) {
-      console.error("Error sending email:", error);
-      res.status(500).json({ error: "Failed to send email" });
+      console.error("Error in contact form handler:", error);
+      return res.status(500).json({ error: "Internal server error" });
     }
   });
 

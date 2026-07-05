@@ -690,7 +690,7 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
     <div className="relative w-full max-w-3xl mx-auto aspect-square flex items-center justify-center">
       {/* Background Glow */}
       <div className={cn(
-        "absolute inset-0 blur-[180px] rounded-full animate-pulse transition-colors duration-1000",
+        "absolute inset-0 blur-[96px] rounded-full animate-pulse transition-colors duration-1000",
         isDarkMode ? "bg-primary/40" : "bg-primary/30"
       )} />
       
@@ -846,12 +846,20 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+        rafId = null;
+      });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [mouseX, mouseY]);
 
   // Visit Counter Logic
