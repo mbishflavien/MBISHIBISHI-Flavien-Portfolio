@@ -36,7 +36,8 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-import { Background3D } from './Background3D';
+import { FastCSSBackground } from './FastCSSBackground';
+const Background3D = React.lazy(() => import('./Background3D'));
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
 import { trackPageView, trackCTAClick, trackSectionView } from '../lib/analytics';
@@ -823,6 +824,8 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 alt="Flavien Mbishibishi"
                 className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
+                loading="eager"
+                decoding="async"
               />
             </AnimatePresence>
             
@@ -1057,7 +1060,9 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-transparent text-foreground selection:bg-primary/30 selection:text-primary transition-colors duration-500">
-      <Background3D mouseX={mouseX} mouseY={mouseY} isDarkMode={isDarkMode} />
+      <React.Suspense fallback={<FastCSSBackground isDarkMode={isDarkMode} />}>
+        <Background3D mouseX={mouseX} mouseY={mouseY} isDarkMode={isDarkMode} />
+      </React.Suspense>
       {/* Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 origin-left"
@@ -1445,6 +1450,8 @@ export default function Portfolio() {
                       alt={project.title} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                       <div className="flex space-x-3">
@@ -1519,6 +1526,8 @@ export default function Portfolio() {
                       alt={award.title} 
                       className="w-full h-full object-cover transition-all duration-700 blur-xl group-hover:blur-0 group-hover:scale-110"
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-background/40 group-hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-6 text-center">
                       <div className="group-hover:opacity-0 transition-opacity duration-300 flex flex-col items-center">
