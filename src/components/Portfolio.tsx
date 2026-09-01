@@ -150,17 +150,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
     },
     experience: { 
       title: "Work Experience", 
-      subtitle: "My professional journey and contributions.",
+      subtitle: "My professional journey, key roles, and technical contributions.",
       items: [
         {
           role: "Backend / ML Engineering Intern",
           company: "A2SV",
-          period: "Present",
+          period: "Aug 2026 – Present",
           description: [
-            "Architecting scalable backend services, microservices, and RESTful APIs using Python and modern frameworks.",
-            "Developing, fine-tuning, and integrating Machine Learning models into high-throughput production pipelines.",
-            "Optimizing database queries, caching strategies, and data processing workflows for low-latency performance.",
-            "Collaborating with engineering teams to implement clean architecture, CI/CD pipelines, and robust system monitoring."
+            "Architecting scalable backend services, asynchronous task pipelines, and high-performance RESTful APIs using Python, FastAPI, and PostgreSQL.",
+            "Developing, fine-tuning, and productionizing Machine Learning models with robust data ingestion, feature processing, and inference pipelines.",
+            "Optimizing database schemas, indexing strategies, and caching layers (Redis) to ensure high concurrency and sub-millisecond query latency.",
+            "Collaborating with cross-functional engineering teams to implement clean architecture, CI/CD automation, and rigorous testing suites."
           ]
         },
         {
@@ -168,8 +168,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "A2SV",
           period: "Dec 2025 – Present",
           description: [
-            "Solving advanced data structures and algorithms problems (arrays, graphs, DP).",
-            "Collaborating with a team of elite developers to build scalable solutions."
+            "Mastering advanced data structures and algorithmic problem solving (graph traversal, dynamic programming, trees, and heaps), solving 400+ problems.",
+            "Collaborating with top-tier engineering cohorts on complex system designs, architectural breakdowns, and peer code reviews.",
+            "Applying clean code principles, SOLID patterns, and test-driven development in distributed engineering environments."
           ]
         },
         {
@@ -177,8 +178,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "AUCA Software Innovation Center",
           period: "Dec 2025 – Feb 2026",
           description: [
-            "Taught Big Data and machine learning concepts to students.",
-            "Mentored end-to-end ML projects from data collection to model deployment."
+            "Designed and delivered an advanced curriculum on Big Data processing, distributed computing, and practical Machine Learning workflows to university students.",
+            "Mentored student cohorts through end-to-end data science projects, covering exploratory data analysis (EDA), feature engineering, model evaluation, and deployment.",
+            "Conducted hands-on lab sessions on modern data science stacks (Python, Pandas, NumPy, Scikit-Learn) and interactive visualizers."
           ]
         },
         {
@@ -186,8 +188,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "The Gym Rwanda",
           period: "May 2025 – Sep 2025",
           description: [
-            "Contributed to web and software development tasks.",
-            "Applied debugging and version control practices in a professional environment."
+            "Built and deployed responsive, user-centric web applications utilizing modern TypeScript, React, and RESTful API integrations.",
+            "Implemented systematic debugging, code refactoring, Git workflows, and pull request reviews within an agile sprint-based lifecycle.",
+            "Collaborated with senior engineers on full-stack architecture design, state management optimization, and UI/UX performance enhancements."
           ]
         }
       ]
@@ -250,16 +253,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
     },
     experience: { 
       title: "Uzoefu wa Kazi", 
-      subtitle: "Safari yangu ya kitaaluma na mchango wangu.",
+      subtitle: "Safari yangu ya kitaaluma, majukumu muhimu, na mchango wangu wa kiufundi.",
       items: [
         {
           role: "Mhandisi Mwanafunzi wa Backend / ML",
           company: "A2SV",
-          period: "Sasa",
+          period: "Ago 2026 – Sasa",
           description: [
-            "Kujenga na kusimamia huduma za backend na API thabiti kwa kutumia Python na mifumo ya kisasa.",
-            "Kutengeneza, kurekebisha, na kuunganisha mifumo ya Kujifunza kwa Mashine (ML) katika uzalishaji.",
-            "Kuboresha utendakazi wa hifadhidata na miundombinu ya uchakataji data kwa ajili ya mifumo ya AI yenye ufanisi wa juu."
+            "Kubuni na kuunda mifumo thabiti ya backend, huduma ndogo ndogo (microservices), na API za kasi ya juu kwa kutumia Python, FastAPI, na PostgreSQL.",
+            "Kutengeneza, kurekebisha, na kuunganisha mifumo ya Kujifunza kwa Mashine (ML) kwenye mifumo ya uzalishaji yenye ufanisi mkubwa.",
+            "Kuboresha utendakazi wa hifadhidata, mbinu za kuhifadhi kumbukumbu ya muda (Redis), na upakuaji wa data kwa haraka zaidi.",
+            "Kushirikiana na timu za wahandisi kutekeleza usanifu safi wa programu, mifumo ya kiotomatiki ya CI/CD, na upimaji wa kina wa mifumo."
           ]
         },
         {
@@ -267,8 +271,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "A2SV",
           period: "Des 2025 – Sasa",
           description: [
-            "Kutatua matatizo ya juu ya miundo ya data na algoriti (safu, grafu, DP).",
-            "Kushirikiana na timu ya wasanidi wasomi ili kujenga suluhisho zinazoweza kupanuka."
+            "Kutatua matatizo zaidi ya 400+ ya kina ya miundo ya data na algoriti (grafu, mifumo ya DP, na miti).",
+            "Kushirikiana na wahandisi mahiri katika uchambuzi wa mifumo mikubwa na ukaguzi wa kina wa kanuni za programu.",
+            "Kuimarisha misingi ya sayansi ya kompyuta na kuboresha ufanisi wa muda na kumbukumbu ya programu."
           ]
         },
         {
@@ -276,8 +281,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "Kituo cha Ubunifu wa Programu cha AUCA",
           period: "Des 2025 – Feb 2026",
           description: [
-            "Alifundisha dhana za Data Kubwa na kujifunza kwa mashine kwa wanafunzi.",
-            "Alishauri miradi ya ML ya mwisho hadi mwisho kutoka kwa ukusanyaji wa data hadi utumaji wa mfano."
+            "Kufundisha mitaala ya hali ya juu ya Data Kubwa, mifumo iliyosambazwa, na mbinu za Kujifunza kwa Mashine (ML).",
+            "Kushauri na kuongoza wanafunzi katika miradi halisi kuanzia ukusanyaji wa data hadi utekelezaji wa miundo ya AI.",
+            "Kuendesha mafunzo ya vitendo ya zana za kisasa za uchambuzi wa data kama Python, Pandas, NumPy, na Scikit-Learn."
           ]
         },
         {
@@ -285,8 +291,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "The Gym Rwanda",
           period: "Mei 2025 – Sep 2025",
           description: [
-            "Alichangia katika kazi za ukuzaji wa wavuti na programu.",
-            "Alitumia mazoea ya utatuzi na udhibiti wa toleo katika mazingira ya kitaaluma."
+            "Kujenga na kusambaza mifumo ya wavuti inayovutia na inayojibu haraka kwa kutumia TypeScript, React, na API.",
+            "Kutumia mbinu za kisasa za utatuzi wa hitilafu (debugging), udhibiti wa matoleo ya Git, na utendakazi wa timu wa Agile.",
+            "Kukuza maarifa ya usanifu wa mifumo ya full-stack na uboreshaji wa kiolesura cha mtumiaji."
           ]
         }
       ]
@@ -349,16 +356,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
     },
     experience: { 
       title: "Inararibonye mu Kazi", 
-      subtitle: "Urugendo rwanjye rw'umwuga n'umusanzu wanjye.",
+      subtitle: "Urugendo rwanjye rw'umwuga, inshingano z'ingenzi, n'umusanzu wanjye wa tekiniki.",
       items: [
         {
           role: "Injeniyeri wa Backend / ML (Intern)",
           company: "A2SV",
-          period: "Kugeza ubu",
+          period: "Kanama 2026 – Kugeza ubu",
           description: [
-            "Kubaka no gucunga serivisi za backend na API zikomeye hifashishijwe Python n'ikoranabuhanga rigezweho.",
-            "Gushyira mu bikorwa no guhuza uburyo bwa Machine Learning muri sisitemu z'ikoranabuhanga zikora mu buryo bwo hejuru.",
-            "Guteza imbere imikorere ya database no gucunga imigendekere y'amakuru ku buryo bwihuse kandi bwizewe."
+            "Kubaka no gucunga serivisi za backend zikomeye, microservices, na API zihuse hifashishijwe Python, FastAPI, na PostgreSQL.",
+            "Gukora, kunoza, no gushyira mu bikorwa uburyo bwa Machine Learning mu buryo bwizewe bw'ikoranabuhanga rikora mu gihe nyacyo.",
+            "Kunoza imikorere ya database, uburyo bwo gushyira mu bubiko bwihuse (Redis), no kwihutisha iyoherezwa ry'amakuru.",
+            "Gukorana n'amatsinda y'abahanga mu kwandika code zujuje ubuziranenge, gukoresha CI/CD, no gupima imikorere ya sisitemu."
           ]
         },
         {
@@ -366,8 +374,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "A2SV",
           period: "Ukuboza 2025 – Kugeza ubu",
           description: [
-            "Gukemura ibibazo bikomeye by'imiterere y'amakuru na algorithms (arrays, graphs, DP).",
-            "Gufatanya n'itsinda ry'abahanga mu kubaka ibisubizo bishobora kwaguka."
+            "Gukemura ibibazo birenga 400+ by'ubumenyi bwo hejuru mu miterere y'amakuru na algorithms (graphs, dynamic programming, n'ibindi).",
+            "Gufatanya n'abahanga mu by'ikoranabuhanga mu gushushanya sisitemu nini no gusuzuma code zikomeye.",
+            "Gushimangira ubumenyi bw'ibanze bwa computer science no kongera umuvuduko w'imikorere ya gahunda za mudasobwa."
           ]
         },
         {
@@ -375,8 +384,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "AUCA Software Innovation Center",
           period: "Ukuboza 2025 – Gashyantare 2026",
           description: [
-            "Nigishije abanyeshuri ibijyanye na Big Data na Machine Learning.",
-            "Nafashije abanyeshuri mu mishinga ya ML kuva ku gukusanya amakuru kugeza kuyashyira mu bikorwa."
+            "Kwigisha amasomo yimbitse ku gucunga amakuru manini (Big Data), uburyo bwo kuyasesengura, n'ikoranabuhanga rya Machine Learning.",
+            "Guherekeza no gufasha abanyeshuri mu mishinga y'ikoranabuhanga kuva ku gukusanya amakuru kugeza ku gushyira mu bikorwa imishinga ya AI.",
+            "Kuyobora amasomo y'imyitozo ngiro ku bikoresho bya Python, Pandas, NumPy, na Scikit-Learn."
           ]
         },
         {
@@ -384,8 +394,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "The Gym Rwanda",
           period: "Gicurasi 2025 – Nzeri 2025",
           description: [
-            "Nafashije mu kubaka imbuga za interineti na porogaramu.",
-            "Nakoresheje uburyo bwo gukemura amakosa (debugging) no gucunga verisiyo (version control) mu kazi."
+            "Kubaka imbuga za interineti na porogaramu zigezweho hifashishijwe TypeScript, React, na API zikora neza.",
+            "Gukemura amakosa (debugging), gukoresha Git mu gucunga impinduka za code, no gukorera mu matsinda akoresha uburyo bwa Agile.",
+            "Gutsura ubumenyi bwo hejuru mu kubaka gahunda za full-stack no korohereza abakoresha porogaramu."
           ]
         }
       ]
@@ -456,17 +467,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
     },
     experience: { 
       title: "Expérience Professionnelle", 
-      subtitle: "Mon parcours professionnel et mes contributions.",
+      subtitle: "Mon parcours professionnel, responsabilités clés et contributions techniques.",
       items: [
         {
           role: "Stagiaire Ingénieur Backend / ML",
           company: "A2SV",
-          period: "Présent",
+          period: "Août 2026 – Présent",
           description: [
-            "Conception et déploiement d'architectures backend évolutives et d'APIs RESTful avec Python et frameworks modernes.",
-            "Développement, optimisation et intégration de modèles de Machine Learning dans des pipelines de production haute performance.",
-            "Optimisation des requêtes de base de données, des stratégies de cache et des flux de données à faible latence.",
-            "Collaboration avec des équipes d'ingénierie pour implémenter une architecture propre et des pipelines CI/CD."
+            "Conception et implémentation d'architectures backend résilientes, de microservices et d'APIs RESTful haute performance avec Python, FastAPI et PostgreSQL.",
+            "Développement, optimisation et déploiement de modèles de Machine Learning au sein de pipelines de traitement de données et d'inférence en production.",
+            "Optimisation des schémas de bases de données, des stratégies d'indexation et des couches de mise en cache (Redis) pour des temps de réponse sous la milliseconde.",
+            "Collaboration avec des équipes pluridisciplinaires pour mettre en œuvre une architecture propre, l'automatisation CI/CD et des tests exhaustifs."
           ]
         },
         {
@@ -474,8 +485,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "A2SV",
           period: "Déc 2025 – Présent",
           description: [
-            "Résolution de problèmes complexes de structures de données et d'algorithmes (tableaux, graphes, DP).",
-            "Collaboration avec une équipe de développeurs d'élite pour construire des solutions évolutives."
+            "Maîtrise approfondie des structures de données et de l'algorithmique complexe (graphes, programmation dynamique, arbres) avec plus de 400 problèmes résolus.",
+            "Collaboration avec une cohorte d'ingénieurs de haut niveau sur la conception de systèmes distribués et les revues de code rigoureuses.",
+            "Application des principes de Clean Code, de conception modulaire et d'optimisation de la complexité spatio-temporelle."
           ]
         },
         {
@@ -483,8 +495,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "AUCA Software Innovation Center",
           period: "Déc 2025 – Fév 2026",
           description: [
-            "Enseignement des concepts de Big Data et d'apprentissage automatique aux étudiants.",
-            "Encadrement de projets ML de bout en bout, de la collecte de données au déploiement de modèles."
+            "Élaboration et animation de cours intensifs sur l'architecture Big Data, les systèmes distribués et le Machine Learning appliqué.",
+            "Mentorat d'étudiants sur des projets de science des données de bout en bout : collecte, nettoyage, analyse exploratoire et déploiement de modèles.",
+            "Direction d'ateliers pratiques axés sur l'écosystème Python Data Science (Pandas, NumPy, Scikit-Learn) et la visualisation de données."
           ]
         },
         {
@@ -492,8 +505,9 @@ const TRANSLATIONS: Record<Language, Translation> = {
           company: "The Gym Rwanda",
           period: "Mai 2025 – Sep 2025",
           description: [
-            "Contribution aux tâches de développement web et logiciel.",
-            "Application des pratiques de débogage et de contrôle de version dans un environnement professionnel."
+            "Développement et déploiement d'applications web réactives et ergonomiques utilisant TypeScript, React et des APIs REST.",
+            "Mise en pratique du débogage systématique, du refactoring de code et de la gestion de versions avec Git dans un cadre agile.",
+            "Renforcement des compétences en architecture full-stack, gestion d'état et optimisation des performances front-end."
           ]
         }
       ]
