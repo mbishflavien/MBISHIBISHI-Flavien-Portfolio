@@ -145,13 +145,24 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Education",
       education_period: "June 2024 - Present",
       stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
-      experience_card: { title: "Experience", description: "Trainee Software Engineer at A2SV and Instructor at AUCA." },
+      experience_card: { title: "Experience", description: "Backend / ML Engineering Intern & Trainee at A2SV, and Instructor at AUCA." },
       certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, and more." }
     },
     experience: { 
       title: "Work Experience", 
       subtitle: "My professional journey and contributions.",
       items: [
+        {
+          role: "Backend / ML Engineering Intern",
+          company: "A2SV",
+          period: "Present",
+          description: [
+            "Architecting scalable backend services, microservices, and RESTful APIs using Python and modern frameworks.",
+            "Developing, fine-tuning, and integrating Machine Learning models into high-throughput production pipelines.",
+            "Optimizing database queries, caching strategies, and data processing workflows for low-latency performance.",
+            "Collaborating with engineering teams to implement clean architecture, CI/CD pipelines, and robust system monitoring."
+          ]
+        },
         {
           role: "Trainee Software Engineer",
           company: "A2SV",
@@ -234,13 +245,23 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Elimu",
       education_period: "Juni 2024 - Sasa",
       stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
-      experience_card: { title: "Uzoefu", description: "Mhandisi wa Programu wa Mafunzo katika A2SV na Mkufunzi katika AUCA." },
+      experience_card: { title: "Uzoefu", description: "Mhandisi Mwanafunzi wa Backend / ML & Mafunzo katika A2SV na Mkufunzi katika AUCA." },
       certifications_card: { title: "Vyeti", description: "Cisco Networking Basics, Hugging Face NLP, na zaidi." }
     },
     experience: { 
       title: "Uzoefu wa Kazi", 
       subtitle: "Safari yangu ya kitaaluma na mchango wangu.",
       items: [
+        {
+          role: "Mhandisi Mwanafunzi wa Backend / ML",
+          company: "A2SV",
+          period: "Sasa",
+          description: [
+            "Kujenga na kusimamia huduma za backend na API thabiti kwa kutumia Python na mifumo ya kisasa.",
+            "Kutengeneza, kurekebisha, na kuunganisha mifumo ya Kujifunza kwa Mashine (ML) katika uzalishaji.",
+            "Kuboresha utendakazi wa hifadhidata na miundombinu ya uchakataji data kwa ajili ya mifumo ya AI yenye ufanisi wa juu."
+          ]
+        },
         {
           role: "Mhandisi wa Programu wa Mafunzo",
           company: "A2SV",
@@ -323,13 +344,23 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Amashuri",
       education_period: "Kamena 2024 - Kugeza ubu",
       stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
-      experience_card: { title: "Inararibonye", description: "Injeniyeri w'Ibisobanuro wimenyereza muri A2SV n'umwarimu muri AUCA." },
+      experience_card: { title: "Inararibonye", description: "Injeniyeri wa Backend / ML (Intern) n'Uwimenyereza muri A2SV n'umwarimu muri AUCA." },
       certifications_card: { title: "Impamyabumenyi", description: "Cisco Networking Basics, Hugging Face NLP, n'izindi." }
     },
     experience: { 
       title: "Inararibonye mu Kazi", 
       subtitle: "Urugendo rwanjye rw'umwuga n'umusanzu wanjye.",
       items: [
+        {
+          role: "Injeniyeri wa Backend / ML (Intern)",
+          company: "A2SV",
+          period: "Kugeza ubu",
+          description: [
+            "Kubaka no gucunga serivisi za backend na API zikomeye hifashishijwe Python n'ikoranabuhanga rigezweho.",
+            "Gushyira mu bikorwa no guhuza uburyo bwa Machine Learning muri sisitemu z'ikoranabuhanga zikora mu buryo bwo hejuru.",
+            "Guteza imbere imikorere ya database no gucunga imigendekere y'amakuru ku buryo bwihuse kandi bwizewe."
+          ]
+        },
         {
           role: "Injeniyeri wa Software wimenyereza",
           company: "A2SV",
@@ -420,13 +451,24 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Éducation",
       education_period: "Juin 2024 - Présent",
       stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
-      experience_card: { title: "Expérience", description: "Ingénieur logiciel stagiaire chez A2SV et instructeur à l'AUCA." },
+      experience_card: { title: "Expérience", description: "Stagiaire Ingénieur Backend / ML & Stagiaire Logiciel chez A2SV et instructeur à l'AUCA." },
       certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, et plus encore." }
     },
     experience: { 
       title: "Expérience Professionnelle", 
       subtitle: "Mon parcours professionnel et mes contributions.",
       items: [
+        {
+          role: "Stagiaire Ingénieur Backend / ML",
+          company: "A2SV",
+          period: "Présent",
+          description: [
+            "Conception et déploiement d'architectures backend évolutives et d'APIs RESTful avec Python et frameworks modernes.",
+            "Développement, optimisation et intégration de modèles de Machine Learning dans des pipelines de production haute performance.",
+            "Optimisation des requêtes de base de données, des stratégies de cache et des flux de données à faible latence.",
+            "Collaboration avec des équipes d'ingénierie pour implémenter une architecture propre et des pipelines CI/CD."
+          ]
+        },
         {
           role: "Ingénieur Logiciel Stagiaire",
           company: "A2SV",
@@ -1515,7 +1557,7 @@ export default function Portfolio() {
           <div className="max-w-4xl mx-auto space-y-12">
             {t.experience.items.map((exp, index) => (
               <motion.div
-                key={exp.company}
+                key={`${exp.company}-${exp.role}-${index}`}
                 initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
                 whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.3 }}
