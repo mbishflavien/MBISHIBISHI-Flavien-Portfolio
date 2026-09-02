@@ -1551,22 +1551,30 @@ export default function Portfolio() {
                   className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/50 backdrop-blur-sm cursor-pointer"
                   onClick={() => setSelectedAward(award)}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-muted/40 flex items-center justify-center">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900/90 dark:bg-neutral-950 flex items-center justify-center p-5">
                     <img 
                       src={award.image} 
                       alt={award.title} 
-                      className={award.image.endsWith('.svg')
-                        ? "w-full h-full object-contain p-6 transition-all duration-500 group-hover:scale-110"
-                        : "w-full h-full object-cover transition-all duration-500 group-hover:scale-105"}
+                      className={cn(
+                        "transition-all duration-500 filter blur-md group-hover:blur-0 group-hover:scale-105",
+                        award.image.endsWith('.svg')
+                          ? "max-w-[72%] max-h-[75%] object-contain drop-shadow-xl"
+                          : "w-full h-full object-cover"
+                      )}
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
                     />
                     <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
-                    <div className="absolute top-4 right-4">
+                    <div className="absolute top-4 right-4 z-10">
                       <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-md border-none text-xs">
                         {award.category}
                       </Badge>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/25 backdrop-blur-[1px] pointer-events-none">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-background/95 text-foreground shadow-xl border border-border/40">
+                        <Maximize2 className="w-3.5 h-3.5 text-primary" /> View Credential
+                      </span>
                     </div>
                   </div>
                   <CardHeader className="flex-grow flex flex-col justify-between">
@@ -1892,55 +1900,86 @@ export default function Portfolio() {
 
       {/* Award Detail Modal */}
       <Dialog open={!!selectedAward} onOpenChange={() => setSelectedAward(null)}>
-        <DialogContent className="max-w-4xl rounded-3xl overflow-hidden p-0 border-none bg-background/95 backdrop-blur-xl">
+        <DialogContent className="max-w-2xl sm:max-w-3xl rounded-3xl overflow-hidden p-0 border border-primary/20 bg-background/95 backdrop-blur-2xl shadow-2xl">
           <DialogTitle className="sr-only">Certificate: {selectedAward?.title}</DialogTitle>
           {selectedAward && (
             <div className="flex flex-col">
-              <div className="relative w-full bg-black flex items-center justify-center p-4 md:p-8">
+              <div className="relative w-full bg-gradient-to-b from-neutral-950 via-zinc-950 to-neutral-900 flex items-center justify-center p-6 sm:p-10 border-b border-border/40 overflow-hidden min-h-[260px] sm:min-h-[320px]">
+                {/* Ambient glow matching credential theme */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-45"
+                  style={{
+                    background: selectedAward.image.includes('nvidia') 
+                      ? 'radial-gradient(circle at center, rgba(118, 185, 0, 0.35) 0%, transparent 70%)'
+                      : selectedAward.image.includes('gdg')
+                      ? 'radial-gradient(circle at center, rgba(234, 67, 53, 0.35) 0%, transparent 70%)'
+                      : 'radial-gradient(circle at center, rgba(59, 130, 246, 0.25) 0%, transparent 70%)'
+                  }}
+                />
+                
+                <div className="absolute top-4 left-4 z-20">
+                  <Badge className="bg-primary text-primary-foreground font-semibold px-3 py-1 text-xs shadow-md">
+                    {selectedAward.category}
+                  </Badge>
+                </div>
+
                 <img 
                   src={selectedAward.image} 
                   alt={selectedAward.title} 
-                  className="max-w-full max-h-[70vh] object-contain shadow-2xl rounded-lg"
+                  className={selectedAward.image.endsWith('.svg')
+                    ? "relative z-10 w-48 h-48 sm:w-64 sm:h-64 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
+                    : "relative z-10 max-w-full max-h-[50vh] object-contain shadow-2xl rounded-xl filter-none"}
                   referrerPolicy="no-referrer"
                 />
+
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute top-4 right-4 rounded-full"
+                  className="absolute top-4 right-4 z-20 rounded-full h-8 w-8 bg-black/60 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md"
                   onClick={() => setSelectedAward(null)}
                 >
                   <X className="w-4 h-4" />
+                  <span className="sr-only">Close</span>
                 </Button>
               </div>
-              <div className="p-8 space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+              <div className="p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div>
-                    <Badge className="mb-2">{selectedAward.category}</Badge>
-                    <h2 className="text-3xl font-bold tracking-tighter">{selectedAward.title}</h2>
-                    <p className="text-primary font-semibold">{selectedAward.issuer} • {selectedAward.date}</p>
+                    <span className="text-xs font-bold text-primary uppercase tracking-widest block mb-1">
+                      {selectedAward.issuer}
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                      {selectedAward.title}
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1 font-mono">
+                      Issued: {selectedAward.date} • Verified Credential
+                    </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3 shrink-0">
                     {selectedAward.verifyLink && (
                       <a href={selectedAward.verifyLink} target="_blank" rel="noopener noreferrer">
-                        <Button className="rounded-xl bg-primary text-primary-foreground">
+                        <Button className="rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:bg-primary/90">
                           <CheckCircle2 className="w-4 h-4 mr-2" /> Verify on Google Developers
-                          <ExternalLink className="w-4 h-4 ml-1.5" />
+                          <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
                       </a>
                     )}
                     <a href={selectedAward.image} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="rounded-xl">
+                      <Button variant="outline" className="rounded-xl border-border/60 hover:bg-accent">
                         <ExternalLink className="w-4 h-4 mr-2" /> Open Full Image
                       </Button>
                     </a>
                   </div>
                 </div>
-                <Separator />
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold flex items-center">
-                    <Award className="w-5 h-5 mr-2 text-primary" /> About this Certification
+                
+                <Separator className="bg-border/60" />
+                
+                <div className="space-y-2">
+                  <h3 className="text-base sm:text-lg font-bold flex items-center gap-2 text-foreground">
+                    <Award className="w-5 h-5 text-primary" /> About this Credential
                   </h3>
-                  <p className="text-foreground/80 leading-relaxed text-lg">
+                  <p className="text-foreground/80 leading-relaxed text-sm sm:text-base">
                     {selectedAward.description}
                   </p>
                 </div>
