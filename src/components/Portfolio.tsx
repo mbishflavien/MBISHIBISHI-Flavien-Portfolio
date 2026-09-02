@@ -86,6 +86,7 @@ interface Translation {
       company: string;
       period: string;
       description: string[];
+      verifyLink?: string;
     }[];
   };
   skills: {
@@ -146,7 +147,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Education",
       education_period: "June 2024 - Present",
       stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
-      experience_card: { title: "Experience", description: "Backend / ML Engineering Intern & Trainee at A2SV, and Instructor at AUCA." },
+      experience_card: { title: "Experience", description: "Backend / ML Intern at A2SV, NVIDIA Developer, and Instructor at AUCA." },
       certifications_card: { title: "Badges & Certs", description: "GDG Kigali Chapter Member, NVIDIA Developer, Cisco, Hugging Face NLP, and more." }
     },
     experience: { 
@@ -162,6 +163,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
             "Developing, fine-tuning, and productionizing Machine Learning models with robust data ingestion, feature processing, and inference pipelines.",
             "Optimizing database schemas, indexing strategies, and caching layers (Redis) to ensure high concurrency and sub-millisecond query latency.",
             "Collaborating with cross-functional engineering teams to implement clean architecture, CI/CD automation, and rigorous testing suites."
+          ]
+        },
+        {
+          role: "NVIDIA Developer",
+          company: "NVIDIA Developer Program",
+          period: "Apr 2026 – Present",
+          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
+          description: [
+            "Leveraging NVIDIA accelerated computing platforms, CUDA architectures, and optimized deep learning libraries for high-throughput AI workloads and model inference.",
+            "Building and profiling GPU-accelerated computing pipelines, neural network models, and performance-optimized machine learning workflows.",
+            "Active contributor within the global NVIDIA Developer community, participating in developer workshops, technical summits, and accelerated computing initiatives."
           ]
         },
         {
@@ -249,7 +261,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Elimu",
       education_period: "Juni 2024 - Sasa",
       stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
-      experience_card: { title: "Uzoefu", description: "Mhandisi Mwanafunzi wa Backend / ML & Mafunzo katika A2SV na Mkufunzi katika AUCA." },
+      experience_card: { title: "Uzoefu", description: "Mhandisi wa Backend / ML katika A2SV, Msanidi Programu wa NVIDIA, na Mkufunzi AUCA." },
       certifications_card: { title: "Nishani na Vyeti", description: "Mwanachama wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, na zaidi." }
     },
     experience: { 
@@ -265,6 +277,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
             "Kutengeneza, kurekebisha, na kuunganisha mifumo ya Kujifunza kwa Mashine (ML) kwenye mifumo ya uzalishaji yenye ufanisi mkubwa.",
             "Kuboresha utendakazi wa hifadhidata, mbinu za kuhifadhi kumbukumbu ya muda (Redis), na upakuaji wa data kwa haraka zaidi.",
             "Kushirikiana na timu za wahandisi kutekeleza usanifu safi wa programu, mifumo ya kiotomatiki ya CI/CD, na upimaji wa kina wa mifumo."
+          ]
+        },
+        {
+          role: "Msanidi Programu wa NVIDIA",
+          company: "NVIDIA Developer Program",
+          period: "Apr 2026 – Sasa",
+          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
+          description: [
+            "Kutumia mifumo ya kompyuta iliyoharakishwa ya NVIDIA, CUDA, na maktaba za kisasa za Deep Learning kwa kasi kubwa ya mafunzo na utekelezaji wa mifumo ya AI.",
+            "Kujenga na kuboresha mifumo ya kompyuta inayotumia GPU na uchakataji wa data wa kasi ya juu.",
+            "Mwanachama hai wa Jumuiya ya Kimataifa ya Wasanii wa NVIDIA (NVIDIA Developer), nikishiriki katika warsha za kiufundi na mikutano ya kiteknolojia."
           ]
         },
         {
@@ -352,7 +375,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Amashuri",
       education_period: "Kamena 2024 - Kugeza ubu",
       stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
-      experience_card: { title: "Inararibonye", description: "Injeniyeri wa Backend / ML (Intern) n'Uwimenyereza muri A2SV n'umwarimu muri AUCA." },
+      experience_card: { title: "Inararibonye", description: "Injeniyeri wa Backend / ML muri A2SV, Umushakashatsi wa NVIDIA, n'Umwarimu muri AUCA." },
       certifications_card: { title: "Badges n'Impamyabumenyi", description: "Umunyamuryango wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, n'izindi." }
     },
     experience: { 
@@ -368,6 +391,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
             "Gukora, kunoza, no gushyira mu bikorwa uburyo bwa Machine Learning mu buryo bwizewe bw'ikoranabuhanga rikora mu gihe nyacyo.",
             "Kunoza imikorere ya database, uburyo bwo gushyira mu bubiko bwihuse (Redis), no kwihutisha iyoherezwa ry'amakuru.",
             "Gukorana n'amatsinda y'abahanga mu kwandika code zujuje ubuziranenge, gukoresha CI/CD, no gupima imikorere ya sisitemu."
+          ]
+        },
+        {
+          role: "Umushakashatsi na Porogaramu wa NVIDIA",
+          company: "NVIDIA Developer Program",
+          period: "Mata 2026 – Kugeza ubu",
+          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
+          description: [
+            "Gukoresha ikoranabuhanga rya NVIDIA ryo kwihutisha imikorere ya mudasobwa (accelerated computing), CUDA, na frameworks z'ubwenge bukorano (AI/Deep Learning).",
+            "Kubaka no gushyira mu bikorwa imiyoboro ya Machine Learning yihutishwa na GPU hamwe n'ubushakashatsi bwo kongera umuvuduko wa algorithms.",
+            "Umunyamuryango wa gahunda y'abashakashatsi n'abubatsi ba NVIDIA (NVIDIA Developer Program), witabira amahugurwa n'iterambere rya AI."
           ]
         },
         {
@@ -463,7 +497,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education: "Éducation",
       education_period: "Juin 2024 - Présent",
       stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
-      experience_card: { title: "Expérience", description: "Stagiaire Ingénieur Backend / ML & Stagiaire Logiciel chez A2SV et instructeur à l'AUCA." },
+      experience_card: { title: "Expérience", description: "Stagiaire Backend / ML chez A2SV, Développeur NVIDIA et Instructeur à l'AUCA." },
       certifications_card: { title: "Badges & Certifications", description: "Membre GDG Kigali, Développeur NVIDIA, Cisco, Hugging Face NLP, et plus encore." }
     },
     experience: { 
@@ -479,6 +513,17 @@ const TRANSLATIONS: Record<Language, Translation> = {
             "Développement, optimisation et déploiement de modèles de Machine Learning au sein de pipelines de traitement de données et d'inférence en production.",
             "Optimisation des schémas de bases de données, des stratégies d'indexation et des couches de mise en cache (Redis) pour des temps de réponse sous la milliseconde.",
             "Collaboration avec des équipes pluridisciplinaires pour mettre en œuvre une architecture propre, l'automatisation CI/CD et des tests exhaustifs."
+          ]
+        },
+        {
+          role: "Développeur NVIDIA",
+          company: "NVIDIA Developer Program",
+          period: "Avr 2026 – Présent",
+          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
+          description: [
+            "Exploitation des plateformes de calcul accéléré NVIDIA, de l'écosystème CUDA et des frameworks de Deep Learning pour l'optimisation et l'inférence de modèles d'IA.",
+            "Conception et déploiement de pipelines de Machine Learning accélérés par GPU et de charges de travail de calcul haute performance (HPC).",
+            "Membre actif du NVIDIA Developer Program, participant aux formations techniques spécialisées et aux initiatives d'innovation en IA."
           ]
         },
         {
@@ -570,6 +615,7 @@ interface Experience {
   company: string;
   period: string;
   description: string[];
+  verifyLink?: string;
 }
 
 interface Skill {
@@ -1644,12 +1690,27 @@ export default function Portfolio() {
                 className="relative pl-8 md:pl-12 border-l-2 border-muted hover:border-primary transition-colors group"
               >
                 <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-muted group-hover:bg-primary transition-colors border-4 border-background" />
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-2">
                   <div>
                     <h3 className="text-2xl font-bold">{exp.role}</h3>
-                    <p className="text-primary font-semibold">{exp.company}</p>
+                    <div className="flex flex-wrap items-center gap-2.5 mt-1">
+                      <p className="text-primary font-semibold">{exp.company}</p>
+                      {exp.verifyLink && (
+                        <a 
+                          href={exp.verifyLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all border border-emerald-500/20 group/link"
+                          title="Verify Official Membership Card"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Verify Membership</span>
+                          <ExternalLink className="w-3 h-3 ml-0.5 opacity-70 group-hover/link:translate-x-0.5 transition-transform" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <Badge variant="outline" className="w-fit mt-2 md:mt-0 px-4 py-1 rounded-full">
+                  <Badge variant="outline" className="w-fit mt-1 md:mt-0 px-4 py-1 rounded-full font-mono text-xs shrink-0">
                     {exp.period}
                   </Badge>
                 </div>
