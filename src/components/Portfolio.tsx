@@ -129,7 +129,7 @@ interface Translation {
 
 const TRANSLATIONS: Record<Language, Translation> = {
   en: {
-    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", awards: "Awards", contact: "Contact", download_cv: "Download CV" },
+    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", awards: "Badges & Certs", contact: "Contact", download_cv: "Download CV" },
     hero: {
       greeting: "Hi, I'm Flavien Mbishibishi",
       role: "Software Engineer & AI Enthusiast",
@@ -147,7 +147,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education_period: "June 2024 - Present",
       stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
       experience_card: { title: "Experience", description: "Backend / ML Engineering Intern & Trainee at A2SV, and Instructor at AUCA." },
-      certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, and more." }
+      certifications_card: { title: "Badges & Certs", description: "GDG Kigali Chapter Member, NVIDIA Developer, Cisco, Hugging Face NLP, and more." }
     },
     experience: { 
       title: "Work Experience", 
@@ -203,10 +203,10 @@ const TRANSLATIONS: Record<Language, Translation> = {
       demo_unavailable: "Live demo is currently unavailable. Check GitHub for source code!"
     },
     awards: {
-      title: "Honors & Awards",
-      subtitle: "Certifications and recognitions for my professional growth and technical expertise.",
-      view_certificate: "View Certificate",
-      hover_reveal: "Hover to reveal"
+      title: "Badges & Certifications",
+      subtitle: "Verified community memberships, developer credentials, and technical certifications.",
+      view_certificate: "View Details",
+      hover_reveal: "Click to explore"
     },
     contact: {
       title: "Get in Touch",
@@ -232,7 +232,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
     }
   },
   sw: {
-    nav: { about: "Kuhusu", experience: "Uzoefu", skills: "Ujuzi", projects: "Miradi", awards: "Tuzo", contact: "Wasiliana", download_cv: "Pakua CV" },
+    nav: { about: "Kuhusu", experience: "Uzoefu", skills: "Ujuzi", projects: "Miradi", awards: "Nishani na Vyeti", contact: "Wasiliana", download_cv: "Pakua CV" },
     hero: {
       greeting: "Habari, mimi ni Flavien Mbishibishi",
       role: "Mhandisi wa Programu na Shauku ya AI",
@@ -250,7 +250,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education_period: "Juni 2024 - Sasa",
       stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
       experience_card: { title: "Uzoefu", description: "Mhandisi Mwanafunzi wa Backend / ML & Mafunzo katika A2SV na Mkufunzi katika AUCA." },
-      certifications_card: { title: "Vyeti", description: "Cisco Networking Basics, Hugging Face NLP, na zaidi." }
+      certifications_card: { title: "Nishani na Vyeti", description: "Mwanachama wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, na zaidi." }
     },
     experience: { 
       title: "Uzoefu wa Kazi", 
@@ -306,10 +306,10 @@ const TRANSLATIONS: Record<Language, Translation> = {
       demo_unavailable: "Onyesho la moja kwa moja halipatikani kwa sasa. Angalia GitHub kwa nambari ya chanzo!"
     },
     awards: {
-      title: "Heshima na Tuzo",
-      subtitle: "Vyeti na utambuzi kwa ukuaji wangu wa kitaaluma na utaalamu wa kiufundi.",
-      view_certificate: "Angalia Cheti",
-      hover_reveal: "Peleka mshale kuona"
+      title: "Nishani na Vyeti",
+      subtitle: "Vyeti rasmi na nishani za utambuzi kwa ukuaji wangu wa kitaaluma na kiufundi.",
+      view_certificate: "Angalia Maelezo",
+      hover_reveal: "Bofya kuona"
     },
     contact: {
       title: "Wasiliana Nami",
@@ -335,7 +335,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
     }
   },
   rw: {
-    nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", awards: "Ibihembo", contact: "Twandikire", download_cv: "Kurura CV" },
+    nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", awards: "Badges n'Impamyabumenyi", contact: "Twandikire", download_cv: "Kurura CV" },
     hero: {
       greeting: "Muraho, nitwa Flavien Mbishibishi",
       role: "Injeniyeri wa Software n'Ubuhanga bw'Ubukorano (AI)",
@@ -353,7 +353,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education_period: "Kamena 2024 - Kugeza ubu",
       stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
       experience_card: { title: "Inararibonye", description: "Injeniyeri wa Backend / ML (Intern) n'Uwimenyereza muri A2SV n'umwarimu muri AUCA." },
-      certifications_card: { title: "Impamyabumenyi", description: "Cisco Networking Basics, Hugging Face NLP, n'izindi." }
+      certifications_card: { title: "Badges n'Impamyabumenyi", description: "Umunyamuryango wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, n'izindi." }
     },
     experience: { 
       title: "Inararibonye mu Kazi", 
@@ -409,10 +409,10 @@ const TRANSLATIONS: Record<Language, Translation> = {
       demo_unavailable: "Kwereka uko bikora ntibishoboka ubu. Reba kuri GitHub kugira ngo ubone code!"
     },
     awards: {
-      title: "Icyubahiro n'Ibihembo",
-      subtitle: "Impamyabumenyi n'ishimwe ku mikurire yanjye mu mwuga n'ubumenyi bwa tekiniki.",
-      view_certificate: "Reba Impamyabumenyi",
-      hover_reveal: "Kanda hano urebe"
+      title: "Badges n'Impamyabumenyi",
+      subtitle: "Impamyabumenyi z'umwuga n'amashimwe y'ubuhanga muri porogaramu.",
+      view_certificate: "Reba Ibisobanuro",
+      hover_reveal: "Kanda urebe"
     },
     contact: {
       title: "Twandikire",
@@ -443,7 +443,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       experience: "Expérience",
       skills: "Compétences",
       projects: "Projets",
-      awards: "Récompenses",
+      awards: "Badges & Certifications",
       contact: "Contact",
       download_cv: "Télécharger CV"
     },
@@ -464,7 +464,7 @@ const TRANSLATIONS: Record<Language, Translation> = {
       education_period: "Juin 2024 - Présent",
       stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
       experience_card: { title: "Expérience", description: "Stagiaire Ingénieur Backend / ML & Stagiaire Logiciel chez A2SV et instructeur à l'AUCA." },
-      certifications_card: { title: "Certifications", description: "Cisco Networking Basics, Hugging Face NLP, et plus encore." }
+      certifications_card: { title: "Badges & Certifications", description: "Membre GDG Kigali, Développeur NVIDIA, Cisco, Hugging Face NLP, et plus encore." }
     },
     experience: { 
       title: "Expérience Professionnelle", 
@@ -523,10 +523,10 @@ const TRANSLATIONS: Record<Language, Translation> = {
       demo_unavailable: "La démo en direct est actuellement indisponible. Consultez GitHub pour le code source !"
     },
     awards: {
-      title: "Honneurs et Récompenses",
-      subtitle: "Certifications et reconnaissances pour ma croissance professionnelle et mon expertise technique.",
-      view_certificate: "Voir le Certificat",
-      hover_reveal: "Survoler pour révéler"
+      title: "Badges & Certifications",
+      subtitle: "Badges officiels, certifications professionnelles et engagements communautaires.",
+      view_certificate: "Voir les Détails",
+      hover_reveal: "Cliquer pour voir"
     },
     contact: {
       title: "Contactez-moi",
@@ -587,6 +587,7 @@ interface AwardItem {
   image: string;
   description: string;
   category: string;
+  verifyLink?: string;
 }
 
 // --- Data ---
@@ -671,6 +672,24 @@ const SKILLS: Skill[] = [
 ];
 
 const CERTIFICATIONS: AwardItem[] = [
+  {
+    title: "Google Developer Groups Chapter Member",
+    issuer: "Google Developer Groups (GDG) Kigali",
+    date: "2024",
+    image: "/badges/gdg-kigali.svg",
+    description: "Official verified membership in Google Developer Groups (GDG) Kigali Chapter, collaborating on Google Cloud, Android, AI/ML, and community tech initiatives.",
+    category: "Google Developer",
+    verifyLink: "https://developers.google.com/profile/badges/community/gdg/chapter/member/gdg-kigali?u=flavienmbishibishi"
+  },
+  {
+    title: "NVIDIA Developer Badge",
+    issuer: "NVIDIA & Google Cloud Community",
+    date: "2024",
+    image: "/badges/nvidia-developer.svg",
+    description: "Official recognition awarded through the Google Cloud and NVIDIA Developer collaboration for engagement in accelerated computing, AI workflows, and GPU architectures.",
+    category: "AI & Cloud",
+    verifyLink: "https://developers.google.com/profile/badges/nvidia-developer?u=flavienmbishibishi"
+  },
   {
     title: "Hugging Face NLP Specialization",
     issuer: "Hugging Face",
@@ -1226,9 +1245,17 @@ export default function Portfolio() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Badge variant="secondary" className="px-4 py-1 text-sm font-medium rounded-full mb-4">
-                {t.hero.available}
-              </Badge>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <Badge variant="secondary" className="px-4 py-1 text-sm font-medium rounded-full">
+                  {t.hero.available}
+                </Badge>
+                <a href="#awards">
+                  <Badge variant="outline" className="px-3.5 py-1 text-xs font-semibold rounded-full border-primary/30 hover:border-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 cursor-pointer">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    GDG Kigali Member & NVIDIA Badges
+                  </Badge>
+                </a>
+              </div>
               <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
                 {t.hero.role.split(' ').slice(0, 2).join(' ')} <br />
                 <span className="text-primary italic">{t.hero.role.split(' ').slice(2).join(' ')}.</span>
@@ -1336,19 +1363,23 @@ export default function Portfolio() {
                 <h3 className="text-xl font-bold">{t.about.experience_card.title}</h3>
                 <p className="text-sm text-foreground/70">{t.about.experience_card.description}</p>
               </motion.div>
-              <motion.div 
+              <motion.a 
+                href="#awards"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="p-6 rounded-3xl bg-background border shadow-sm space-y-4 mt-8"
+                className="block p-6 rounded-3xl bg-background border border-primary/10 hover:border-primary/40 shadow-sm space-y-4 mt-8 transition-all hover:shadow-md group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 group-hover:bg-primary/10 flex items-center justify-center text-blue-500 group-hover:text-primary transition-colors">
                   <Award className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold">{t.about.certifications_card.title}</h3>
+                <h3 className="text-xl font-bold group-hover:text-primary transition-colors flex items-center justify-between">
+                  <span>{t.about.certifications_card.title}</span>
+                  <ChevronRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h3>
                 <p className="text-sm text-foreground/70">{t.about.certifications_card.description}</p>
-              </motion.div>
+              </motion.a>
             </div>
           </div>
         </div>
@@ -1520,44 +1551,50 @@ export default function Portfolio() {
                   className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/50 backdrop-blur-sm cursor-pointer"
                   onClick={() => setSelectedAward(award)}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-muted/40 flex items-center justify-center">
                     <img 
                       src={award.image} 
                       alt={award.title} 
-                      className="w-full h-full object-cover transition-all duration-700 blur-xl group-hover:blur-0 group-hover:scale-110"
+                      className={award.image.endsWith('.svg')
+                        ? "w-full h-full object-contain p-6 transition-all duration-500 group-hover:scale-110"
+                        : "w-full h-full object-cover transition-all duration-500 group-hover:scale-105"}
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
                     />
-                    <div className="absolute inset-0 bg-background/40 group-hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="group-hover:opacity-0 transition-opacity duration-300 flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                          <Award className="w-6 h-6 text-primary" />
-                        </div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-foreground/70">{t.awards.hover_reveal}</p>
-                      </div>
-                      
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                        <Button variant="secondary" className="rounded-full shadow-xl">
-                          <Maximize2 className="w-4 h-4 mr-2" /> {t.awards.view_certificate}
-                        </Button>
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
                     <div className="absolute top-4 right-4">
-                      <Badge className="bg-primary/80 backdrop-blur-md border-none">
+                      <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-md border-none text-xs">
                         {award.category}
                       </Badge>
                     </div>
                   </div>
-                  <CardHeader className="flex-grow">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-bold text-primary uppercase tracking-widest">{award.issuer}</span>
-                      <span className="text-xs font-mono text-foreground/50">{award.date}</span>
+                  <CardHeader className="flex-grow flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-primary uppercase tracking-widest">{award.issuer}</span>
+                        <span className="text-xs font-mono text-foreground/50">{award.date}</span>
+                      </div>
+                      <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">{award.title}</CardTitle>
+                      <CardDescription className="mt-2 line-clamp-3">
+                        {award.description}
+                      </CardDescription>
                     </div>
-                    <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">{award.title}</CardTitle>
-                    <CardDescription className="mt-2 line-clamp-3">
-                      {award.description}
-                    </CardDescription>
+                    {award.verifyLink && (
+                      <div className="mt-4 pt-3 border-t border-primary/10">
+                        <a 
+                          href={award.verifyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center text-xs font-semibold text-primary hover:underline gap-1.5"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Verify on Google Developers
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
                   </CardHeader>
                 </Card>
               </motion.div>
@@ -1882,11 +1919,21 @@ export default function Portfolio() {
                     <h2 className="text-3xl font-bold tracking-tighter">{selectedAward.title}</h2>
                     <p className="text-primary font-semibold">{selectedAward.issuer} • {selectedAward.date}</p>
                   </div>
-                  <a href={selectedAward.image} target="_blank" rel="noopener noreferrer">
-                    <Button className="rounded-xl">
-                      <ExternalLink className="w-4 h-4 mr-2" /> Open Full Image
-                    </Button>
-                  </a>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {selectedAward.verifyLink && (
+                      <a href={selectedAward.verifyLink} target="_blank" rel="noopener noreferrer">
+                        <Button className="rounded-xl bg-primary text-primary-foreground">
+                          <CheckCircle2 className="w-4 h-4 mr-2" /> Verify on Google Developers
+                          <ExternalLink className="w-4 h-4 ml-1.5" />
+                        </Button>
+                      </a>
+                    )}
+                    <a href={selectedAward.image} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" className="rounded-xl">
+                        <ExternalLink className="w-4 h-4 mr-2" /> Open Full Image
+                      </Button>
+                    </a>
+                  </div>
                 </div>
                 <Separator />
                 <div className="space-y-4">

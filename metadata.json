@@ -1,6 +1,6 @@
 {
   "name": "Flavien MBISHIBISHI | Portfolio",
-  "description": "A modern, highly interactive personal portfolio website for Flavien MBISHIBISHI, a Software Engineering student and AI/ML enthusiast.",
+  "description": "A modern, highly interactive personal portfolio website for Flavien MBISHIBISHI, a Software Engineering student, GDG Kigali member, and AI/ML enthusiast.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
