@@ -676,7 +676,7 @@ const CERTIFICATIONS: AwardItem[] = [
     title: "Google Developer Groups Chapter Member",
     issuer: "Google Developer Groups (GDG) Kigali",
     date: "2024",
-    image: "/badges/gdg-kigali.svg",
+    image: "https://developers.google.com/static/profile/badges/community/gdg/chapter/badge.svg",
     description: "Official verified membership in Google Developer Groups (GDG) Kigali Chapter, collaborating on Google Cloud, Android, AI/ML, and community tech initiatives.",
     category: "Google Developer",
     verifyLink: "https://developers.google.com/profile/badges/community/gdg/chapter/member/gdg-kigali?u=flavienmbishibishi"
@@ -685,7 +685,7 @@ const CERTIFICATIONS: AwardItem[] = [
     title: "NVIDIA Developer Badge",
     issuer: "NVIDIA & Google Cloud Community",
     date: "2024",
-    image: "/badges/nvidia-developer.svg",
+    image: "https://developers.google.com/static/profile/badges/nvidia-developer/badge.svg",
     description: "Official recognition awarded through the Google Cloud and NVIDIA Developer collaboration for engagement in accelerated computing, AI workflows, and GPU architectures.",
     category: "AI & Cloud",
     verifyLink: "https://developers.google.com/profile/badges/nvidia-developer?u=flavienmbishibishi"
@@ -1557,10 +1557,17 @@ export default function Portfolio() {
                       alt={award.title} 
                       className={cn(
                         "transition-all duration-500 filter blur-md group-hover:blur-0 group-hover:scale-105",
-                        award.image.endsWith('.svg')
+                        award.image.includes('.svg')
                           ? "max-w-[72%] max-h-[75%] object-contain drop-shadow-xl"
                           : "w-full h-full object-cover"
                       )}
+                      onError={(e) => {
+                        if (award.image.includes('nvidia')) {
+                          (e.currentTarget as HTMLImageElement).src = '/badges/nvidia-developer.svg';
+                        } else if (award.image.includes('gdg') || award.image.includes('chapter')) {
+                          (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
+                        }
+                      }}
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
@@ -1926,9 +1933,16 @@ export default function Portfolio() {
                 <img 
                   src={selectedAward.image} 
                   alt={selectedAward.title} 
-                  className={selectedAward.image.endsWith('.svg')
+                  className={selectedAward.image.includes('.svg')
                     ? "relative z-10 w-48 h-48 sm:w-64 sm:h-64 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
                     : "relative z-10 max-w-full max-h-[50vh] object-contain shadow-2xl rounded-xl filter-none"}
+                  onError={(e) => {
+                    if (selectedAward.image.includes('nvidia')) {
+                      (e.currentTarget as HTMLImageElement).src = '/badges/nvidia-developer.svg';
+                    } else if (selectedAward.image.includes('gdg') || selectedAward.image.includes('chapter')) {
+                      (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
+                    }
+                  }}
                   referrerPolicy="no-referrer"
                 />
 
