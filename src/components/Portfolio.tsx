@@ -169,7 +169,6 @@ const TRANSLATIONS: Record<Language, Translation> = {
           role: "NVIDIA Developer",
           company: "NVIDIA Developer Program",
           period: "Apr 2026 – Present",
-          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
           description: [
             "Leveraging NVIDIA accelerated computing platforms, CUDA architectures, and optimized deep learning libraries for high-throughput AI workloads and model inference.",
             "Building and profiling GPU-accelerated computing pipelines, neural network models, and performance-optimized machine learning workflows.",
@@ -283,7 +282,6 @@ const TRANSLATIONS: Record<Language, Translation> = {
           role: "Msanidi Programu wa NVIDIA",
           company: "NVIDIA Developer Program",
           period: "Apr 2026 – Sasa",
-          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
           description: [
             "Kutumia mifumo ya kompyuta iliyoharakishwa ya NVIDIA, CUDA, na maktaba za kisasa za Deep Learning kwa kasi kubwa ya mafunzo na utekelezaji wa mifumo ya AI.",
             "Kujenga na kuboresha mifumo ya kompyuta inayotumia GPU na uchakataji wa data wa kasi ya juu.",
@@ -397,7 +395,6 @@ const TRANSLATIONS: Record<Language, Translation> = {
           role: "Umushakashatsi na Porogaramu wa NVIDIA",
           company: "NVIDIA Developer Program",
           period: "Mata 2026 – Kugeza ubu",
-          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
           description: [
             "Gukoresha ikoranabuhanga rya NVIDIA ryo kwihutisha imikorere ya mudasobwa (accelerated computing), CUDA, na frameworks z'ubwenge bukorano (AI/Deep Learning).",
             "Kubaka no gushyira mu bikorwa imiyoboro ya Machine Learning yihutishwa na GPU hamwe n'ubushakashatsi bwo kongera umuvuduko wa algorithms.",
@@ -519,7 +516,6 @@ const TRANSLATIONS: Record<Language, Translation> = {
           role: "Développeur NVIDIA",
           company: "NVIDIA Developer Program",
           period: "Avr 2026 – Présent",
-          verifyLink: "https://developer.nvidia.com/membership-card/vy384hjA4WVVdLlnHSCm2IbdGTHwQmpgo01JHRRdPk1Mb40_O8OmazxjGNSpygXU9kNpHu856hq2L2IV7MSM4RzxZEogefM=",
           description: [
             "Exploitation des plateformes de calcul accéléré NVIDIA, de l'écosystème CUDA et des frameworks de Deep Learning pour l'optimisation et l'inférence de modèles d'IA.",
             "Conception et déploiement de pipelines de Machine Learning accélérés par GPU et de charges de travail de calcul haute performance (HPC).",
@@ -1684,27 +1680,12 @@ export default function Portfolio() {
                 className="relative pl-8 md:pl-12 border-l-2 border-muted hover:border-primary transition-colors group"
               >
                 <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-muted group-hover:bg-primary transition-colors border-4 border-background" />
-                <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-2">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                   <div>
                     <h3 className="text-2xl font-bold">{exp.role}</h3>
-                    <div className="flex flex-wrap items-center gap-2.5 mt-1">
-                      <p className="text-primary font-semibold">{exp.company}</p>
-                      {exp.verifyLink && (
-                        <a 
-                          href={exp.verifyLink} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all border border-emerald-500/20 group/link"
-                          title="Verify Official Membership Card"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Verify Membership</span>
-                          <ExternalLink className="w-3 h-3 ml-0.5 opacity-70 group-hover/link:translate-x-0.5 transition-transform" />
-                        </a>
-                      )}
-                    </div>
+                    <p className="text-primary font-semibold">{exp.company}</p>
                   </div>
-                  <Badge variant="outline" className="w-fit mt-1 md:mt-0 px-4 py-1 rounded-full font-mono text-xs shrink-0">
+                  <Badge variant="outline" className="w-fit mt-2 md:mt-0 px-4 py-1 rounded-full font-mono text-xs">
                     {exp.period}
                   </Badge>
                 </div>
