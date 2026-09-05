@@ -1295,12 +1295,6 @@ export default function Portfolio() {
                 <Badge variant="secondary" className="px-4 py-1 text-sm font-medium rounded-full">
                   {t.hero.available}
                 </Badge>
-                <a href="#awards">
-                  <Badge variant="outline" className="px-3.5 py-1 text-xs font-semibold rounded-full border-primary/30 hover:border-primary hover:bg-primary/10 transition-colors flex items-center gap-1.5 cursor-pointer">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    GDG Kigali Member & NVIDIA Badges
-                  </Badge>
-                </a>
               </div>
               <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
                 {t.hero.role.split(' ').slice(0, 2).join(' ')} <br />
