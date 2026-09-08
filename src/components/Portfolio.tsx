@@ -898,10 +898,9 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
           <motion.div
             animate={{ y: [0, 15, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-6 -right-6 bg-background/80 backdrop-blur-md border border-primary/20 p-4 rounded-2xl shadow-xl z-40"
+            className="absolute -top-6 -right-6 bg-background/80 backdrop-blur-md border border-primary/20 px-4 py-2.5 rounded-2xl shadow-xl z-40"
           >
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+            <div className="flex items-center">
               <span className="text-sm font-bold uppercase tracking-wider">Open to Work</span>
             </div>
           </motion.div>
@@ -1287,11 +1286,6 @@ export default function Portfolio() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <Badge variant="secondary" className="px-4 py-1 text-sm font-medium rounded-full">
-                  {t.hero.available}
-                </Badge>
-              </div>
               <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
                 {t.hero.role.split(' ').slice(0, 2).join(' ')} <br />
                 <span className="text-primary italic">{t.hero.role.split(' ').slice(2).join(' ')}.</span>
