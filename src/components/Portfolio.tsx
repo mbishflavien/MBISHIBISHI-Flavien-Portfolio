@@ -475,15 +475,14 @@ export default function Portfolio() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <motion.a 
             href="#" 
-            className="text-xl font-bold tracking-tighter hover:text-primary transition-colors flex items-center"
+            className="hover:opacity-80 transition-opacity flex items-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            aria-label="Home"
           >
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
               <Code2 size={18} />
             </div>
-            <span className="text-foreground font-extrabold tracking-tight">FM</span>
-            <span className="text-primary font-black">.</span>
           </motion.a>
 
           {/* Desktop Nav */}
