@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValueEvent } from 'motion/react';
 import { 
   Github, 
@@ -30,10 +30,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 import { FastCSSBackground } from './FastCSSBackground';
@@ -42,732 +40,11 @@ import { db } from '../firebase';
 import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
 import { trackPageView, trackCTAClick, trackSectionView } from '../lib/analytics';
 
-// --- Types ---
-type Language = 'en' | 'sw' | 'rw' | 'fr';
+import { Language, ProjectItem, SkillItem, AwardItem } from '../types/portfolio';
+import { TRANSLATIONS } from '../data/translations';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
-interface Translation {
-  nav: {
-    about: string;
-    experience: string;
-    skills: string;
-    projects: string;
-    awards: string;
-    contact: string;
-    download_cv: string;
-  };
-  hero: {
-    greeting: string;
-    role: string;
-    description: string;
-    cta_projects: string;
-    cta_contact: string;
-    available: string;
-  };
-  about: {
-    title: string;
-    subtitle: string;
-    description: string;
-    location: string;
-    education: string;
-    education_period: string;
-    stats: {
-      experience: string;
-      projects: string;
-      clients: string;
-    };
-    experience_card: { title: string; description: string };
-    certifications_card: { title: string; description: string };
-  };
-  experience: {
-    title: string;
-    subtitle: string;
-    items: {
-      role: string;
-      company: string;
-      period: string;
-      description: string[];
-      verifyLink?: string;
-    }[];
-  };
-  skills: {
-    title: string;
-    subtitle: string;
-  };
-  projects: {
-    title: string;
-    subtitle: string;
-    demo_unavailable: string;
-  };
-  awards: {
-    title: string;
-    subtitle: string;
-    view_certificate: string;
-    hover_reveal: string;
-  };
-  contact: {
-    title: string;
-    subtitle: string;
-    name: string;
-    email: string;
-    message: string;
-    send: string;
-    sending: string;
-    success: string;
-    error: string;
-    phone: string;
-    location: string;
-    email_me: string;
-    call_me: string;
-    build_great: string;
-    message_placeholder: string;
-  };
-  footer: {
-    rights: string;
-    privacy: string;
-    terms: string;
-  };
-}
-
-const TRANSLATIONS: Record<Language, Translation> = {
-  en: {
-    nav: { about: "About", experience: "Experience", skills: "Skills", projects: "Projects", awards: "Badges & Certs", contact: "Contact", download_cv: "Download CV" },
-    hero: {
-      greeting: "Hi, I'm Flavien Mbishibishi",
-      role: "Software Engineer & AI Enthusiast",
-      description: "Building intelligent solutions at the intersection of healthcare and technology. Specialized in full-stack development and data-driven systems.",
-      cta_projects: "View My Work",
-      cta_contact: "Let's Talk",
-      available: "Available for opportunities"
-    },
-    about: {
-      title: "About Me",
-      subtitle: "Passionate about building software that makes a difference.",
-      description: "I am a dedicated Software Engineer with a strong foundation in data structures, algorithms, and full-stack development. My journey is driven by a desire to solve complex problems and create impactful digital experiences, particularly in the healthcare sector.",
-      location: "Location",
-      education: "Education",
-      education_period: "June 2024 - Present",
-      stats: { experience: "Years Experience", projects: "Projects Completed", clients: "Happy Clients" },
-      experience_card: { title: "Experience", description: "Backend / ML Intern at A2SV, NVIDIA Developer, and Instructor at AUCA." },
-      certifications_card: { title: "Badges & Certs", description: "GDG Kigali Chapter Member, NVIDIA Developer, Cisco, Hugging Face NLP, and more." }
-    },
-    experience: { 
-      title: "Work Experience", 
-      subtitle: "My professional journey, key roles, and technical contributions.",
-      items: [
-        {
-          role: "Backend / ML Engineering Intern",
-          company: "A2SV",
-          period: "Aug 2026 – Present",
-          description: [
-            "Architecting scalable backend services, asynchronous task pipelines, and high-performance RESTful APIs using Python, FastAPI, and PostgreSQL.",
-            "Developing, fine-tuning, and productionizing Machine Learning models with robust data ingestion, feature processing, and inference pipelines.",
-            "Optimizing database schemas, indexing strategies, and caching layers (Redis) to ensure high concurrency and sub-millisecond query latency.",
-            "Collaborating with cross-functional engineering teams to implement clean architecture, CI/CD automation, and rigorous testing suites."
-          ]
-        },
-        {
-          role: "NVIDIA Developer",
-          company: "NVIDIA Developer Program",
-          period: "Apr 2026 – Present",
-          description: [
-            "Leveraging NVIDIA accelerated computing platforms, CUDA architectures, and optimized deep learning libraries for high-throughput AI workloads and model inference.",
-            "Building and profiling GPU-accelerated computing pipelines, neural network models, and performance-optimized machine learning workflows.",
-            "Active contributor within the global NVIDIA Developer community, participating in developer workshops, technical summits, and accelerated computing initiatives."
-          ]
-        },
-        {
-          role: "Trainee Software Engineer",
-          company: "A2SV",
-          period: "Dec 2025 – Present",
-          description: [
-            "Mastering advanced data structures and algorithmic problem solving (graph traversal, dynamic programming, trees, and heaps), solving 400+ problems.",
-            "Collaborating with top-tier engineering cohorts on complex system designs, architectural breakdowns, and peer code reviews.",
-            "Applying clean code principles, SOLID patterns, and test-driven development in distributed engineering environments."
-          ]
-        },
-        {
-          role: "Big Data Analytics Instructor",
-          company: "AUCA Software Innovation Center",
-          period: "Dec 2025 – Feb 2026",
-          description: [
-            "Designed and delivered an advanced curriculum on Big Data processing, distributed computing, and practical Machine Learning workflows to university students.",
-            "Mentored student cohorts through end-to-end data science projects, covering exploratory data analysis (EDA), feature engineering, model evaluation, and deployment.",
-            "Conducted hands-on lab sessions on modern data science stacks (Python, Pandas, NumPy, Scikit-Learn) and interactive visualizers."
-          ]
-        },
-        {
-          role: "Software Development Trainee",
-          company: "The Gym Rwanda",
-          period: "May 2025 – Sep 2025",
-          description: [
-            "Built and deployed responsive, user-centric web applications utilizing modern TypeScript, React, and RESTful API integrations.",
-            "Implemented systematic debugging, code refactoring, Git workflows, and pull request reviews within an agile sprint-based lifecycle.",
-            "Collaborated with senior engineers on full-stack architecture design, state management optimization, and UI/UX performance enhancements."
-          ]
-        }
-      ]
-    },
-    skills: { title: "Skills & Expertise", subtitle: "The tools and technologies I use to bring ideas to life." },
-    projects: { 
-      title: "Featured Projects", 
-      subtitle: "A selection of my recent work and academic projects.",
-      demo_unavailable: "Live demo is currently unavailable. Check GitHub for source code!"
-    },
-    awards: {
-      title: "Badges & Certifications",
-      subtitle: "Verified community memberships, developer credentials, and technical certifications.",
-      view_certificate: "View Details",
-      hover_reveal: "Click to explore"
-    },
-    contact: {
-      title: "Get in Touch",
-      subtitle: "Have a project in mind? Let's build something amazing together.",
-      name: "Your Name",
-      email: "Your Email",
-      message: "Your Message",
-      send: "Send Message",
-      sending: "Sending...",
-      success: "Message sent successfully!",
-      error: "Failed to send message. Opening your email client to send manually...",
-      phone: "Phone",
-      location: "Location",
-      email_me: "Email Me",
-      call_me: "Call Me",
-      build_great: "Get in touch",
-      message_placeholder: "Your message here..."
-    },
-    footer: {
-      rights: "All rights reserved.",
-      privacy: "Privacy Policy",
-      terms: "Terms of Service"
-    }
-  },
-  sw: {
-    nav: { about: "Kuhusu", experience: "Uzoefu", skills: "Ujuzi", projects: "Miradi", awards: "Nishani na Vyeti", contact: "Wasiliana", download_cv: "Pakua CV" },
-    hero: {
-      greeting: "Habari, mimi ni Flavien Mbishibishi",
-      role: "Mhandisi wa Programu na Shauku ya AI",
-      description: "Ninajenga suluhisho zenye akili katika makutano ya huduma ya afya na teknolojia. Nimebobea katika ukuzaji wa mifumo kamili na inayotokana na data.",
-      cta_projects: "Angalia Kazi Zangu",
-      cta_contact: "Tuzungumze",
-      available: "Napatikana kwa fursa"
-    },
-    about: {
-      title: "Kuhusu Mimi",
-      subtitle: "Nina shauku ya kujenga programu zinazoleta mabadiliko.",
-      description: "Mimi ni Mhandisi wa Programu aliyejitolea na msingi thabiti katika miundo ya data, algoriti, na ukuzaji wa mifumo kamili. Safari yangu inaongozwa na hamu ya kutatua matatatizo magumu na kuunda uzoefu wa kidijitali wenye athari, haswa katika sekta ya huduma ya afya.",
-      location: "Mahali",
-      education: "Elimu",
-      education_period: "Juni 2024 - Sasa",
-      stats: { experience: "Miaka ya Uzoefu", projects: "Miradi Iliyokamilika", clients: "Wateja Wenye Furaha" },
-      experience_card: { title: "Uzoefu", description: "Mhandisi wa Backend / ML katika A2SV, Msanidi Programu wa NVIDIA, na Mkufunzi AUCA." },
-      certifications_card: { title: "Nishani na Vyeti", description: "Mwanachama wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, na zaidi." }
-    },
-    experience: { 
-      title: "Uzoefu wa Kazi", 
-      subtitle: "Safari yangu ya kitaaluma, majukumu muhimu, na mchango wangu wa kiufundi.",
-      items: [
-        {
-          role: "Mhandisi Mwanafunzi wa Backend / ML",
-          company: "A2SV",
-          period: "Ago 2026 – Sasa",
-          description: [
-            "Kubuni na kuunda mifumo thabiti ya backend, huduma ndogo ndogo (microservices), na API za kasi ya juu kwa kutumia Python, FastAPI, na PostgreSQL.",
-            "Kutengeneza, kurekebisha, na kuunganisha mifumo ya Kujifunza kwa Mashine (ML) kwenye mifumo ya uzalishaji yenye ufanisi mkubwa.",
-            "Kuboresha utendakazi wa hifadhidata, mbinu za kuhifadhi kumbukumbu ya muda (Redis), na upakuaji wa data kwa haraka zaidi.",
-            "Kushirikiana na timu za wahandisi kutekeleza usanifu safi wa programu, mifumo ya kiotomatiki ya CI/CD, na upimaji wa kina wa mifumo."
-          ]
-        },
-        {
-          role: "Msanidi Programu wa NVIDIA",
-          company: "NVIDIA Developer Program",
-          period: "Apr 2026 – Sasa",
-          description: [
-            "Kutumia mifumo ya kompyuta iliyoharakishwa ya NVIDIA, CUDA, na maktaba za kisasa za Deep Learning kwa kasi kubwa ya mafunzo na utekelezaji wa mifumo ya AI.",
-            "Kujenga na kuboresha mifumo ya kompyuta inayotumia GPU na uchakataji wa data wa kasi ya juu.",
-            "Mwanachama hai wa Jumuiya ya Kimataifa ya Wasanii wa NVIDIA (NVIDIA Developer), nikishiriki katika warsha za kiufundi na mikutano ya kiteknolojia."
-          ]
-        },
-        {
-          role: "Mhandisi wa Programu wa Mafunzo",
-          company: "A2SV",
-          period: "Des 2025 – Sasa",
-          description: [
-            "Kutatua matatizo zaidi ya 400+ ya kina ya miundo ya data na algoriti (grafu, mifumo ya DP, na miti).",
-            "Kushirikiana na wahandisi mahiri katika uchambuzi wa mifumo mikubwa na ukaguzi wa kina wa kanuni za programu.",
-            "Kuimarisha misingi ya sayansi ya kompyuta na kuboresha ufanisi wa muda na kumbukumbu ya programu."
-          ]
-        },
-        {
-          role: "Mkufunzi wa Uchambuzi wa Data Kubwa",
-          company: "Kituo cha Ubunifu wa Programu cha AUCA",
-          period: "Des 2025 – Feb 2026",
-          description: [
-            "Kufundisha mitaala ya hali ya juu ya Data Kubwa, mifumo iliyosambazwa, na mbinu za Kujifunza kwa Mashine (ML).",
-            "Kushauri na kuongoza wanafunzi katika miradi halisi kuanzia ukusanyaji wa data hadi utekelezaji wa miundo ya AI.",
-            "Kuendesha mafunzo ya vitendo ya zana za kisasa za uchambuzi wa data kama Python, Pandas, NumPy, na Scikit-Learn."
-          ]
-        },
-        {
-          role: "Mwanafunzi wa Ukuzaji wa Programu",
-          company: "The Gym Rwanda",
-          period: "Mei 2025 – Sep 2025",
-          description: [
-            "Kujenga na kusambaza mifumo ya wavuti inayovutia na inayojibu haraka kwa kutumia TypeScript, React, na API.",
-            "Kutumia mbinu za kisasa za utatuzi wa hitilafu (debugging), udhibiti wa matoleo ya Git, na utendakazi wa timu wa Agile.",
-            "Kukuza maarifa ya usanifu wa mifumo ya full-stack na uboreshaji wa kiolesura cha mtumiaji."
-          ]
-        }
-      ]
-    },
-    skills: { title: "Ujuzi na Utaalamu", subtitle: "Zana na teknolojia ninazotumia kuleta mawazo kwenye maisha." },
-    projects: { 
-      title: "Miradi Iliyoangaziwa", 
-      subtitle: "Uteuzi wa kazi zangu za hivi karibuni na miradi ya kitaaluma.",
-      demo_unavailable: "Onyesho la moja kwa moja halipatikani kwa sasa. Angalia GitHub kwa nambari ya chanzo!"
-    },
-    awards: {
-      title: "Nishani na Vyeti",
-      subtitle: "Vyeti rasmi na nishani za utambuzi kwa ukuaji wangu wa kitaaluma na kiufundi.",
-      view_certificate: "Angalia Maelezo",
-      hover_reveal: "Bofya kuona"
-    },
-    contact: {
-      title: "Wasiliana Nami",
-      subtitle: "Una mradi akilini? Hebu tujenge kitu cha kushangaza pamoja.",
-      name: "Jina Lako",
-      email: "Barua Pepe Yako",
-      message: "Ujumbe Wako",
-      send: "Tuma Ujumbe",
-      sending: "Inatuma...",
-      success: "Ujumbe umetumwa kwa mafanikio!",
-      error: "Imeshindwa kutuma ujumbe. Inafungua barua pepe yako ili utume mwenyewe...",
-      phone: "Simu",
-      location: "Mahali",
-      email_me: "Nitumie Barua Pepe",
-      call_me: "Nipigie Simu",
-      build_great: "Wasiliana nami",
-      message_placeholder: "Ujumbe wako hapa..."
-    },
-    footer: {
-      rights: "Haki zote zimehifadhiwa.",
-      privacy: "Sera ya Faragha",
-      terms: "Masharti ya Huduma"
-    }
-  },
-  rw: {
-    nav: { about: "Ibyerekeye", experience: "Inararibonye", skills: "Ubumenyi", projects: "Imishinga", awards: "Badges n'Impamyabumenyi", contact: "Twandikire", download_cv: "Kurura CV" },
-    hero: {
-      greeting: "Muraho, nitwa Flavien Mbishibishi",
-      role: "Injeniyeri wa Software n'Ubuhanga bw'Ubukorano (AI)",
-      description: "Nkubaka ibisubizo by'ubuhanga mu guhuza ubuvuzi n'ikoranabuhanga. Ninzobere mu kubaka sisitemu zose n'izishingiye ku makuru.",
-      cta_projects: "Reba Ibikorwa Byanjye",
-      cta_contact: "Tuvugane",
-      available: "Niteguye amahirwe mashya"
-    },
-    about: {
-      title: "Ibyerekeye Njye",
-      subtitle: "Nfite ishyaka ryo kubaka porogaramu zizana impinduka.",
-      description: "Ndi Injeniyeri w'Ibisobanuro wiyeguriye umurimo ufite urufatiro rakomeye mu miterere y'amakuru, algorithms, no kubaka sisitemu zose. Urugendo rwanjye ruyobowe n'icyifuzo cyo gukemura ibibazo bikomeye no guhanga uburambe bw'ikoranabuhanga bufite ingaruka, cyane cyane mu rwego rw'ubuvuzi.",
-      location: "Aho nherereye",
-      education: "Amashuri",
-      education_period: "Kamena 2024 - Kugeza ubu",
-      stats: { experience: "Imyaka y'Inararibonye", projects: "Imishinga Yarangiye", clients: "Abakiriya Bishimye" },
-      experience_card: { title: "Inararibonye", description: "Injeniyeri wa Backend / ML muri A2SV, Umushakashatsi wa NVIDIA, n'Umwarimu muri AUCA." },
-      certifications_card: { title: "Badges n'Impamyabumenyi", description: "Umunyamuryango wa GDG Kigali, NVIDIA Developer, Cisco, Hugging Face NLP, n'izindi." }
-    },
-    experience: { 
-      title: "Inararibonye mu Kazi", 
-      subtitle: "Urugendo rwanjye rw'umwuga, inshingano z'ingenzi, n'umusanzu wanjye wa tekiniki.",
-      items: [
-        {
-          role: "Injeniyeri wa Backend / ML (Intern)",
-          company: "A2SV",
-          period: "Kanama 2026 – Kugeza ubu",
-          description: [
-            "Kubaka no gucunga serivisi za backend zikomeye, microservices, na API zihuse hifashishijwe Python, FastAPI, na PostgreSQL.",
-            "Gukora, kunoza, no gushyira mu bikorwa uburyo bwa Machine Learning mu buryo bwizewe bw'ikoranabuhanga rikora mu gihe nyacyo.",
-            "Kunoza imikorere ya database, uburyo bwo gushyira mu bubiko bwihuse (Redis), no kwihutisha iyoherezwa ry'amakuru.",
-            "Gukorana n'amatsinda y'abahanga mu kwandika code zujuje ubuziranenge, gukoresha CI/CD, no gupima imikorere ya sisitemu."
-          ]
-        },
-        {
-          role: "Umushakashatsi na Porogaramu wa NVIDIA",
-          company: "NVIDIA Developer Program",
-          period: "Mata 2026 – Kugeza ubu",
-          description: [
-            "Gukoresha ikoranabuhanga rya NVIDIA ryo kwihutisha imikorere ya mudasobwa (accelerated computing), CUDA, na frameworks z'ubwenge bukorano (AI/Deep Learning).",
-            "Kubaka no gushyira mu bikorwa imiyoboro ya Machine Learning yihutishwa na GPU hamwe n'ubushakashatsi bwo kongera umuvuduko wa algorithms.",
-            "Umunyamuryango wa gahunda y'abashakashatsi n'abubatsi ba NVIDIA (NVIDIA Developer Program), witabira amahugurwa n'iterambere rya AI."
-          ]
-        },
-        {
-          role: "Injeniyeri wa Software wimenyereza",
-          company: "A2SV",
-          period: "Ukuboza 2025 – Kugeza ubu",
-          description: [
-            "Gukemura ibibazo birenga 400+ by'ubumenyi bwo hejuru mu miterere y'amakuru na algorithms (graphs, dynamic programming, n'ibindi).",
-            "Gufatanya n'abahanga mu by'ikoranabuhanga mu gushushanya sisitemu nini no gusuzuma code zikomeye.",
-            "Gushimangira ubumenyi bw'ibanze bwa computer science no kongera umuvuduko w'imikorere ya gahunda za mudasobwa."
-          ]
-        },
-        {
-          role: "Umwarimu w'Ubusobanuro bw'Amakuru Manini (Big Data)",
-          company: "AUCA Software Innovation Center",
-          period: "Ukuboza 2025 – Gashyantare 2026",
-          description: [
-            "Kwigisha amasomo yimbitse ku gucunga amakuru manini (Big Data), uburyo bwo kuyasesengura, n'ikoranabuhanga rya Machine Learning.",
-            "Guherekeza no gufasha abanyeshuri mu mishinga y'ikoranabuhanga kuva ku gukusanya amakuru kugeza ku gushyira mu bikorwa imishinga ya AI.",
-            "Kuyobora amasomo y'imyitozo ngiro ku bikoresho bya Python, Pandas, NumPy, na Scikit-Learn."
-          ]
-        },
-        {
-          role: "Kwimenyereza mu Kubaka Porogaramu",
-          company: "The Gym Rwanda",
-          period: "Gicurasi 2025 – Nzeri 2025",
-          description: [
-            "Kubaka imbuga za interineti na porogaramu zigezweho hifashishijwe TypeScript, React, na API zikora neza.",
-            "Gukemura amakosa (debugging), gukoresha Git mu gucunga impinduka za code, no gukorera mu matsinda akoresha uburyo bwa Agile.",
-            "Gutsura ubumenyi bwo hejuru mu kubaka gahunda za full-stack no korohereza abakoresha porogaramu."
-          ]
-        }
-      ]
-    },
-    skills: { title: "Ubumenyi n'Ubuhanga", subtitle: "Ibikoresho n'ikoranabuhanga nkororesha mu gushyira ibitekerezo mu bikorwa." },
-    projects: { 
-      title: "Imishinga Yatoranyijwe", 
-      subtitle: "Guhitamo ibikorwa byanjye vuba aha n'imishinga yo kwiga.",
-      demo_unavailable: "Kwereka uko bikora ntibishoboka ubu. Reba kuri GitHub kugira ngo ubone code!"
-    },
-    awards: {
-      title: "Badges n'Impamyabumenyi",
-      subtitle: "Impamyabumenyi z'umwuga n'amashimwe y'ubuhanga muri porogaramu.",
-      view_certificate: "Reba Ibisobanuro",
-      hover_reveal: "Kanda urebe"
-    },
-    contact: {
-      title: "Twandikire",
-      subtitle: "Fite umushinga utekereza? Reka twubake ikintu gitangaje hamwe.",
-      name: "Izina Ryawe",
-      email: "Imeri Yawe",
-      message: "Ubutumwa Bwawe",
-      send: "Ohereza Ubutumwa",
-      sending: "Irimo kohereza...",
-      success: "Ubutumwa bwoherejwe neza!",
-      error: "Kwohereza ubutumwa byanze. Irimo gufungura imeri yawe kugira ngo ubwohereze...",
-      phone: "Terefoni",
-      location: "Aho nherereye",
-      email_me: "Nyandikira kuri Imeri",
-      call_me: "Nkubita akadehe",
-      build_great: "Twandikire",
-      message_placeholder: "Ubutumwa bwawe hano..."
-    },
-    footer: {
-      rights: "Uburenganzira bwose burasubijwe.",
-      privacy: "Politiki y'Ibwanga",
-      terms: "Amategeko n'Amabwiriza"
-    }
-  },
-  fr: {
-    nav: {
-      about: "À Propos",
-      experience: "Expérience",
-      skills: "Compétences",
-      projects: "Projets",
-      awards: "Badges & Certifications",
-      contact: "Contact",
-      download_cv: "Télécharger CV"
-    },
-    hero: {
-      greeting: "Bonjour, je suis Flavien Mbishibishi",
-      role: "Ingénieur Logiciel & Passionné d'IA",
-      description: "Je construis des solutions intelligentes à l'intersection de la santé et de la technologie. Spécialisé dans le développement full-stack et les systèmes basés sur les données.",
-      cta_projects: "Voir Mes Travaux",
-      cta_contact: "Parlons-en",
-      available: "Disponible pour des opportunités"
-    },
-    about: {
-      title: "À Propos de Moi",
-      subtitle: "Passionné par la création de logiciels qui font la différence.",
-      description: "Je suis un ingénieur logiciel dévoué avec une solide base en structures de données, algorithmes et développement full-stack. Mon parcours est guidé par le désir de résoudre des problèmes complexes et de créer des expériences numériques percutantes, particulièrement dans le secteur de la santé.",
-      location: "Localisation",
-      education: "Éducation",
-      education_period: "Juin 2024 - Présent",
-      stats: { experience: "Années d'Expérience", projects: "Projets Terminés", clients: "Clients Satisfaits" },
-      experience_card: { title: "Expérience", description: "Stagiaire Backend / ML chez A2SV, Développeur NVIDIA et Instructeur à l'AUCA." },
-      certifications_card: { title: "Badges & Certifications", description: "Membre GDG Kigali, Développeur NVIDIA, Cisco, Hugging Face NLP, et plus encore." }
-    },
-    experience: { 
-      title: "Expérience Professionnelle", 
-      subtitle: "Mon parcours professionnel, responsabilités clés et contributions techniques.",
-      items: [
-        {
-          role: "Stagiaire Ingénieur Backend / ML",
-          company: "A2SV",
-          period: "Août 2026 – Présent",
-          description: [
-            "Conception et implémentation d'architectures backend résilientes, de microservices et d'APIs RESTful haute performance avec Python, FastAPI et PostgreSQL.",
-            "Développement, optimisation et déploiement de modèles de Machine Learning au sein de pipelines de traitement de données et d'inférence en production.",
-            "Optimisation des schémas de bases de données, des stratégies d'indexation et des couches de mise en cache (Redis) pour des temps de réponse sous la milliseconde.",
-            "Collaboration avec des équipes pluridisciplinaires pour mettre en œuvre une architecture propre, l'automatisation CI/CD et des tests exhaustifs."
-          ]
-        },
-        {
-          role: "Développeur NVIDIA",
-          company: "NVIDIA Developer Program",
-          period: "Avr 2026 – Présent",
-          description: [
-            "Exploitation des plateformes de calcul accéléré NVIDIA, de l'écosystème CUDA et des frameworks de Deep Learning pour l'optimisation et l'inférence de modèles d'IA.",
-            "Conception et déploiement de pipelines de Machine Learning accélérés par GPU et de charges de travail de calcul haute performance (HPC).",
-            "Membre actif du NVIDIA Developer Program, participant aux formations techniques spécialisées et aux initiatives d'innovation en IA."
-          ]
-        },
-        {
-          role: "Ingénieur Logiciel Stagiaire",
-          company: "A2SV",
-          period: "Déc 2025 – Présent",
-          description: [
-            "Maîtrise approfondie des structures de données et de l'algorithmique complexe (graphes, programmation dynamique, arbres) avec plus de 400 problèmes résolus.",
-            "Collaboration avec une cohorte d'ingénieurs de haut niveau sur la conception de systèmes distribués et les revues de code rigoureuses.",
-            "Application des principes de Clean Code, de conception modulaire et d'optimisation de la complexité spatio-temporelle."
-          ]
-        },
-        {
-          role: "Instructeur en Analyse de Big Data",
-          company: "AUCA Software Innovation Center",
-          period: "Déc 2025 – Fév 2026",
-          description: [
-            "Élaboration et animation de cours intensifs sur l'architecture Big Data, les systèmes distribués et le Machine Learning appliqué.",
-            "Mentorat d'étudiants sur des projets de science des données de bout en bout : collecte, nettoyage, analyse exploratoire et déploiement de modèles.",
-            "Direction d'ateliers pratiques axés sur l'écosystème Python Data Science (Pandas, NumPy, Scikit-Learn) et la visualisation de données."
-          ]
-        },
-        {
-          role: "Stagiaire en Développement Logiciel",
-          company: "The Gym Rwanda",
-          period: "Mai 2025 – Sep 2025",
-          description: [
-            "Développement et déploiement d'applications web réactives et ergonomiques utilisant TypeScript, React et des APIs REST.",
-            "Mise en pratique du débogage systématique, du refactoring de code et de la gestion de versions avec Git dans un cadre agile.",
-            "Renforcement des compétences en architecture full-stack, gestion d'état et optimisation des performances front-end."
-          ]
-        }
-      ]
-    },
-    skills: {
-      title: "Compétences & Expertise",
-      subtitle: "Les outils et technologies que j'utilise pour donner vie aux idées."
-    },
-    projects: {
-      title: "Projets Vedettes",
-      subtitle: "Une sélection de mes travaux récents et projets académiques.",
-      demo_unavailable: "La démo en direct est actuellement indisponible. Consultez GitHub pour le code source !"
-    },
-    awards: {
-      title: "Badges & Certifications",
-      subtitle: "Badges officiels, certifications professionnelles et engagements communautaires.",
-      view_certificate: "Voir les Détails",
-      hover_reveal: "Cliquer pour voir"
-    },
-    contact: {
-      title: "Contactez-moi",
-      subtitle: "Vous avez un projet en tête ? Construisons quelque chose d'incroyable ensemble.",
-      name: "Votre Nom",
-      email: "Votre Email",
-      message: "Votre Message",
-      send: "Envoyer le Message",
-      sending: "Envoi en cours...",
-      success: "Message envoyé avec succès !",
-      error: "Échec de l'envoi du message. Ouverture de votre messagerie pour envoi manuel...",
-      phone: "Téléphone",
-      location: "Localisation",
-      email_me: "M'envoyer un Email",
-      call_me: "M'appeler",
-      build_great: "Contactez-moi",
-      message_placeholder: "Votre message ici..."
-    },
-    footer: {
-      rights: "Tous droits réservés.",
-      privacy: "Politique de Confidentialité",
-      terms: "Conditions d'Utilisation"
-    }
-  }
-};
-
-interface Project {
-  title: string;
-  description: string;
-  longDescription: string;
-  tags: string[];
-  image: string;
-  link?: string;
-  github?: string;
-  color: string;
-  features: string[];
-}
-
-interface Experience {
-  role: string;
-  company: string;
-  period: string;
-  description: string[];
-  verifyLink?: string;
-}
-
-interface Skill {
-  name: string;
-  icon: React.ReactNode;
-  level: number;
-  details: string;
-  category: string;
-}
-
-interface AwardItem {
-  title: string;
-  issuer: string;
-  date: string;
-  image: string;
-  description: string;
-  category: string;
-  verifyLink?: string;
-}
-
-// --- Data ---
-const PROJECTS: Project[] = [
-  {
-    title: "RapidAid AI",
-    description: "An emergency AI voice assistant designed to provide immediate healthcare guidance and emergency response coordination.",
-    longDescription: "RapidAid AI is a cutting-edge emergency response system that leverages advanced Natural Language Processing to assist users during medical crises. It can identify symptoms, provide step-by-step first aid instructions, and automatically coordinate with local emergency services. Built with a focus on low-latency response and high accuracy in critical situations.",
-    tags: ["Python", "OpenAI API", "Speech Recognition", "Healthcare AI"],
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
-    link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
-    github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
-    color: "from-red-500/20 to-orange-500/20",
-    features: ["Real-time voice processing", "Emergency service integration", "Offline first-aid database", "Multi-language support"]
-  },
-  {
-    title: "MediTrack",
-    description: "Health Risk Prediction System using advanced machine learning models to predict potential health risks based on patient data.",
-    longDescription: "MediTrack utilizes state-of-the-art machine learning algorithms to analyze patient history, lifestyle factors, and clinical data to predict potential health risks before they become critical. The system provides actionable insights for both patients and healthcare providers, enabling proactive health management and early intervention.",
-    tags: ["Python", "Machine Learning", "Scikit-learn", "Pandas"],
-    image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
-    link: "https://kfh-hospital-1.onrender.com",
-    github: "https://github.com/kezacardine/kfh_hospital",
-    color: "from-blue-500/20 to-teal-500/20",
-    features: ["Predictive risk modeling", "Patient data visualization", "Automated health reports", "Provider dashboard"]
-  },
-  {
-    title: "CareConnect",
-    description: "A comprehensive Healthcare Management System designed with a robust relational database and optimized PL/SQL queries.",
-    longDescription: "CareConnect is an enterprise-grade hospital management solution that streamlines clinical and administrative workflows. It features a highly optimized database architecture capable of handling millions of patient records with sub-second query times. The system includes modules for appointment scheduling, electronic health records (EHR), and billing.",
-    tags: ["PL/SQL", "Oracle", "Database Design", "Healthcare"],
-    image: "https://datasolutionsexperts.com/wp-content/uploads/2024/01/Healthcare-Database-1.jpg",
-    github: "https://github.com/mbishflavien/mbishibishi_flavien_27857_plsql_capstone_project",
-    color: "from-emerald-500/20 to-cyan-500/20",
-    features: ["Optimized PL/SQL procedures", "Role-based access control", "Comprehensive EHR management", "Automated billing system"]
-  }
-];
-
-const SKILLS: Skill[] = [
-  { 
-    name: "Python", 
-    icon: <Terminal className="w-4 h-4" />, 
-    level: 90,
-    category: "Programming",
-    details: "Expertise in Python for backend development, data analysis, and automation. Proficient with frameworks like Django and FastAPI, and libraries like NumPy and Pandas."
-  },
-  { 
-    name: "SQL", 
-    icon: <Database className="w-4 h-4" />, 
-    level: 85,
-    category: "Database",
-    details: "Strong command of SQL for complex data querying, database design, and optimization. Experienced with PostgreSQL, MySQL, and Oracle PL/SQL."
-  },
-  { 
-    name: "Machine Learning", 
-    icon: <BrainCircuit className="w-4 h-4" />, 
-    level: 80,
-    category: "AI",
-    details: "Experience in building and deploying ML models for classification, regression, and NLP. Skilled in Scikit-learn, TensorFlow, and Hugging Face Transformers."
-  },
-  { 
-    name: "Data Structures", 
-    icon: <Code2 className="w-4 h-4" />, 
-    level: 85,
-    category: "Core CS",
-    details: "Deep understanding of fundamental data structures and algorithms. Skilled in optimizing code for time and space complexity."
-  },
-  { 
-    name: "PostgreSQL", 
-    icon: <Database className="w-4 h-4" />, 
-    level: 80,
-    category: "Database",
-    details: "Advanced knowledge of PostgreSQL administration, performance tuning, and complex relational modeling."
-  },
-  { 
-    name: "Linux/Bash", 
-    icon: <Terminal className="w-4 h-4" />, 
-    level: 75,
-    category: "DevOps",
-    details: "Proficient in Linux environment management, shell scripting for automation, and server configuration."
-  },
-];
-
-const CERTIFICATIONS: AwardItem[] = [
-  {
-    title: "Google Developer Groups Chapter Member",
-    issuer: "Google Developer Groups (GDG) Kigali",
-    date: "2024",
-    image: "https://developers.google.com/static/profile/badges/community/gdg/chapter/badge.svg",
-    description: "Official verified membership in Google Developer Groups (GDG) Kigali Chapter, collaborating on Google Cloud, Android, AI/ML, and community tech initiatives.",
-    category: "Google Developer",
-    verifyLink: "https://developers.google.com/profile/badges/community/gdg/chapter/member/gdg-kigali?u=flavienmbishibishi"
-  },
-  {
-    title: "NVIDIA Developer Badge",
-    issuer: "NVIDIA & Google Cloud Community",
-    date: "2024",
-    image: "https://developers.google.com/static/profile/badges/nvidia-developer/badge.svg",
-    description: "Official recognition awarded through the Google Cloud and NVIDIA Developer collaboration for engagement in accelerated computing, AI workflows, and GPU architectures.",
-    category: "AI & Cloud",
-    verifyLink: "https://developers.google.com/profile/badges/nvidia-developer?u=flavienmbishibishi"
-  },
-  {
-    title: "Hugging Face NLP Specialization",
-    issuer: "Hugging Face",
-    date: "2024",
-    image: "https://lh3.googleusercontent.com/d/1IK8tVbc8YpOHh0TCS2tI47QGakfoP3LX",
-    description: "Advanced training in Natural Language Processing using Transformers and state-of-the-art AI models.",
-    category: "AI/NLP"
-  },
-  {
-    title: "Cisco Networking Basics",
-    issuer: "Cisco",
-    date: "2024",
-    image: "https://lh3.googleusercontent.com/d/10UvsVsWK7WPptu1oH6PmR8hC8B_DRQM_",
-    description: "Validation of foundational knowledge in networking, covering basic concepts, security, and connectivity.",
-    category: "Networking"
-  },
-  {
-    title: "Introduction to Network Operations",
-    issuer: "Internet Society",
-    date: "2023",
-    image: "https://lh3.googleusercontent.com/d/1H_JbPQrP0MaDmnUdld53Q4YJNbdJWXG5",
-    description: "Foundational course on network operations, routing, and infrastructure management.",
-    category: "Networking"
-  },
-  {
-    title: "The Gym Certification",
-    issuer: "The Gym",
-    date: "2024",
-    image: "https://lh3.googleusercontent.com/d/1xTMmtQJOCws26nZrnzEGcxPHkmXfpFtQ",
-    description: "Professional certification in software engineering, coding, and digital skills development.",
-    category: "Software Engineering"
-  }
-];
-
-// --- Components ---
-
+// --- Constants & Assets ---
 const HERO_BACKGROUNDS = [
   "bg-primary/20",
   "bg-blue-500/20",
@@ -782,18 +59,35 @@ const PROFILE_IMAGES = [
   "https://lh3.googleusercontent.com/d/1FcMCJDuIZ5P1AsVFMLNHr3xJtgAtVAiG"
 ];
 
-const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
+// Helper to resolve skill icons
+const getSkillIcon = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes('python')) return <Terminal className="w-5 h-5" />;
+  if (n.includes('sql') || n.includes('database') || n.includes('postgresql')) return <Database className="w-5 h-5" />;
+  if (n.includes('machine learning') || n.includes('ai')) return <BrainCircuit className="w-5 h-5" />;
+  if (n.includes('data structures') || n.includes('cs')) return <Code2 className="w-5 h-5" />;
+  if (n.includes('linux') || n.includes('bash')) return <Terminal className="w-5 h-5" />;
+  return <Sparkles className="w-5 h-5" />;
+};
+
+// --- Sub-components ---
+interface HeroImageProps {
+  isDarkMode: boolean;
+  openToWorkText: string;
+}
+
+const HeroImage = ({ isDarkMode, openToWorkText }: HeroImageProps) => {
   const [bgIndex, setBgIndex] = useState(0);
   const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
     const bgTimer = setInterval(() => {
       setBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
-    }, 2000);
+    }, 2500);
     
     const imgTimer = setInterval(() => {
       setImgIndex((prev) => (prev + 1) % PROFILE_IMAGES.length);
-    }, 5000);
+    }, 6000);
 
     return () => {
       clearInterval(bgTimer);
@@ -805,47 +99,46 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const currentImg = PROFILE_IMAGES[imgIndex];
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto aspect-square flex items-center justify-center">
+    <div className="relative w-full max-w-[280px] xs:max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto aspect-square flex items-center justify-center">
       {/* Background Glow */}
       <div className={cn(
-        "absolute inset-0 blur-[96px] rounded-full animate-pulse transition-colors duration-1000",
+        "absolute inset-0 blur-[80px] sm:blur-[100px] rounded-full animate-pulse transition-colors duration-1000",
         isDarkMode ? "bg-primary/40" : "bg-primary/30"
       )} />
       
       {/* Animated Decorative Rings */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[115%] h-[115%] border border-dashed border-primary/20 rounded-full"
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[110%] h-[110%] border border-dashed border-primary/20 rounded-full"
         />
         <motion.div
           animate={{ rotate: -360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[130%] h-[130%] border border-primary/10 rounded-full"
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[125%] h-[125%] border border-primary/10 rounded-full"
         />
       </div>
 
       {/* Image Frame */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
         className="relative w-full h-full"
       >
         <motion.div
           animate={{ 
-            y: [0, -20, 0],
+            y: [0, -15, 0],
             rotate: [0, 1, 0, -1, 0]
           }}
           transition={{ 
-            duration: 8, 
+            duration: 7, 
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
           className="relative w-full h-full flex items-center justify-center"
         >
-          {/* Main Image with "Background Removed" effect using mask/styling */}
           <motion.div
             animate={{ 
               borderRadius: [
@@ -859,7 +152,7 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
               repeat: Infinity, 
               ease: "easeInOut" 
             }}
-            className="relative w-full h-full overflow-hidden border-4 border-primary/20 shadow-2xl group"
+            className="relative w-full h-full overflow-hidden border-4 border-primary/20 shadow-2xl group bg-muted/20"
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -872,7 +165,7 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
               />
             </AnimatePresence>
 
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10 pointer-events-none" />
             
             <AnimatePresence mode="wait">
               <motion.img
@@ -880,29 +173,28 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.7 }}
                 src={currentImg}
                 alt="Flavien Mbishibishi"
-                className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-105"
                 referrerPolicy="no-referrer"
                 loading="eager"
                 decoding="async"
               />
             </AnimatePresence>
             
-            {/* Overlay for better integration */}
-            <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors duration-500 z-30" />
+            <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors duration-500 z-30 pointer-events-none" />
           </motion.div>
 
-          {/* Floating Badges */}
+          {/* Clean Floating Badge: Open to Work (no green led dot as requested) */}
           <motion.div
-            animate={{ y: [0, 15, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-6 -right-6 bg-background/80 backdrop-blur-md border border-primary/20 px-4 py-2.5 rounded-2xl shadow-xl z-40"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-3 -right-2 sm:-top-5 sm:-right-4 md:-top-6 md:-right-6 bg-background/90 backdrop-blur-md border border-primary/20 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl z-40 select-none"
           >
-            <div className="flex items-center">
-              <span className="text-sm font-bold uppercase tracking-wider">Open to Work</span>
-            </div>
+            <span className="text-xs sm:text-sm font-bold tracking-wider text-foreground whitespace-nowrap">
+              {openToWorkText}
+            </span>
           </motion.div>
         </motion.div>
       </motion.div>
@@ -911,12 +203,12 @@ const HeroImage = ({ isDarkMode }: { isDarkMode: boolean }) => {
 };
 
 const SectionHeading = ({ children, subtitle }: { children: React.ReactNode, subtitle?: string }) => (
-  <div className="mb-12 space-y-2">
+  <div className="mb-10 sm:mb-12 space-y-2">
     <motion.h2 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="text-4xl md:text-5xl font-bold tracking-tighter"
+      className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter"
     >
       {children}
     </motion.h2>
@@ -926,36 +218,82 @@ const SectionHeading = ({ children, subtitle }: { children: React.ReactNode, sub
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.1 }}
-        className="text-foreground/70 text-lg max-w-2xl"
+        className="text-foreground/70 text-base sm:text-lg max-w-2xl leading-relaxed"
       >
         {subtitle}
       </motion.p>
     )}
     <motion.div 
       initial={{ width: 0 }}
-      whileInView={{ width: 60 }}
+      whileInView={{ width: 64 }}
       viewport={{ once: true }}
       transition={{ delay: 0.2, duration: 0.8 }}
-      className="h-1 bg-primary rounded-full"
+      className="h-1 bg-primary rounded-full mt-3"
     />
   </div>
 );
 
 export default function Portfolio() {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [language, setLanguage] = useState<Language>('en');
+  
+  // Persistent language state with navigator fallback
+  const [language, setLanguage] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_language') as Language;
+      if (saved && ['en', 'sw', 'rw', 'fr'].includes(saved)) {
+        return saved;
+      }
+      const navLang = navigator.language?.toLowerCase() || '';
+      if (navLang.startsWith('fr')) return 'fr';
+      if (navLang.startsWith('sw')) return 'sw';
+      if (navLang.startsWith('rw')) return 'rw';
+    } catch {
+      // fallback
+    }
+    return 'en';
+  });
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [showDemoUnavailable, setShowDemoUnavailable] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
-  const [selectedAward, setSelectedAward] = useState<AwardItem | null>(null);
+  
+  // Selection keys for modals to allow seamless language switching while modal is open
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedSkillName, setSelectedSkillName] = useState<string | null>(null);
+  const [selectedAwardId, setSelectedAwardId] = useState<string | null>(null);
+
   const [visitCount, setVisitCount] = useState<number | null>(null);
 
+  // Active translation dictionary
   const t = TRANSLATIONS[language];
+
+  // Derive localized modal items
+  const selectedProject = selectedProjectId 
+    ? (t.projects.items.find(p => p.id === selectedProjectId) ?? null)
+    : null;
+  const selectedSkill = selectedSkillName
+    ? (t.skills.items.find(s => s.name.toLowerCase() === selectedSkillName.toLowerCase()) ?? null)
+    : null;
+  const selectedAward = selectedAwardId
+    ? (t.awards.items.find(a => a.id === selectedAwardId) ?? null)
+    : null;
+
+  const handleLanguageChange = (newLang: Language) => {
+    setLanguage(newLang);
+    try {
+      localStorage.setItem('portfolio_language', newLang);
+      document.documentElement.lang = newLang;
+    } catch (e) {
+      console.error("Language save error:", e);
+    }
+  };
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
   const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
@@ -1043,34 +381,28 @@ export default function Portfolio() {
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  const handleDemoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowDemoUnavailable(true);
-    setTimeout(() => setShowDemoUnavailable(false), 3000);
-  };
-
   const validateForm = () => {
     let valid = true;
     const newErrors = { name: '', email: '', message: '' };
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t.contact.name_error;
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t.contact.email_error;
       valid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = t.contact.email_invalid;
       valid = false;
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = t.contact.message_error;
       valid = false;
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters';
+      newErrors.message = t.contact.message_too_short;
       valid = false;
     }
 
@@ -1123,7 +455,8 @@ export default function Portfolio() {
       <React.Suspense fallback={<FastCSSBackground isDarkMode={isDarkMode} />}>
         <Background3D mouseX={mouseX} mouseY={mouseY} isDarkMode={isDarkMode} />
       </React.Suspense>
-      {/* Progress Bar */}
+      
+      {/* Scroll Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 origin-left"
         style={{ scaleX }}
@@ -1137,7 +470,7 @@ export default function Portfolio() {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-0 w-full z-40 border-b border-primary/10 bg-background/40 backdrop-blur-xl shadow-sm"
+        className="fixed top-0 w-full z-40 border-b border-primary/10 bg-background/70 backdrop-blur-xl shadow-sm"
       >
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <motion.a 
@@ -1146,85 +479,134 @@ export default function Portfolio() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 shadow-sm">
               <Code2 size={18} />
             </div>
-            <span className="text-primary">.</span>
+            <span className="text-foreground font-extrabold tracking-tight">FM</span>
+            <span className="text-primary font-black">.</span>
           </motion.a>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6">
             {navItems.map((item) => (
               <a 
                 key={item.name} 
                 href={item.href}
-                className="relative text-sm font-medium text-foreground/60 hover:text-primary transition-colors group py-1"
+                className="relative text-sm font-medium text-foreground/70 hover:text-primary transition-colors group py-1"
               >
                 {item.name}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
             
-            <div className="flex items-center space-x-2 border-l border-primary/10 pl-6">
-              <select 
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:text-primary transition-colors"
-              >
-                <option value="en" className="bg-background">EN</option>
-                <option value="sw" className="bg-background">SW</option>
-                <option value="rw" className="bg-background">RW</option>
-                <option value="fr" className="bg-background">FR</option>
-              </select>
+            <div className="flex items-center space-x-3 border-l border-primary/15 pl-5">
+              {/* Language Switcher */}
+              <LanguageSwitcher 
+                currentLanguage={language} 
+                onLanguageChange={handleLanguageChange} 
+              />
 
-              <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-                {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleDarkMode}
+                className="rounded-full w-9 h-9 hover:bg-primary/10 hover:text-primary"
+                aria-label="Toggle theme"
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </Button>
             </div>
             
             <a href="/Flavien_MBISHIBISHI_CV.pdf" download onClick={() => trackCTAClick('Download CV - Nav')}>
-              <Button className="rounded-full">
-                {t.nav.download_cv} <Download className="ml-2 w-4 h-4" />
+              <Button className="rounded-full shadow-sm text-sm h-9 px-4 font-semibold">
+                {t.nav.download_cv} <Download className="ml-1.5 w-3.5 h-3.5" />
               </Button>
             </a>
           </div>
 
-          {/* Mobile Nav Toggle */}
-          <div className="md:hidden flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {/* Mobile Nav Top Controls */}
+          <div className="lg:hidden flex items-center space-x-2">
+            <LanguageSwitcher 
+              currentLanguage={language} 
+              onLanguageChange={handleLanguageChange} 
+            />
+
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleDarkMode}
+              className="rounded-full w-9 h-9"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="rounded-xl w-9 h-9"
+              aria-label="Open menu"
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Drawer */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-b bg-background"
+              transition={{ duration: 0.3 }}
+              className="lg:hidden border-b border-border/60 bg-background/95 backdrop-blur-2xl max-h-[85vh] overflow-y-auto"
             >
-              <div className="container mx-auto px-4 py-8 flex flex-col space-y-4">
-                {navItems.map((item) => (
+              <div className="container mx-auto px-5 py-6 flex flex-col space-y-4">
+                {/* Language Picker in Mobile Drawer */}
+                <div className="py-2 border-b border-border/40">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                    {t.nav.language}
+                  </p>
+                  <LanguageSwitcher 
+                    currentLanguage={language} 
+                    onLanguageChange={(newLang) => {
+                      handleLanguageChange(newLang);
+                      setIsMenuOpen(false);
+                    }}
+                    isMobile
+                  />
+                </div>
+
+                <div className="flex flex-col space-y-2 pt-2">
+                  {navItems.map((item) => (
+                    <a 
+                      key={item.name} 
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-lg font-bold hover:text-primary transition-colors py-2 px-3 rounded-xl hover:bg-muted/40"
+                    >
+                      {item.name}
+                    </a>
+                  ))}
+                </div>
+
+                <div className="pt-2">
                   <a 
-                    key={item.name} 
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-2xl font-bold hover:text-primary transition-colors"
+                    href="/Flavien_MBISHIBISHI_CV.pdf" 
+                    download 
+                    className="w-full block" 
+                    onClick={() => {
+                      trackCTAClick('Download CV - Mobile Menu');
+                      setIsMenuOpen(false);
+                    }}
                   >
-                    {item.name}
+                    <Button className="w-full rounded-2xl py-6 text-base font-semibold shadow-md">
+                      {t.nav.download_cv} <Download className="ml-2 w-4 h-4" />
+                    </Button>
                   </a>
-                ))}
-                <a href="/Flavien_MBISHIBISHI_CV.pdf" download className="w-full" onClick={() => trackCTAClick('Download CV - Mobile Menu')}>
-                  <Button className="w-full rounded-full py-6 text-lg">
-                    {t.nav.download_cv} <Download className="ml-2 w-5 h-5" />
-                  </Button>
-                </a>
+                </div>
               </div>
             </motion.div>
           )}
@@ -1233,111 +615,157 @@ export default function Portfolio() {
 
       {/* Hero Section */}
       <motion.section 
-        className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden"
+        className="relative pt-28 pb-16 sm:pt-36 sm:pb-24 md:pt-48 md:pb-32 overflow-hidden"
         onViewportEnter={() => trackSectionView('Hero')}
       >
-        {/* Hero Parallax Background Elements */}
+        {/* Parallax Background Glows */}
         <div className="absolute inset-0 -z-10 pointer-events-none">
           <motion.div 
             style={{ 
-              x: useTransform(mouseX, [0, 1920], [-100, 100]),
-              y: useTransform(mouseY, [0, 1080], [-100, 100])
+              x: useTransform(mouseX, [0, 1920], [-60, 60]),
+              y: useTransform(mouseY, [0, 1080], [-60, 60])
             }}
-            className="absolute top-[20%] left-[10%] w-64 h-64 bg-primary/10 blur-3xl rounded-full"
+            className="absolute top-[15%] left-[8%] w-56 sm:w-72 h-56 sm:h-72 bg-primary/10 blur-3xl rounded-full"
           />
           <motion.div 
             style={{ 
-              x: useTransform(mouseX, [0, 1920], [150, -150]),
-              y: useTransform(mouseY, [0, 1080], [150, -150])
+              x: useTransform(mouseX, [0, 1920], [80, -80]),
+              y: useTransform(mouseY, [0, 1080], [80, -80])
             }}
-            className="absolute bottom-[20%] right-[15%] w-96 h-96 bg-blue-500/10 blur-3xl rounded-full"
+            className="absolute bottom-[15%] right-[10%] w-64 sm:w-96 h-64 sm:h-96 bg-blue-500/10 blur-3xl rounded-full"
           />
           
-          {/* Floating Icons */}
+          {/* Floating Icons on Large Screens */}
           {[Code2, Database, BrainCircuit, Sparkles].map((Icon, i) => (
             <motion.div
               key={i}
               animate={{ 
-                y: [0, -20, 0],
+                y: [0, -18, 0],
                 rotate: [i * 45, i * 45 + 10, i * 45]
               }}
               transition={{ 
                 y: { duration: 5 + i, repeat: Infinity, ease: "easeInOut" },
                 rotate: { duration: 8 + i, repeat: Infinity, ease: "easeInOut" }
               }}
-              className="absolute hidden lg:block text-primary/20"
+              className="absolute hidden xl:block text-primary/20 pointer-events-none"
               style={{ 
-                top: `${20 + i * 20}%`, 
-                left: `${15 + i * 25}%`,
-                x: useTransform(mouseX, [0, 1920], [(i + 1) * -30, (i + 1) * 30]),
-                y: useTransform(mouseY, [0, 1080], [(i + 1) * -30, (i + 1) * 30]),
+                top: `${18 + i * 22}%`, 
+                left: `${12 + i * 25}%`,
+                x: useTransform(mouseX, [0, 1920], [(i + 1) * -25, (i + 1) * 25]),
+                y: useTransform(mouseY, [0, 1080], [(i + 1) * -25, (i + 1) * 25]),
                 rotate: i * 45
               }}
             >
-              <Icon size={40 + i * 10} strokeWidth={1} />
+              <Icon size={38 + i * 8} strokeWidth={1.2} />
             </motion.div>
           ))}
         </div>
 
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center">
+          <div className="space-y-6 sm:space-y-8 order-2 md:order-1 text-center md:text-left">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
-                {t.hero.role.split(' ').slice(0, 2).join(' ')} <br />
-                <span className="text-primary italic">{t.hero.role.split(' ').slice(2).join(' ')}.</span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tighter leading-[1.05] sm:leading-[0.95]">
+                {t.hero.role.includes('&') ? (
+                  <>
+                    <span>{t.hero.role.split('&')[0].trim()}</span> <br className="hidden sm:inline" />
+                    <span className="text-primary italic">& {t.hero.role.split('&')[1].trim()}.</span>
+                  </>
+                ) : t.hero.role.toLowerCase().includes('na ') ? (
+                  <>
+                    <span>{t.hero.role.split(/na /i)[0].trim()}</span> <br className="hidden sm:inline" />
+                    <span className="text-primary italic">na {t.hero.role.split(/na /i)[1].trim()}.</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{t.hero.role.split(' ').slice(0, 2).join(' ')}</span> <br className="hidden sm:inline" />
+                    <span className="text-primary italic">{t.hero.role.split(' ').slice(2).join(' ')}.</span>
+                  </>
+                )}
               </h1>
-              <p className="mt-6 text-xl text-foreground/80 max-w-lg leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-foreground/80 max-w-xl mx-auto md:mx-0 leading-relaxed">
                 {t.hero.greeting.includes(',') ? t.hero.greeting.split(',')[0] : t.hero.greeting}, <span className="text-foreground font-semibold">Flavien MBISHIBISHI</span>. 
-                {t.hero.description}
+                {" "}{t.hero.description}
               </p>
             </motion.div>
 
+            {/* CTAs */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex flex-wrap gap-4"
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center md:justify-start"
             >
-              <Button size="lg" className="rounded-full px-8 h-14 text-lg" onClick={() => trackCTAClick('Hero - View My Work')}>
-                <a href="#projects">{t.hero.cta_projects}</a>
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg" onClick={() => trackCTAClick('Hero - Let\'s Talk')}>
-                <a href="#contact">{t.hero.cta_contact}</a>
-              </Button>
+              <a href="#projects" className="w-full sm:w-auto" onClick={() => trackCTAClick('Hero - View My Work')}>
+                <Button size="lg" className="rounded-full px-8 h-12 sm:h-14 text-base sm:text-lg w-full sm:w-auto shadow-md hover:shadow-primary/25 font-semibold">
+                  {t.hero.cta_projects}
+                </Button>
+              </a>
+              <a href="#contact" className="w-full sm:w-auto" onClick={() => trackCTAClick('Hero - Let\'s Talk')}>
+                <Button size="lg" variant="outline" className="rounded-full px-8 h-12 sm:h-14 text-base sm:text-lg w-full sm:w-auto border-border/80 hover:bg-accent font-semibold">
+                  {t.hero.cta_contact}
+                </Button>
+              </a>
             </motion.div>
 
+            {/* Social Links */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="flex items-center space-x-6 pt-4"
+              transition={{ delay: 0.6 }}
+              className="flex items-center justify-center md:justify-start space-x-6 pt-2"
             >
-              <a href="https://github.com/mbishflavien" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Github')}>
+              <a 
+                href="https://github.com/mbishflavien" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-foreground/60 hover:text-primary transition-colors p-1" 
+                onClick={() => trackCTAClick('Social - Github')}
+                aria-label="GitHub Profile"
+              >
                 <Github className="w-6 h-6" />
               </a>
-              <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Linkedin')}>
+              <a 
+                href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-foreground/60 hover:text-primary transition-colors p-1" 
+                onClick={() => trackCTAClick('Social - Linkedin')}
+                aria-label="LinkedIn Profile"
+              >
                 <Linkedin className="w-6 h-6" />
               </a>
-              <a href="https://medium.com/@flavmbish" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Medium')}>
+              <a 
+                href="https://medium.com/@flavmbish" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-foreground/60 hover:text-primary transition-colors p-1" 
+                onClick={() => trackCTAClick('Social - Medium')}
+                aria-label="Medium Blog"
+              >
                 <BookOpen className="w-6 h-6" />
               </a>
-              <a href="mailto:flavmbish@gmail.com" className="text-foreground/60 hover:text-primary transition-colors" onClick={() => trackCTAClick('Social - Email')}>
+              <a 
+                href="mailto:flavmbish@gmail.com" 
+                className="text-foreground/60 hover:text-primary transition-colors p-1" 
+                onClick={() => trackCTAClick('Social - Email')}
+                aria-label="Email Me"
+              >
                 <Mail className="w-6 h-6" />
               </a>
             </motion.div>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative"
+            transition={{ duration: 0.9, ease: "easeOut" }}
+            className="relative order-1 md:order-2"
           >
-            <HeroImage isDarkMode={isDarkMode} />
+            <HeroImage isDarkMode={isDarkMode} openToWorkText={t.hero.open_to_work} />
           </motion.div>
         </div>
       </motion.section>
@@ -1345,11 +773,11 @@ export default function Portfolio() {
       {/* About Section */}
       <motion.section 
         id="about" 
-        className="py-24 bg-muted/10 backdrop-blur-[2px]"
+        className="py-20 sm:py-24 bg-muted/10 backdrop-blur-[2px]"
         onViewportEnter={() => trackSectionView('About')}
       >
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -1359,7 +787,8 @@ export default function Portfolio() {
               <SectionHeading subtitle={t.about.subtitle}>
                 {t.about.title}
               </SectionHeading>
-              <div className="space-y-4 text-lg text-foreground/80 leading-relaxed">
+              
+              <div className="space-y-4 text-base sm:text-lg text-foreground/80 leading-relaxed">
                 <p>
                   {t.about.description.split('. ')[0]}.
                 </p>
@@ -1367,39 +796,45 @@ export default function Portfolio() {
                   {t.about.description.split('. ').slice(1).join('. ')}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-6 pt-4">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-3">
                 <div className="space-y-1">
-                  <p className="text-sm text-foreground/60 uppercase tracking-wider font-bold">{t.about.location}</p>
-                  <p className="font-medium flex items-center"><MapPin className="w-4 h-4 mr-2 text-primary" /> Kigali, Rwanda</p>
+                  <p className="text-xs sm:text-sm text-foreground/60 uppercase tracking-wider font-bold">{t.about.location}</p>
+                  <p className="font-semibold flex items-center text-sm sm:text-base">
+                    <MapPin className="w-4 h-4 mr-2 text-primary shrink-0" /> {t.about.location_value}
+                  </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-foreground/60 uppercase tracking-wider font-bold">{t.about.education}</p>
-                  <p className="font-medium flex items-center"><GraduationCap className="w-4 h-4 mr-2 text-primary" /> BSc Software Engineering</p>
+                  <p className="text-xs sm:text-sm text-foreground/60 uppercase tracking-wider font-bold">{t.about.education}</p>
+                  <p className="font-semibold flex items-center text-sm sm:text-base">
+                    <GraduationCap className="w-4 h-4 mr-2 text-primary shrink-0" /> {t.about.education_value}
+                  </p>
                   <p className="text-xs text-foreground/60 ml-6">{t.about.education_period}</p>
                 </div>
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="p-6 rounded-3xl bg-background border shadow-sm space-y-4"
+                className="p-6 rounded-3xl bg-background border border-primary/10 shadow-sm space-y-4"
               >
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                   <Briefcase className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold">{t.about.experience_card.title}</h3>
-                <p className="text-sm text-foreground/70">{t.about.experience_card.description}</p>
+                <p className="text-sm text-foreground/70 leading-relaxed">{t.about.experience_card.description}</p>
               </motion.div>
+
               <motion.a 
                 href="#awards"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="block p-6 rounded-3xl bg-background border border-primary/10 hover:border-primary/40 shadow-sm space-y-4 mt-8 transition-all hover:shadow-md group cursor-pointer"
+                className="block p-6 rounded-3xl bg-background border border-primary/10 hover:border-primary/40 shadow-sm space-y-4 transition-all hover:shadow-md group cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-2xl bg-blue-500/10 group-hover:bg-primary/10 flex items-center justify-center text-blue-500 group-hover:text-primary transition-colors">
                   <Award className="w-6 h-6" />
@@ -1408,7 +843,7 @@ export default function Portfolio() {
                   <span>{t.about.certifications_card.title}</span>
                   <ChevronRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h3>
-                <p className="text-sm text-foreground/70">{t.about.certifications_card.description}</p>
+                <p className="text-sm text-foreground/70 leading-relaxed">{t.about.certifications_card.description}</p>
               </motion.a>
             </div>
           </div>
@@ -1418,7 +853,7 @@ export default function Portfolio() {
       {/* Skills Section */}
       <motion.section 
         id="skills" 
-        className="py-24"
+        className="py-20 sm:py-24"
         onViewportEnter={() => trackSectionView('Skills')}
       >
         <div className="container mx-auto px-4">
@@ -1426,45 +861,49 @@ export default function Portfolio() {
             {t.skills.title}
           </SectionHeading>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {SKILLS.map((skill, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {t.skills.items.map((skill, index) => (
               <motion.div
                 key={skill.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => setSelectedSkill(skill)}
-                className="group p-8 rounded-3xl bg-muted/20 border border-transparent hover:border-primary/20 hover:bg-muted/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer"
+                transition={{ delay: index * 0.08 }}
+                onClick={() => setSelectedSkillName(skill.name)}
+                className="group p-6 sm:p-8 rounded-3xl bg-muted/20 border border-border/40 hover:border-primary/30 hover:bg-muted/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm group-hover:shadow-primary/50">
-                      {skill.icon}
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm">
+                      {getSkillIcon(skill.name)}
                     </div>
-                    <h3 className="text-xl font-bold">{skill.name}</h3>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold">{skill.name}</h3>
+                      <p className="text-xs text-foreground/60 font-medium uppercase tracking-wider">{skill.category}</p>
+                    </div>
                   </div>
+                  <span className="text-sm font-mono font-bold text-primary">{skill.level}%</span>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
                       viewport={{ once: true }}
-                      transition={{ duration: 1, delay: 0.5 }}
+                      transition={{ duration: 1, delay: 0.4 }}
                       className="h-full bg-primary rounded-full"
                     />
                   </div>
-                  <p className="text-xs text-foreground/60 font-medium uppercase tracking-wider">{skill.category}</p>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-16 flex flex-wrap gap-3 justify-center">
-            {["Pandas", "NumPy", "Scikit-learn", "Git", "MySQL", "Oracle", "Networking", "Bash"].map((item) => (
-              <Badge key={item} variant="outline" className="px-6 py-2 rounded-full text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
+          {/* Quick-pill technologies */}
+          <div className="mt-12 sm:mt-16 flex flex-wrap gap-2.5 sm:gap-3 justify-center">
+            {["Pandas", "NumPy", "Scikit-learn", "Git", "MySQL", "Oracle", "Networking", "Bash", "FastAPI", "React"].map((item) => (
+              <Badge key={item} variant="outline" className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors cursor-default border-border/80">
                 {item}
               </Badge>
             ))}
@@ -1475,7 +914,7 @@ export default function Portfolio() {
       {/* Projects Section */}
       <motion.section 
         id="projects" 
-        className="py-24 bg-muted/10 backdrop-blur-[2px]"
+        className="py-20 sm:py-24 bg-muted/10 backdrop-blur-[2px]"
         onViewportEnter={() => trackSectionView('Projects')}
       >
         <div className="container mx-auto px-4">
@@ -1483,53 +922,69 @@ export default function Portfolio() {
             {t.projects.title}
           </SectionHeading>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {PROJECTS.map((project, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {t.projects.items.map((project, index) => (
               <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                key={project.id}
+                initial={{ opacity: 0, y: 40, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                whileHover={{ y: -12, transition: { duration: 0.3 } }}
+                whileHover={{ y: -8, transition: { duration: 0.25 } }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ 
-                  duration: 0.8, 
+                  duration: 0.7, 
                   delay: index * 0.1,
                   ease: [0.22, 1, 0.36, 1]
                 }}
               >
                 <Card 
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => setSelectedProjectId(project.id)}
                   className={cn(
-                    "group overflow-hidden rounded-3xl border border-transparent hover:border-primary/20 shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 bg-card/50 backdrop-blur-sm relative cursor-pointer",
+                    "group overflow-hidden rounded-3xl border border-primary/10 hover:border-primary/30 shadow-md hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 bg-card/60 backdrop-blur-sm relative cursor-pointer flex flex-col h-full",
                     "before:absolute before:inset-0 before:bg-gradient-to-br before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-500",
                     project.color
                   )}
                 >
-                  <div className="relative aspect-video overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden bg-neutral-900">
                     <img 
                       src={project.image} 
                       alt={project.title} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       decoding="async"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                      <div className="flex space-x-3">
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                      <div className="flex space-x-2.5">
                         {project.link && (
-                          <a href={project.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                          <a 
+                            href={project.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`Launch ${project.title} demo`}
+                          >
                             <Button 
                               size="icon" 
                               variant="secondary" 
-                              className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                              className="rounded-full w-9 h-9 hover:bg-primary hover:text-primary-foreground transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" />
                             </Button>
                           </a>
                         )}
                         {project.github && (
-                          <a href={project.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                            <Button size="icon" variant="secondary" className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
+                          <a 
+                            href={project.github} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`View ${project.title} on GitHub`}
+                          >
+                            <Button 
+                              size="icon" 
+                              variant="secondary" 
+                              className="rounded-full w-9 h-9 hover:bg-primary hover:text-primary-foreground transition-colors"
+                            >
                               <Github className="w-4 h-4" />
                             </Button>
                           </a>
@@ -1537,18 +992,26 @@ export default function Portfolio() {
                       </div>
                     </div>
                   </div>
-                  <CardHeader className="relative z-10">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {project.tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="text-[10px] uppercase tracking-wider font-bold bg-primary/10 text-primary border-primary/20">
-                          {tag}
-                        </Badge>
-                      ))}
+                  
+                  <CardHeader className="relative z-10 flex-grow flex flex-col justify-between p-5 sm:p-6">
+                    <div>
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {project.tags.map(tag => (
+                          <Badge key={tag} variant="secondary" className="text-[10px] uppercase tracking-wider font-bold bg-primary/10 text-primary border-primary/20">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <CardTitle className="text-xl sm:text-2xl group-hover:text-primary transition-colors">{project.title}</CardTitle>
+                      <CardDescription className="text-sm line-clamp-2 text-foreground/70 mt-2 leading-relaxed">
+                        {project.description}
+                      </CardDescription>
                     </div>
-                    <CardTitle className="text-2xl group-hover:text-primary transition-colors">{project.title}</CardTitle>
-                    <CardDescription className="text-sm line-clamp-2 text-foreground/70">
-                      {project.description}
-                    </CardDescription>
+
+                    <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs font-semibold text-primary">
+                      <span>{t.projects.view_details}</span>
+                      <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </CardHeader>
                 </Card>
               </motion.div>
@@ -1560,7 +1023,7 @@ export default function Portfolio() {
       {/* Honors & Awards Section */}
       <motion.section 
         id="awards" 
-        className="py-16 bg-primary/5"
+        className="py-16 sm:py-20 bg-primary/5"
         onViewportEnter={() => trackSectionView('Awards')}
       >
         <div className="container mx-auto px-4">
@@ -1568,18 +1031,18 @@ export default function Portfolio() {
             {t.awards.title}
           </SectionHeading>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {CERTIFICATIONS.map((award, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            {t.awards.items.map((award, index) => (
               <motion.div
-                key={award.title}
-                initial={{ opacity: 0, scale: 0.9 }}
+                key={award.id || award.title}
+                initial={{ opacity: 0, scale: 0.92 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
               >
                 <Card 
-                  className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/50 backdrop-blur-sm cursor-pointer"
-                  onClick={() => setSelectedAward(award)}
+                  className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/60 backdrop-blur-sm cursor-pointer shadow-sm hover:shadow-xl"
+                  onClick={() => setSelectedAwardId(award.id)}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900/90 dark:bg-neutral-950 flex items-center justify-center p-5">
                     <img 
@@ -1588,7 +1051,7 @@ export default function Portfolio() {
                       className={cn(
                         "transition-all duration-500 filter blur-md group-hover:blur-0 group-hover:scale-105",
                         award.image.includes('.svg')
-                          ? "max-w-[72%] max-h-[75%] object-contain drop-shadow-xl"
+                          ? "max-w-[70%] max-h-[75%] object-contain drop-shadow-xl"
                           : "w-full h-full object-cover"
                       )}
                       onError={(e) => {
@@ -1603,28 +1066,32 @@ export default function Portfolio() {
                       decoding="async"
                     />
                     <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
-                    <div className="absolute top-4 right-4 z-10">
-                      <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-md border-none text-xs">
+                    
+                    <div className="absolute top-3.5 right-3.5 z-10">
+                      <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-md border-none text-[11px] font-semibold">
                         {award.category}
                       </Badge>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/25 backdrop-blur-[1px] pointer-events-none">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-background/95 text-foreground shadow-xl border border-border/40">
-                        <Maximize2 className="w-3.5 h-3.5 text-primary" /> View Credential
+
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/35 backdrop-blur-[1px] pointer-events-none">
+                      <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-background text-foreground shadow-xl border border-border/40">
+                        <Maximize2 className="w-3.5 h-3.5 text-primary" /> {t.awards.view_credential}
                       </span>
                     </div>
                   </div>
-                  <CardHeader className="flex-grow flex flex-col justify-between">
+
+                  <CardHeader className="flex-grow flex flex-col justify-between p-5 sm:p-6">
                     <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-primary uppercase tracking-widest">{award.issuer}</span>
-                        <span className="text-xs font-mono text-foreground/50">{award.date}</span>
+                      <div className="flex justify-between items-start mb-2 gap-2">
+                        <span className="text-xs font-bold text-primary uppercase tracking-wider">{award.issuer}</span>
+                        <span className="text-xs font-mono text-foreground/50 shrink-0">{award.date}</span>
                       </div>
-                      <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">{award.title}</CardTitle>
-                      <CardDescription className="mt-2 line-clamp-3">
+                      <CardTitle className="text-lg sm:text-xl leading-tight group-hover:text-primary transition-colors">{award.title}</CardTitle>
+                      <CardDescription className="mt-2 line-clamp-3 text-sm leading-relaxed">
                         {award.description}
                       </CardDescription>
                     </div>
+
                     {award.verifyLink && (
                       <div className="mt-4 pt-3 border-t border-primary/10">
                         <a 
@@ -1635,8 +1102,8 @@ export default function Portfolio() {
                           className="inline-flex items-center text-xs font-semibold text-primary hover:underline gap-1.5"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          Verify on Google Developers
-                          <ExternalLink className="w-3 h-3" />
+                          {t.awards.modal.verify_google}
+                          <ExternalLink className="w-3 h-3 ml-0.5" />
                         </a>
                       </div>
                     )}
@@ -1651,7 +1118,7 @@ export default function Portfolio() {
       {/* Experience Section */}
       <motion.section 
         id="experience" 
-        className="py-24"
+        className="py-20 sm:py-24"
         onViewportEnter={() => trackSectionView('Experience')}
       >
         <div className="container mx-auto px-4">
@@ -1659,7 +1126,7 @@ export default function Portfolio() {
             {t.experience.title}
           </SectionHeading>
 
-          <div className="max-w-4xl mx-auto space-y-12">
+          <div className="max-w-4xl mx-auto space-y-10 sm:space-y-12">
             {t.experience.items.map((exp, index) => (
               <motion.div
                 key={`${exp.company}-${exp.role}-${index}`}
@@ -1668,24 +1135,26 @@ export default function Portfolio() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ 
                   duration: 0.8, 
-                  delay: index * 0.15,
+                  delay: index * 0.12,
                   ease: [0.22, 1, 0.36, 1]
                 }}
-                className="relative pl-8 md:pl-12 border-l-2 border-muted hover:border-primary transition-colors group"
+                className="relative pl-6 sm:pl-8 md:pl-12 border-l-2 border-muted hover:border-primary transition-colors group"
               >
                 <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-muted group-hover:bg-primary transition-colors border-4 border-background" />
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
                   <div>
-                    <h3 className="text-2xl font-bold">{exp.role}</h3>
-                    <p className="text-primary font-semibold">{exp.company}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold">{exp.role}</h3>
+                    <p className="text-primary font-semibold text-sm sm:text-base">{exp.company}</p>
                   </div>
-                  <Badge variant="outline" className="w-fit mt-2 md:mt-0 px-4 py-1 rounded-full font-mono text-xs">
+                  <Badge variant="outline" className="w-fit px-3.5 py-1 rounded-full font-mono text-xs border-border/80">
                     {exp.period}
                   </Badge>
                 </div>
-                <ul className="space-y-3">
+                
+                <ul className="space-y-2.5 text-sm sm:text-base">
                   {exp.description.map((item, i) => (
-                    <li key={i} className="flex items-start text-foreground/70">
+                    <li key={i} className="flex items-start text-foreground/80 leading-relaxed">
                       <ChevronRight className="w-4 h-4 mr-2 mt-1 text-primary shrink-0" />
                       <span>{item}</span>
                     </li>
@@ -1700,88 +1169,109 @@ export default function Portfolio() {
       {/* Contact Section */}
       <motion.section 
         id="contact" 
-        className="py-24"
+        className="py-20 sm:py-24"
         onViewportEnter={() => trackSectionView('Contact')}
       >
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto rounded-[3rem] bg-primary p-8 md:p-16 text-primary-foreground relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="max-w-5xl mx-auto rounded-3xl sm:rounded-[2.5rem] md:rounded-[3rem] bg-primary p-6 sm:p-10 md:p-14 lg:p-16 text-primary-foreground relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             
-            <div className="grid md:grid-cols-2 gap-12 relative z-10">
-              <div className="space-y-8">
-                <h2 className="text-5xl font-bold tracking-tighter">{t.contact.build_great}</h2>
-                <p className="text-primary-foreground/80 text-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 relative z-10">
+              <div className="space-y-6 sm:space-y-8">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter leading-tight">
+                  {t.contact.build_great}
+                </h2>
+                <p className="text-primary-foreground/85 text-base sm:text-lg leading-relaxed">
                   {t.contact.subtitle}
                 </p>
-                <div className="space-y-6">
+                
+                <div className="space-y-5 pt-2">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-                      <Mail className="w-6 h-6" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                      <Mail className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm text-primary-foreground/60 uppercase font-bold tracking-wider">{t.contact.email_me}</p>
-                      <p className="text-xl font-semibold">flavmbish@gmail.com</p>
+                      <p className="text-xs text-primary-foreground/70 uppercase font-bold tracking-wider">{t.contact.email_me}</p>
+                      <a href="mailto:flavmbish@gmail.com" className="text-base sm:text-lg font-semibold hover:underline">
+                        flavmbish@gmail.com
+                      </a>
                     </div>
                   </div>
+                  
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-                      <Phone className="w-6 h-6" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                      <Phone className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm text-primary-foreground/60 uppercase font-bold tracking-wider">{t.contact.call_me}</p>
-                      <p className="text-xl font-semibold">+250 790 817 920</p>
+                      <p className="text-xs text-primary-foreground/70 uppercase font-bold tracking-wider">{t.contact.call_me}</p>
+                      <a href="tel:+250790817920" className="text-base sm:text-lg font-semibold hover:underline">
+                        +250 790 817 920
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-foreground/70 uppercase font-bold tracking-wider">{t.contact.location}</p>
+                      <p className="text-base sm:text-lg font-semibold">Kigali, Rwanda</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4 bg-white/10 p-8 rounded-[2rem] backdrop-blur-sm border border-white/10">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold uppercase tracking-wider">{t.contact.name}</label>
+              <form onSubmit={handleSubmit} className="space-y-4 bg-white/10 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] backdrop-blur-sm border border-white/15 shadow-inner">
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-sm font-bold uppercase tracking-wider">{t.contact.name}</label>
                   <input 
                     type="text" 
-                    placeholder="John Doe"
+                    placeholder={language === 'fr' ? 'Jean Dupont' : language === 'sw' ? 'Juma Bakari' : language === 'rw' ? 'Kwizera Jean' : 'John Doe'}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className={cn(
-                      "w-full bg-white/5 border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 transition-all",
-                      errors.name ? "border-red-400 focus:ring-red-400/20" : "border-white/10 focus:ring-white/20"
+                      "w-full bg-white/5 border rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all text-sm sm:text-base",
+                      errors.name ? "border-red-400 focus:ring-red-400/30" : "border-white/15 focus:ring-white/30"
                     )}
                   />
-                  {errors.name && <p className="text-xs text-red-300 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.name}</p>}
+                  {errors.name && <p className="text-xs text-red-200 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.name}</p>}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold uppercase tracking-wider">{t.contact.email}</label>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-sm font-bold uppercase tracking-wider">{t.contact.email}</label>
                   <input 
                     type="email" 
                     placeholder="john@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className={cn(
-                      "w-full bg-white/5 border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 transition-all",
-                      errors.email ? "border-red-400 focus:ring-red-400/20" : "border-white/10 focus:ring-white/20"
+                      "w-full bg-white/5 border rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all text-sm sm:text-base",
+                      errors.email ? "border-red-400 focus:ring-red-400/30" : "border-white/15 focus:ring-white/30"
                     )}
                   />
-                  {errors.email && <p className="text-xs text-red-300 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.email}</p>}
+                  {errors.email && <p className="text-xs text-red-200 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.email}</p>}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold uppercase tracking-wider">{t.contact.message}</label>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-sm font-bold uppercase tracking-wider">{t.contact.message}</label>
                   <textarea 
                     rows={4}
                     placeholder={t.contact.message_placeholder}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className={cn(
-                      "w-full bg-white/5 border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 transition-all resize-none",
-                      errors.message ? "border-red-400 focus:ring-red-400/20" : "border-white/10 focus:ring-white/20"
+                      "w-full bg-white/5 border rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all resize-none text-sm sm:text-base",
+                      errors.message ? "border-red-400 focus:ring-red-400/30" : "border-white/15 focus:ring-white/30"
                     )}
                   />
-                  {errors.message && <p className="text-xs text-red-300 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.message}</p>}
+                  {errors.message && <p className="text-xs text-red-200 flex items-center mt-1"><AlertCircle className="w-3 h-3 mr-1" /> {errors.message}</p>}
                 </div>
+
                 <Button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-white text-primary hover:bg-white/90 rounded-xl h-14 text-lg font-bold disabled:opacity-50"
+                  className="w-full bg-white text-primary hover:bg-white/90 rounded-xl h-12 sm:h-14 text-base sm:text-lg font-bold disabled:opacity-50 transition-colors shadow-md"
                 >
                   {isSubmitting ? t.contact.sending : t.contact.send}
                 </Button>
@@ -1792,9 +1282,9 @@ export default function Portfolio() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 rounded-xl bg-green-500/20 border border-green-500/50 text-green-100 flex items-center text-sm"
+                      className="p-4 rounded-xl bg-green-500/25 border border-green-500/50 text-green-100 flex items-center text-sm"
                     >
-                      <CheckCircle2 className="w-4 h-4 mr-2" /> {t.contact.success}
+                      <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" /> {t.contact.success}
                     </motion.div>
                   )}
                   {submitStatus === 'error' && (
@@ -1802,9 +1292,9 @@ export default function Portfolio() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 rounded-xl bg-red-500/20 border border-red-500/50 text-red-100 flex items-center text-sm"
+                      className="p-4 rounded-xl bg-red-500/25 border border-red-500/50 text-red-100 flex items-center text-sm"
                     >
-                      <AlertCircle className="w-4 h-4 mr-2" /> {t.contact.error}
+                      <AlertCircle className="w-4 h-4 mr-2 shrink-0" /> {t.contact.error}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -1815,35 +1305,41 @@ export default function Portfolio() {
       </motion.section>
 
       {/* Footer */}
-      <footer className="py-12 border-t">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+      <footer className="py-12 border-t border-border/60">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
           <div className="text-center md:text-left">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground mb-2 mx-auto md:mx-0">
-              <Code2 size={20} />
+            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground mb-2 mx-auto md:mx-0 shadow-sm">
+              <Code2 size={18} />
             </div>
-            <p className="text-sm text-foreground/60 mt-1">© 2026 Flavien MBISHIBISHI. {t.footer.rights}</p>
+            <p className="text-xs sm:text-sm text-foreground/60">
+              © 2026 Flavien MBISHIBISHI. {t.footer.rights}
+            </p>
             {visitCount !== null && (
-              <div className="flex items-center justify-center md:justify-start space-x-2 text-xs text-foreground/40 mt-2">
-                <Users className="w-3 h-3" />
-                <span>{visitCount.toLocaleString()} visits</span>
+              <div className="flex items-center justify-center md:justify-start space-x-1.5 text-xs text-foreground/45 mt-1.5">
+                <Users className="w-3.5 h-3.5" />
+                <span>{visitCount.toLocaleString()} {t.footer.visits}</span>
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-6">
-            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t.footer.privacy}</a>
-            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t.footer.terms}</a>
-            <div className="flex items-center space-x-4 ml-6">
-              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Github')}>
-                <a href="https://github.com/mbishflavien" target="_blank" rel="noopener noreferrer"><Github className="w-5 h-5" /></a>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="flex items-center space-x-5 text-xs sm:text-sm font-medium">
+              <a href="#" className="hover:text-primary transition-colors">{t.footer.privacy}</a>
+              <a href="#" className="hover:text-primary transition-colors">{t.footer.terms}</a>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="rounded-full w-9 h-9" onClick={() => trackCTAClick('Footer Social - Github')} aria-label="GitHub">
+                <a href="https://github.com/mbishflavien" target="_blank" rel="noopener noreferrer"><Github className="w-4 h-4" /></a>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Linkedin')}>
-                <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" target="_blank" rel="noopener noreferrer"><Linkedin className="w-5 h-5" /></a>
+              <Button variant="ghost" size="icon" className="rounded-full w-9 h-9" onClick={() => trackCTAClick('Footer Social - Linkedin')} aria-label="LinkedIn">
+                <a href="https://linkedin.com/in/mbishibishi-flavien-4120a52b8" target="_blank" rel="noopener noreferrer"><Linkedin className="w-4 h-4" /></a>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Medium')}>
-                <a href="https://medium.com/@flavmbish" target="_blank" rel="noopener noreferrer"><BookOpen className="w-5 h-5" /></a>
+              <Button variant="ghost" size="icon" className="rounded-full w-9 h-9" onClick={() => trackCTAClick('Footer Social - Medium')} aria-label="Medium">
+                <a href="https://medium.com/@flavmbish" target="_blank" rel="noopener noreferrer"><BookOpen className="w-4 h-4" /></a>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => trackCTAClick('Footer Social - Email')}>
-                <a href="mailto:flavmbish@gmail.com"><Mail className="w-5 h-5" /></a>
+              <Button variant="ghost" size="icon" className="rounded-full w-9 h-9" onClick={() => trackCTAClick('Footer Social - Email')} aria-label="Email">
+                <a href="mailto:flavmbish@gmail.com"><Mail className="w-4 h-4" /></a>
               </Button>
             </div>
           </div>
@@ -1855,15 +1351,19 @@ export default function Portfolio() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-50 hover:scale-110 active:scale-95 transition-transform"
+        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-40 hover:scale-105 active:scale-95 transition-transform"
+        aria-label={t.common.back_to_top}
+        title={t.common.back_to_top}
       >
-        <ChevronRight className="w-6 h-6 -rotate-90" />
+        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 -rotate-90" />
       </motion.button>
 
       {/* Project Detail Modal */}
-      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-3xl rounded-3xl overflow-hidden p-0 border-none bg-background/95 backdrop-blur-xl">
-          <DialogTitle className="sr-only">Project Details: {selectedProject?.title}</DialogTitle>
+      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProjectId(null)}>
+        <DialogContent className="w-[94vw] max-w-3xl rounded-3xl overflow-hidden p-0 border border-primary/20 bg-background/95 backdrop-blur-xl max-h-[90vh] overflow-y-auto">
+          <DialogTitle className="sr-only">
+            {selectedProject ? `${selectedProject.title} Details` : 'Project Details'}
+          </DialogTitle>
           {selectedProject && (
             <div className="flex flex-col">
               <div className="relative aspect-video">
@@ -1872,62 +1372,71 @@ export default function Portfolio() {
                   alt={selectedProject.title} 
                   className="w-full h-full object-cover"
                 />
-                <div className={cn("absolute inset-0 bg-gradient-to-t from-background to-transparent", selectedProject.color)} />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="flex flex-wrap gap-2 mb-3">
+                <div className={cn("absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent", selectedProject.color)} />
+                <div className="absolute bottom-5 left-5 right-5 sm:bottom-6 sm:left-6 sm:right-6">
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
                     {selectedProject.tags.map(tag => (
-                      <Badge key={tag} variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+                      <Badge key={tag} variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
                         {tag}
                       </Badge>
                     ))}
                   </div>
-                  <h2 className="text-4xl font-bold tracking-tighter">{selectedProject.title}</h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter text-foreground">{selectedProject.title}</h2>
                 </div>
               </div>
-              <div className="p-8 space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2 text-primary" /> Overview
+
+              <div className="p-5 sm:p-8 space-y-6">
+                <div className="space-y-3">
+                  <h3 className="text-lg sm:text-xl font-bold flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 text-primary" /> {t.projects.modal.overview}
                   </h3>
-                  <p className="text-foreground/80 leading-relaxed text-lg">
+                  <p className="text-foreground/80 leading-relaxed text-sm sm:text-base">
                     {selectedProject.longDescription}
                   </p>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold flex items-center">
-                      <CheckCircle2 className="w-5 h-5 mr-2 text-primary" /> Key Features
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  <div className="space-y-3">
+                    <h3 className="text-lg sm:text-xl font-bold flex items-center">
+                      <CheckCircle2 className="w-5 h-5 mr-2 text-primary" /> {t.projects.modal.key_features}
                     </h3>
                     <ul className="space-y-2">
                       {selectedProject.features.map((feature, i) => (
-                        <li key={i} className="flex items-center text-foreground/70">
-                          <ChevronRight className="w-4 h-4 mr-2 text-primary" /> {feature}
+                        <li key={i} className="flex items-start text-foreground/80 text-sm">
+                          <ChevronRight className="w-4 h-4 mr-2 mt-0.5 text-primary shrink-0" /> 
+                          <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold flex items-center">
-                      <ExternalLink className="w-5 h-5 mr-2 text-primary" /> Links
+
+                  <div className="space-y-3">
+                    <h3 className="text-lg sm:text-xl font-bold flex items-center">
+                      <ExternalLink className="w-5 h-5 mr-2 text-primary" /> {t.projects.modal.links}
                     </h3>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2.5">
                       {selectedProject.github && (
                         <a href={selectedProject.github} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button variant="outline" className="rounded-xl justify-start w-full">
-                            <Github className="w-4 h-4 mr-2" /> View Source Code
+                          <Button variant="outline" className="rounded-xl justify-start w-full text-sm font-semibold">
+                            <Github className="w-4 h-4 mr-2" /> {t.projects.modal.view_code}
                           </Button>
                         </a>
                       )}
                       {selectedProject.link && (
                         <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button className="rounded-xl justify-start w-full">
-                            <ExternalLink className="w-4 h-4 mr-2" /> Launch Live Demo
+                          <Button className="rounded-xl justify-start w-full text-sm font-semibold">
+                            <ExternalLink className="w-4 h-4 mr-2" /> {t.projects.modal.launch_demo}
                           </Button>
                         </a>
                       )}
                     </div>
                   </div>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <Button variant="ghost" onClick={() => setSelectedProjectId(null)} className="rounded-xl">
+                    {t.projects.modal.close}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -1935,14 +1444,16 @@ export default function Portfolio() {
         </DialogContent>
       </Dialog>
 
-      {/* Award Detail Modal */}
-      <Dialog open={!!selectedAward} onOpenChange={() => setSelectedAward(null)}>
-        <DialogContent className="max-w-2xl sm:max-w-3xl rounded-3xl overflow-hidden p-0 border border-primary/20 bg-background/95 backdrop-blur-2xl shadow-2xl">
-          <DialogTitle className="sr-only">Certificate: {selectedAward?.title}</DialogTitle>
+      {/* Award / Certificate Detail Modal */}
+      <Dialog open={!!selectedAward} onOpenChange={() => setSelectedAwardId(null)}>
+        <DialogContent className="w-[94vw] max-w-2xl sm:max-w-3xl rounded-3xl overflow-hidden p-0 border border-primary/20 bg-background/95 backdrop-blur-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+          <DialogTitle className="sr-only">
+            {selectedAward ? `${selectedAward.title} Certificate` : 'Certificate Details'}
+          </DialogTitle>
           {selectedAward && (
             <div className="flex flex-col">
-              <div className="relative w-full bg-gradient-to-b from-neutral-950 via-zinc-950 to-neutral-900 flex items-center justify-center p-6 sm:p-10 border-b border-border/40 overflow-hidden min-h-[260px] sm:min-h-[320px]">
-                {/* Ambient glow matching credential theme */}
+              <div className="relative w-full bg-gradient-to-b from-neutral-950 via-zinc-950 to-neutral-900 flex items-center justify-center p-6 sm:p-10 border-b border-border/40 overflow-hidden min-h-[240px] sm:min-h-[300px]">
+                {/* Ambient glow matching credential category */}
                 <div 
                   className="absolute inset-0 pointer-events-none opacity-45"
                   style={{
@@ -1964,8 +1475,8 @@ export default function Portfolio() {
                   src={selectedAward.image} 
                   alt={selectedAward.title} 
                   className={selectedAward.image.includes('.svg')
-                    ? "relative z-10 w-48 h-48 sm:w-64 sm:h-64 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
-                    : "relative z-10 max-w-full max-h-[50vh] object-contain shadow-2xl rounded-xl filter-none"}
+                    ? "relative z-10 w-44 h-44 sm:w-56 sm:h-56 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
+                    : "relative z-10 max-w-full max-h-[45vh] object-contain shadow-2xl rounded-xl filter-none"}
                   onError={(e) => {
                     if (selectedAward.image.includes('nvidia')) {
                       (e.currentTarget as HTMLImageElement).src = '/badges/nvidia-developer.svg';
@@ -1980,38 +1491,39 @@ export default function Portfolio() {
                   variant="secondary" 
                   size="icon" 
                   className="absolute top-4 right-4 z-20 rounded-full h-8 w-8 bg-black/60 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md"
-                  onClick={() => setSelectedAward(null)}
+                  onClick={() => setSelectedAwardId(null)}
                 >
                   <X className="w-4 h-4" />
-                  <span className="sr-only">Close</span>
+                  <span className="sr-only">{t.awards.modal.close}</span>
                 </Button>
               </div>
 
-              <div className="p-6 sm:p-8 space-y-6">
+              <div className="p-5 sm:p-8 space-y-6">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div>
                     <span className="text-xs font-bold text-primary uppercase tracking-widest block mb-1">
                       {selectedAward.issuer}
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
                       {selectedAward.title}
                     </h2>
-                    <p className="text-sm text-muted-foreground mt-1 font-mono">
-                      Issued: {selectedAward.date} • Verified Credential
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-mono">
+                      {t.awards.modal.issued}: {awardDateFormatted(selectedAward.date)} • {t.awards.modal.verified_credential}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3 shrink-0">
+
+                  <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                     {selectedAward.verifyLink && (
                       <a href={selectedAward.verifyLink} target="_blank" rel="noopener noreferrer">
-                        <Button className="rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:bg-primary/90">
-                          <CheckCircle2 className="w-4 h-4 mr-2" /> Verify on Google Developers
+                        <Button className="rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:bg-primary/90 text-xs sm:text-sm">
+                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> {t.awards.modal.verify_google}
                           <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
                       </a>
                     )}
                     <a href={selectedAward.image} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="rounded-xl border-border/60 hover:bg-accent">
-                        <ExternalLink className="w-4 h-4 mr-2" /> Open Full Image
+                      <Button variant="outline" className="rounded-xl border-border/60 hover:bg-accent text-xs sm:text-sm">
+                        <ExternalLink className="w-4 h-4 mr-1.5" /> {t.awards.modal.open_image}
                       </Button>
                     </a>
                   </div>
@@ -2021,7 +1533,7 @@ export default function Portfolio() {
                 
                 <div className="space-y-2">
                   <h3 className="text-base sm:text-lg font-bold flex items-center gap-2 text-foreground">
-                    <Award className="w-5 h-5 text-primary" /> About this Credential
+                    <Award className="w-5 h-5 text-primary" /> {t.awards.modal.about_credential}
                   </h3>
                   <p className="text-foreground/80 leading-relaxed text-sm sm:text-base">
                     {selectedAward.description}
@@ -2034,67 +1546,74 @@ export default function Portfolio() {
       </Dialog>
 
       {/* Skill Detail Modal */}
-      <Dialog open={!!selectedSkill} onOpenChange={() => setSelectedSkill(null)}>
-        <DialogContent className="max-w-md rounded-3xl bg-background/95 backdrop-blur-xl border-primary/10">
-          <DialogTitle className="sr-only">Skill Details: {selectedSkill?.name}</DialogTitle>
+      <Dialog open={!!selectedSkill} onOpenChange={() => setSelectedSkillName(null)}>
+        <DialogContent className="w-[92vw] max-w-md rounded-3xl bg-background/95 backdrop-blur-xl border-primary/20 max-h-[90vh] overflow-y-auto">
+          <DialogTitle className="sr-only">
+            {selectedSkill ? `${selectedSkill.name} Skill Details` : 'Skill Details'}
+          </DialogTitle>
           {selectedSkill && (
             <div className="p-6 space-y-6">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-3xl">
-                  {selectedSkill.icon}
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl shadow-sm">
+                  {getSkillIcon(selectedSkill.name)}
                 </div>
                 <div>
-                  <Badge variant="outline" className="mb-1">{selectedSkill.category}</Badge>
-                  <h2 className="text-3xl font-bold tracking-tighter">{selectedSkill.name}</h2>
+                  <Badge variant="outline" className="mb-1 text-xs border-primary/30 text-primary">{selectedSkill.category}</Badge>
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{selectedSkill.name}</h2>
                 </div>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-sm font-bold uppercase tracking-wider text-foreground/60">Proficiency</span>
-                  <span className="text-2xl font-mono font-bold text-primary">{selectedSkill.level}%</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-foreground/60">{t.skills.proficiency}</span>
+                  <span className="text-xl font-mono font-bold text-primary">{selectedSkill.level}%</span>
                 </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden">
+                <div className="h-2.5 bg-muted rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${selectedSkill.level}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                     className="h-full bg-primary rounded-full"
                   />
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold flex items-center">
-                  <BrainCircuit className="w-5 h-5 mr-2 text-primary" /> Expertise Details
+              <div className="space-y-2">
+                <h3 className="text-base font-bold flex items-center">
+                  <BrainCircuit className="w-4 h-4 mr-2 text-primary" /> {t.skills.expertise_details}
                 </h3>
-                <p className="text-foreground/80 leading-relaxed">
+                <p className="text-foreground/80 leading-relaxed text-sm">
                   {selectedSkill.details}
                 </p>
               </div>
 
-              <Button className="w-full rounded-xl h-12" onClick={() => setSelectedSkill(null)}>
-                Close Details
+              <Button className="w-full rounded-xl h-11 font-semibold" onClick={() => setSelectedSkillName(null)}>
+                {t.skills.close_details}
               </Button>
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Demo Unavailable Notification */}
+      {/* Demo Unavailable Toast/Notification */}
       <AnimatePresence>
         {showDemoUnavailable && (
           <motion.div
-            initial={{ opacity: 0, y: 50, x: '-50%' }}
+            initial={{ opacity: 0, y: 40, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 20, x: '-50%' }}
-            className="fixed bottom-12 left-1/2 z-[100] bg-background/80 backdrop-blur-md border border-primary/20 px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-sm font-medium"
+            className="fixed bottom-10 left-1/2 z-[100] bg-background/90 backdrop-blur-md border border-primary/20 px-5 py-2.5 rounded-full shadow-2xl flex items-center space-x-2.5 text-sm font-medium"
           >
-            <AlertCircle className="w-5 h-5 text-primary" />
+            <AlertCircle className="w-4 h-4 text-primary" />
             <span>{t.projects.demo_unavailable}</span>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
+}
+
+// Utility helper for date formatting
+function awardDateFormatted(dateStr: string) {
+  return dateStr;
 }
