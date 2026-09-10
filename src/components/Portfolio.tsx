@@ -686,8 +686,16 @@ export default function Portfolio() {
                 )}
               </h1>
               <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-foreground/80 max-w-xl mx-auto md:mx-0 leading-relaxed">
-                {t.hero.greeting.includes(',') ? t.hero.greeting.split(',')[0] : t.hero.greeting}, <span className="text-foreground font-semibold">Flavien MBISHIBISHI</span>. 
-                {" "}{t.hero.description}
+                {t.hero.greeting.includes("Flavien Mbishibishi") ? (
+                  <>
+                    <span>{t.hero.greeting.split("Flavien Mbishibishi")[0]}</span>
+                    <span className="text-foreground font-semibold">Flavien Mbishibishi</span>
+                    <span>{t.hero.greeting.split("Flavien Mbishibishi")[1]}</span>
+                  </>
+                ) : (
+                  <span className="text-foreground font-semibold">{t.hero.greeting}</span>
+                )}
+                {" — "}{t.hero.description}
               </p>
             </motion.div>
 

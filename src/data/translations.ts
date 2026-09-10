@@ -20,9 +20,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       language: "Language"
     },
     hero: {
-      greeting: "Hi, I'm Flavien Mbishibishi",
+      greeting: "Welcome! I'm Flavien Mbishibishi",
       role: "Software Engineer & AI Enthusiast",
-      description: "Building intelligent solutions at the intersection of healthcare and technology. Specialized in full-stack development, distributed computing, and data-driven systems.",
+      description: "engineering intelligent, high-impact solutions at the intersection of healthcare and technology. Specialized in full-stack architecture, distributed computing, and applied AI. Take a look around to explore what I build.",
       cta_projects: "View My Work",
       cta_contact: "Let's Talk",
       open_to_work: "Open to Work"
@@ -322,9 +322,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       language: "Lugha"
     },
     hero: {
-      greeting: "Habari, mimi ni Flavien Mbishibishi",
+      greeting: "Karibu sana! Mimi ni Flavien Mbishibishi",
       role: "Mhandisi wa Programu na Shauku ya AI",
-      description: "Ninajenga suluhisho zenye akili katika makutano ya huduma ya afya na teknolojia. Nimebobea katika ukuzaji wa mifumo kamili, kompyuta iliyosambazwa, na mifumo inayotokana na data.",
+      description: "ninayeunda mifumo thabiti na yenye tija katika makutano ya huduma za afya na teknolojia. Nimebobea katika ukuzaji wa mifumo kamili, kompyuta iliyosambazwa, na Akili Mnemba (AI). Karibu ugundue kazi na miradi yangu.",
       cta_projects: "Angalia Kazi Zangu",
       cta_contact: "Tuzungumze",
       open_to_work: "Niko Tayari Kufanya Kazi"
@@ -624,9 +624,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       language: "Ururimi"
     },
     hero: {
-      greeting: "Muraho, nitwa Flavien Mbishibishi",
+      greeting: "Murakaza neza! Nitwa Flavien Mbishibishi",
       role: "Injeniyeri wa Software n'Ubuhanga bwa AI",
-      description: "Nkubaka ibisubizo by'ubuhanga mu guhuza ubuvuzi n'ikoranabuhanga. Ninzobere mu kubaka sisitemu zose, kubara gukwirakwijwe (distributed computing), na porogaramu zishingiye ku makuru.",
+      description: "nkubaka ibisubizo by'ikoranabuhanga bifite umumaro mu guhuza ubuvuzi na tekinoloji. Ninzobere muri full-stack development, distributed computing, n'ubuhanga bwa AI. Nyura hano urebe imishinga nakoze.",
       cta_projects: "Reba Ibikorwa Byanjye",
       cta_contact: "Tuvugane",
       open_to_work: "Niteguye Akazi"
@@ -926,9 +926,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       language: "Langue"
     },
     hero: {
-      greeting: "Bonjour, je suis Flavien Mbishibishi",
+      greeting: "Bienvenue ! Je suis Flavien Mbishibishi",
       role: "Ingénieur Logiciel & Passionné d'IA",
-      description: "Je conçois des solutions intelligentes à l'intersection de la santé et de la technologie. Spécialisé dans le développement full-stack, le calcul distribué et les systèmes pilotés par les données.",
+      description: "concepteur de solutions intelligentes et à fort impact à l'intersection de la santé et de la technologie. Spécialisé en architectures full-stack, calcul distribué et IA appliquée. Découvrez mes réalisations et projets ci-dessous.",
       cta_projects: "Voir Mes Travaux",
       cta_contact: "Parlons-en",
       open_to_work: "À l'écoute du marché"
