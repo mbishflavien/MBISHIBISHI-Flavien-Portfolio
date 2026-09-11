@@ -325,13 +325,6 @@ export default function Portfolio() {
     }
   });
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -417,12 +410,6 @@ export default function Portfolio() {
         <Background3D mouseX={mouseX} mouseY={mouseY} isDarkMode={isDarkMode} />
       </React.Suspense>
       
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 origin-left"
-        style={{ scaleX }}
-      />
-
       {/* Navbar */}
       <motion.nav 
         variants={{
