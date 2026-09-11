@@ -77,127 +77,88 @@ interface HeroImageProps {
 }
 
 const HeroImage = ({ isDarkMode, openToWorkText }: HeroImageProps) => {
-  const [bgIndex, setBgIndex] = useState(0);
   const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
-    const bgTimer = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
-    }, 2500);
-    
     const imgTimer = setInterval(() => {
       setImgIndex((prev) => (prev + 1) % PROFILE_IMAGES.length);
     }, 6000);
 
     return () => {
-      clearInterval(bgTimer);
       clearInterval(imgTimer);
     };
   }, []);
 
-  const currentBg = HERO_BACKGROUNDS[bgIndex];
   const currentImg = PROFILE_IMAGES[imgIndex];
 
   return (
     <div className="relative w-full max-w-[280px] xs:max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto aspect-square flex items-center justify-center">
-      {/* Background Glow */}
+      {/* Soft Steady Background Glow (no pulsing) */}
       <div className={cn(
-        "absolute inset-0 blur-[80px] sm:blur-[100px] rounded-full animate-pulse transition-colors duration-1000",
-        isDarkMode ? "bg-primary/40" : "bg-primary/30"
+        "absolute inset-0 blur-[80px] sm:blur-[100px] rounded-full transition-colors duration-1000",
+        isDarkMode ? "bg-primary/30" : "bg-primary/20"
       )} />
       
-      {/* Animated Decorative Rings */}
+      {/* Slow Decorative Orbital Rings */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[110%] h-[110%] border border-dashed border-primary/20 rounded-full"
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[108%] h-[108%] border border-dashed border-primary/20 rounded-full"
         />
         <motion.div
           animate={{ rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[125%] h-[125%] border border-primary/10 rounded-full"
+          transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[120%] h-[120%] border border-primary/10 rounded-full"
         />
       </div>
 
-      {/* Image Frame */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.9, ease: "easeOut" }}
-        className="relative w-full h-full"
-      >
+      {/* Image Frame Container - Steady, no bouncing */}
+      <div className="relative w-full h-full flex items-center justify-center">
+        {/* Organic Wobbling Bubble */}
         <motion.div
           animate={{ 
-            y: [0, -15, 0],
-            rotate: [0, 1, 0, -1, 0]
+            borderRadius: [
+              "60% 40% 30% 70% / 60% 30% 70% 40%",
+              "30% 60% 70% 40% / 50% 60% 30% 60%",
+              "60% 40% 30% 70% / 60% 30% 70% 40%"
+            ]
           }}
           transition={{ 
-            duration: 7, 
+            duration: 12, 
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
-          className="relative w-full h-full flex items-center justify-center"
+          className="relative w-full h-full overflow-hidden border-4 border-primary/25 shadow-2xl group bg-gradient-to-br from-primary/15 via-card/60 to-primary/10 backdrop-blur-sm"
         >
-          <motion.div
-            animate={{ 
-              borderRadius: [
-                "60% 40% 30% 70% / 60% 30% 70% 40%",
-                "30% 60% 70% 40% / 50% 60% 30% 60%",
-                "60% 40% 30% 70% / 60% 30% 70% 40%"
-              ]
-            }}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity, 
-              ease: "easeInOut" 
-            }}
-            className="relative w-full h-full overflow-hidden border-4 border-primary/20 shadow-2xl group bg-muted/20"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={bgIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-                className={cn("absolute inset-0 transition-colors duration-1000", currentBg)}
-              />
-            </AnimatePresence>
-
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay z-10 pointer-events-none" />
-            
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={imgIndex}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.7 }}
-                src={currentImg}
-                alt="Flavien Mbishibishi"
-                className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-105"
-                referrerPolicy="no-referrer"
-                loading="eager"
-                decoding="async"
-              />
-            </AnimatePresence>
-            
-            <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors duration-500 z-30 pointer-events-none" />
-          </motion.div>
-
-          {/* Clean Floating Badge: Open to Work (no green led dot as requested) */}
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-3 -right-2 sm:-top-5 sm:-right-4 md:-top-6 md:-right-6 bg-background/90 backdrop-blur-md border border-primary/20 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl z-40 select-none"
-          >
-            <span className="text-xs sm:text-sm font-bold tracking-wider text-foreground whitespace-nowrap">
-              {openToWorkText}
-            </span>
-          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/15 via-transparent to-primary/10 mix-blend-overlay z-10 pointer-events-none" />
+          
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={imgIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              src={currentImg}
+              alt="Flavien Mbishibishi"
+              className="w-full h-full object-contain relative z-20 transition-transform duration-700 group-hover:scale-105"
+              referrerPolicy="no-referrer"
+              loading="eager"
+              decoding="async"
+            />
+          </AnimatePresence>
+          
+          <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors duration-500 z-30 pointer-events-none" />
         </motion.div>
-      </motion.div>
+
+        {/* Clean Floating Badge: Open to Work (calm, anchored) */}
+        <div className="absolute -top-3 -right-2 sm:-top-5 sm:-right-4 md:-top-6 md:-right-6 bg-background/95 backdrop-blur-md border border-primary/20 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl z-40 select-none">
+          <span className="text-xs sm:text-sm font-bold tracking-wider text-foreground whitespace-nowrap">
+            {openToWorkText}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
