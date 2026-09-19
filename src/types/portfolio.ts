@@ -39,6 +39,8 @@ export interface AwardItem {
   description: string;
   category: string;
   verifyLink?: string;
+  verifyLabel?: string;
+  credentialId?: string;
 }
 
 export interface Translation {

@@ -1005,15 +1005,19 @@ export default function Portfolio() {
                       alt={award.title} 
                       className={cn(
                         "transition-all duration-500 filter blur-md group-hover:blur-0 group-hover:scale-105",
-                        award.image.includes('.svg')
-                          ? "max-w-[70%] max-h-[75%] object-contain drop-shadow-xl"
-                          : "w-full h-full object-cover"
+                        award.image.includes('uniathena') || award.image.includes('certificate')
+                          ? "w-full h-full object-contain p-1.5 drop-shadow-md rounded-lg bg-white/5"
+                          : award.image.includes('.svg')
+                            ? "max-w-[70%] max-h-[75%] object-contain drop-shadow-xl"
+                            : "w-full h-full object-cover"
                       )}
                       onError={(e) => {
                         if (award.image.includes('nvidia')) {
                           (e.currentTarget as HTMLImageElement).src = '/badges/nvidia-developer.svg';
                         } else if (award.image.includes('gdg') || award.image.includes('chapter')) {
                           (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
+                        } else if (award.id === 'uniathena-ml' || award.image.includes('uniathena')) {
+                          (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
                         }
                       }}
                       referrerPolicy="no-referrer"
@@ -1057,7 +1061,7 @@ export default function Portfolio() {
                           className="inline-flex items-center text-xs font-semibold text-primary hover:underline gap-1.5"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          {t.awards.modal.verify_google}
+                          {award.verifyLabel || t.awards.modal.verify_google}
                           <ExternalLink className="w-3 h-3 ml-0.5" />
                         </a>
                       </div>
@@ -1429,14 +1433,18 @@ export default function Portfolio() {
                 <img 
                   src={selectedAward.image} 
                   alt={selectedAward.title} 
-                  className={selectedAward.image.includes('.svg')
-                    ? "relative z-10 w-44 h-44 sm:w-56 sm:h-56 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
-                    : "relative z-10 max-w-full max-h-[45vh] object-contain shadow-2xl rounded-xl filter-none"}
+                  className={selectedAward.image.includes('certificate') || selectedAward.id === 'uniathena-ml'
+                    ? "relative z-10 max-w-full max-h-[50vh] object-contain shadow-2xl rounded-xl border border-white/10 filter-none"
+                    : selectedAward.image.includes('.svg')
+                      ? "relative z-10 w-44 h-44 sm:w-56 sm:h-56 object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] transition-transform duration-500 hover:scale-105 filter-none"
+                      : "relative z-10 max-w-full max-h-[45vh] object-contain shadow-2xl rounded-xl filter-none"}
                   onError={(e) => {
                     if (selectedAward.image.includes('nvidia')) {
                       (e.currentTarget as HTMLImageElement).src = '/badges/nvidia-developer.svg';
                     } else if (selectedAward.image.includes('gdg') || selectedAward.image.includes('chapter')) {
                       (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
+                    } else if (selectedAward.id === 'uniathena-ml' || selectedAward.image.includes('uniathena')) {
+                      (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
                     }
                   }}
                   referrerPolicy="no-referrer"
@@ -1464,6 +1472,11 @@ export default function Portfolio() {
                     </h2>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-mono">
                       {t.awards.modal.issued}: {awardDateFormatted(selectedAward.date)} • {t.awards.modal.verified_credential}
+                      {selectedAward.credentialId && (
+                        <span className="block sm:inline sm:before:content-['•'] sm:before:mx-2 text-primary font-semibold font-mono">
+                          {selectedAward.credentialId}
+                        </span>
+                      )}
                     </p>
                   </div>
 
@@ -1471,7 +1484,7 @@ export default function Portfolio() {
                     {selectedAward.verifyLink && (
                       <a href={selectedAward.verifyLink} target="_blank" rel="noopener noreferrer">
                         <Button className="rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:bg-primary/90 text-xs sm:text-sm">
-                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> {t.awards.modal.verify_google}
+                          <CheckCircle2 className="w-4 h-4 mr-1.5" /> {selectedAward.verifyLabel || t.awards.modal.verify_google}
                           <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
                       </a>

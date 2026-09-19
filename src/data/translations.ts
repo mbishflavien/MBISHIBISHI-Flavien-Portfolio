@@ -220,6 +220,18 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "uniathena-ml",
+          title: "Basics of Machine Learning Algorithms",
+          issuer: "UniAthena & CIQ, UK",
+          date: "Sep 2026",
+          image: "/certificates/uniathena-machine-learning.svg",
+          description: "Blockchain-verified professional certification delivered by UniAthena in partnership with Cambridge International Qualifications (CIQ), UK. Covers fundamental classification algorithms, SVMs, Decision Trees, Bayes theorem, Naive Bayes, and Maximum Likelihood Estimation.",
+          category: "Machine Learning",
+          verifyLink: "https://uniathena.com/course/basics-machine-learning-algorithms",
+          verifyLabel: "Verify Certificate",
+          credentialId: "Blockchain ID: 1970-9087-5722"
+        },
+        {
           id: "gdg",
           title: "Google Developer Groups Chapter Member",
           issuer: "Google Developer Groups (GDG) Kigali",
@@ -521,6 +533,18 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Funga"
       },
       items: [
+        {
+          id: "uniathena-ml",
+          title: "Misingi ya Kanuni za Kujifunza kwa Mashine (ML)",
+          issuer: "UniAthena na CIQ, UK",
+          date: "Sep 2026",
+          image: "/certificates/uniathena-machine-learning.svg",
+          description: "Cheti cha kitaaluma kilichothibitishwa kwa blockchain kilichotolewa na UniAthena kwa ushirikiano na Cambridge International Qualifications (CIQ), UK. Kinathibitisha umahiri katika kanuni za uainishaji (classification), Support Vector Machines (SVM), Decision Trees, nadharia ya Bayes, na tathmini ya mifumo ya Machine Learning.",
+          category: "Machine Learning",
+          verifyLink: "https://uniathena.com/course/basics-machine-learning-algorithms",
+          verifyLabel: "Thibitisha Cheti",
+          credentialId: "Blockchain ID: 1970-9087-5722"
+        },
         {
           id: "gdg",
           title: "Mwanachama wa Tawi la Google Developer Groups",
@@ -824,6 +848,18 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "uniathena-ml",
+          title: "Iby'ibanze muri Algoritimi za Machine Learning",
+          issuer: "UniAthena na CIQ, UK",
+          date: "Sep 2026",
+          image: "/certificates/uniathena-machine-learning.svg",
+          description: "Impamyabumenyi y'umwuga yemejwe na blockchain yatanzwe na UniAthena ifatanyije na Cambridge International Qualifications (CIQ), UK. Yemeza ubumenyi mu buhanga bw'ibanze bwa algoritimi za machine learning, classification, SVMs, Decision Trees, Bayes theorem n'isesengura rya moderi.",
+          category: "Machine Learning",
+          verifyLink: "https://uniathena.com/course/basics-machine-learning-algorithms",
+          verifyLabel: "Emeza Impamyabumenyi",
+          credentialId: "Blockchain ID: 1970-9087-5722"
+        },
+        {
           id: "gdg",
           title: "Umunyamuryango wa Google Developer Groups Chapter",
           issuer: "Google Developer Groups (GDG) Kigali",
@@ -1125,6 +1161,18 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Fermer"
       },
       items: [
+        {
+          id: "uniathena-ml",
+          title: "Fondamentaux des Algorithmes de Machine Learning",
+          issuer: "UniAthena & CIQ, UK",
+          date: "Sep 2026",
+          image: "/certificates/uniathena-machine-learning.svg",
+          description: "Certification professionnelle vérifiée sur blockchain délivrée par UniAthena en partenariat avec Cambridge International Qualifications (CIQ), Royaume-Uni. Atteste de compétences solides dans les algorithmes de classification, Support Vector Machines (SVM), arbres de décision, théorème de Bayes et estimation du maximum de vraisemblance.",
+          category: "Machine Learning",
+          verifyLink: "https://uniathena.com/course/basics-machine-learning-algorithms",
+          verifyLabel: "Vérifier le Certificat",
+          credentialId: "Blockchain ID: 1970-9087-5722"
+        },
         {
           id: "gdg",
           title: "Membre du Chapitre Google Developer Groups",
