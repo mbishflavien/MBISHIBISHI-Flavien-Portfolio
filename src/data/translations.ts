@@ -220,6 +220,17 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "anthropic-ai-fluency",
+          title: "AI Fluency: Framework & Foundations",
+          issuer: "Anthropic",
+          date: "2026",
+          image: "/certificates/anthropic-ai-fluency.svg",
+          description: "Official certification by Anthropic on modern AI fluency and the 4D Framework (Delegation, Description, Discernment, and Diligence) for collaborative human-AI reasoning, prompt design, and safe, effective intelligence deployment.",
+          category: "Generative AI",
+          verifyLink: "https://www.anthropic.com/news/ai-fluency-framework",
+          verifyLabel: "Verify on Anthropic"
+        },
+        {
           id: "uniathena-ml",
           title: "Basics of Machine Learning Algorithms",
           issuer: "UniAthena & CIQ, UK",
@@ -533,6 +544,17 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Funga"
       },
       items: [
+        {
+          id: "anthropic-ai-fluency",
+          title: "Ustadi wa AI: Mfumo na Misingi",
+          issuer: "Anthropic",
+          date: "2026",
+          image: "/certificates/anthropic-ai-fluency.svg",
+          description: "Cheti rasmi kutoka Anthropic kuhusu ustadi wa AI na mfumo wa 4D (Delegation, Description, Discernment, Diligence) kwa ushirikiano bora wa binadamu na AI, tathmini ya miundo ya kisasa, na matumizi salama ya akili mnemba.",
+          category: "Generative AI",
+          verifyLink: "https://www.anthropic.com/news/ai-fluency-framework",
+          verifyLabel: "Thibitisha kwenye Anthropic"
+        },
         {
           id: "uniathena-ml",
           title: "Misingi ya Kanuni za Kujifunza kwa Mashine (ML)",
@@ -848,6 +870,17 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "anthropic-ai-fluency",
+          title: "Ubuhanga muri AI: Imiterere n'Urufatiro",
+          issuer: "Anthropic",
+          date: "2026",
+          image: "/certificates/anthropic-ai-fluency.svg",
+          description: "Impamyabumenyi yemewe yatanzwe na Anthropic ku mikorere n'ubumenyi buhanitse bwa AI binyuze mu mfumo wa 4D (Delegation, Description, Discernment, Diligence) mu gukorana na frontier models no gukoresha neza ikoranabuhanga.",
+          category: "Generative AI",
+          verifyLink: "https://www.anthropic.com/news/ai-fluency-framework",
+          verifyLabel: "Emeza kuri Anthropic"
+        },
+        {
           id: "uniathena-ml",
           title: "Iby'ibanze muri Algoritimi za Machine Learning",
           issuer: "UniAthena na CIQ, UK",
@@ -1161,6 +1194,17 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Fermer"
       },
       items: [
+        {
+          id: "anthropic-ai-fluency",
+          title: "Maîtrise de l'IA : Cadre et Fondations",
+          issuer: "Anthropic",
+          date: "2026",
+          image: "/certificates/anthropic-ai-fluency.svg",
+          description: "Certification officielle délivrée par Anthropic sur la maîtrise de l'IA et le cadre 4D (Délégation, Description, Discernement et Diligence) pour la collaboration humain-IA, l'évaluation des modèles de frontière et le déploiement sécurisé.",
+          category: "IA Générative",
+          verifyLink: "https://www.anthropic.com/news/ai-fluency-framework",
+          verifyLabel: "Vérifier sur Anthropic"
+        },
         {
           id: "uniathena-ml",
           title: "Fondamentaux des Algorithmes de Machine Learning",

@@ -1018,6 +1018,8 @@ export default function Portfolio() {
                           (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
                         } else if (award.id === 'uniathena-ml' || award.image.includes('uniathena')) {
                           (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
+                        } else if (award.id === 'anthropic-ai-fluency' || award.image.includes('anthropic')) {
+                          (e.currentTarget as HTMLImageElement).src = '/certificates/anthropic-ai-fluency.svg';
                         }
                       }}
                       referrerPolicy="no-referrer"
@@ -1445,6 +1447,8 @@ export default function Portfolio() {
                       (e.currentTarget as HTMLImageElement).src = '/badges/gdg-kigali.svg';
                     } else if (selectedAward.id === 'uniathena-ml' || selectedAward.image.includes('uniathena')) {
                       (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
+                    } else if (selectedAward.id === 'anthropic-ai-fluency' || selectedAward.image.includes('anthropic')) {
+                      (e.currentTarget as HTMLImageElement).src = '/certificates/anthropic-ai-fluency.svg';
                     }
                   }}
                   referrerPolicy="no-referrer"
