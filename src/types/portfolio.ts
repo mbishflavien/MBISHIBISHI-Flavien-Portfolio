@@ -114,6 +114,9 @@ export interface Translation {
     view_certificate: string;
     hover_reveal: string;
     view_credential: string;
+    see_more?: string;
+    show_less?: string;
+    showing_count?: string;
     items: AwardItem[];
     modal: {
       issued: string;

@@ -13,6 +13,8 @@ import {
   BrainCircuit, 
   Terminal, 
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   MapPin,
   Phone,
   GraduationCap,
@@ -225,6 +227,7 @@ export default function Portfolio() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedSkillName, setSelectedSkillName] = useState<string | null>(null);
   const [selectedAwardId, setSelectedAwardId] = useState<string | null>(null);
+  const [visibleAwardsCount, setVisibleAwardsCount] = useState<number>(3);
 
   const [visitCount, setVisitCount] = useState<number | null>(null);
 
@@ -987,13 +990,12 @@ export default function Portfolio() {
           </SectionHeading>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            {t.awards.items.map((award, index) => (
+            {t.awards.items.slice(0, visibleAwardsCount).map((award, index) => (
               <motion.div
                 key={award.id || award.title}
-                initial={{ opacity: 0, scale: 0.92 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
+                initial={{ opacity: 0, scale: 0.94, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: (index % 3) * 0.08 }}
               >
                 <Card 
                   className="group h-full flex flex-col overflow-hidden rounded-3xl border-primary/10 hover:border-primary/30 transition-all duration-500 bg-card/60 backdrop-blur-sm cursor-pointer shadow-sm hover:shadow-xl"
@@ -1079,6 +1081,31 @@ export default function Portfolio() {
               </motion.div>
             ))}
           </div>
+
+          {/* See More Button */}
+          {visibleAwardsCount < t.awards.items.length && (
+            <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  setVisibleAwardsCount(prev => Math.min(prev + 3, t.awards.items.length));
+                  trackCTAClick('Awards - See More');
+                }}
+                className="group rounded-full px-8 py-6 border-primary/30 hover:border-primary hover:bg-primary hover:text-primary-foreground text-foreground font-semibold shadow-md transition-all duration-300"
+              >
+                <span className="flex items-center gap-2 text-base font-semibold">
+                  {t.awards.see_more || "See More"}
+                  <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1 text-primary group-hover:text-primary-foreground" />
+                </span>
+              </Button>
+              <p className="text-xs text-muted-foreground font-mono">
+                {(t.awards.showing_count || "Showing {count} of {total} certificates")
+                  .replace("{count}", Math.min(visibleAwardsCount, t.awards.items.length).toString())
+                  .replace("{total}", t.awards.items.length.toString())}
+              </p>
+            </div>
+          )}
         </div>
       </motion.section>
 

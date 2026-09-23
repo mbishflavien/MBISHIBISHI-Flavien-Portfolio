@@ -210,6 +210,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       view_certificate: "View Details",
       hover_reveal: "Click to explore",
       view_credential: "View Credential",
+      see_more: "See More",
+      show_less: "Show Less",
+      showing_count: "Showing {count} of {total} certificates",
       modal: {
         issued: "Issued",
         verified_credential: "Verified Credential",
@@ -569,6 +572,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       view_certificate: "Angalia Maelezo",
       hover_reveal: "Bofya kuona",
       view_credential: "Tazama Cheti",
+      see_more: "Tazama Zaidi",
+      show_less: "Onyesha Vichache",
+      showing_count: "Inaonyesha {count} kati ya vyeti {total}",
       modal: {
         issued: "Imetolewa",
         verified_credential: "Cheti Kilichothibitishwa",
@@ -928,6 +934,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       view_certificate: "Reba Ibisobanuro",
       hover_reveal: "Kanda urebe",
       view_credential: "Reba Impamyabumenyi",
+      see_more: "Reba Ibindi",
+      show_less: "Garagaza Bike",
+      showing_count: "Hagaragajwe {count} muri {total}",
       modal: {
         issued: "Yatanzwe",
         verified_credential: "Impamyabumenyi Yemejwe",
@@ -1287,6 +1296,9 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       view_certificate: "Voir les Détails",
       hover_reveal: "Cliquer pour voir",
       view_credential: "Voir le Titre",
+      see_more: "Voir Plus",
+      show_less: "Réduire",
+      showing_count: "Affichage de {count} sur {total} certificats",
       modal: {
         issued: "Délivré",
         verified_credential: "Titre de Compétence Vérifié",
