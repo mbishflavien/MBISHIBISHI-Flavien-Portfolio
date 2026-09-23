@@ -1084,7 +1084,7 @@ export default function Portfolio() {
 
           {/* See More Button */}
           {visibleAwardsCount < t.awards.items.length && (
-            <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center gap-3">
+            <div className="mt-10 sm:mt-12 flex justify-center">
               <Button
                 variant="outline"
                 size="lg"
@@ -1099,11 +1099,6 @@ export default function Portfolio() {
                   <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1 text-primary group-hover:text-primary-foreground" />
                 </span>
               </Button>
-              <p className="text-xs text-muted-foreground font-mono">
-                {(t.awards.showing_count || "Showing {count} of {total} certificates")
-                  .replace("{count}", Math.min(visibleAwardsCount, t.awards.items.length).toString())
-                  .replace("{total}", t.awards.items.length.toString())}
-              </p>
             </div>
           )}
         </div>
