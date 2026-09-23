@@ -220,6 +220,40 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "cognitiveclass-bigdata101",
+          title: "Big Data 101",
+          issuer: "IBM Developer Skills Network & Cognitive Class",
+          date: "Sep 22, 2026",
+          image: "/certificates/ibm-cognitiveclass-bigdata101.svg",
+          description: "Foundational certification covering Big Data core concepts, Hadoop ecosystem, MapReduce, distributed data storage, and scalable analytics architectures powered by IBM Developer Skills Network.",
+          category: "Big Data",
+          verifyLink: "https://courses.cognitiveclass.ai/certificates/d0e2bddfe8ea4e6f9e065207c4ba8e02",
+          verifyLabel: "Verify on Cognitive Class"
+        },
+        {
+          id: "sailpoint-identity-security",
+          title: "Launch Your Identity Security Career",
+          issuer: "SailPoint Identity University",
+          date: "Sep 21, 2026",
+          image: "/certificates/sailpoint-identity-security.svg",
+          description: "Specialized accreditation in Identity Security, Identity Governance and Administration (IGA), role-based access control (RBAC), and zero-trust security frameworks across modern enterprises.",
+          category: "Cybersecurity",
+          verifyLink: "https://verify.skilljar.com/c/4633c5cex5io",
+          verifyLabel: "Verify Certificate",
+          credentialId: "Certificate No: 4633c5cex5io"
+        },
+        {
+          id: "aws-ml-terminology",
+          title: "Machine Learning Terminology and Process",
+          issuer: "AWS Training & Certification",
+          date: "Sep 19, 2026",
+          image: "/certificates/aws-machine-learning-terminology.svg",
+          description: "Official AWS accreditation validating comprehensive knowledge of the machine learning pipeline: problem framing, data preparation, model training, evaluation metrics, and cloud deployment lifecycles.",
+          category: "Cloud & AI",
+          verifyLink: "https://aws.amazon.com/training/",
+          verifyLabel: "Verify on AWS"
+        },
+        {
           id: "anthropic-ai-fluency",
           title: "AI Fluency: Framework & Foundations",
           issuer: "Anthropic",
@@ -544,6 +578,40 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Funga"
       },
       items: [
+        {
+          id: "cognitiveclass-bigdata101",
+          title: "Misingi ya Big Data (Big Data 101)",
+          issuer: "IBM Developer Skills Network na Cognitive Class",
+          date: "Sept 22, 2026",
+          image: "/certificates/ibm-cognitiveclass-bigdata101.svg",
+          description: "Cheti cha msingi kinachofunika dhana kuu za Big Data, mfumo wa Hadoop, MapReduce, uhifadhi wa data uliosambazwa, na usanifu wa uchanganuzi mkubwa unaoendeshwa na IBM Developer Skills Network.",
+          category: "Big Data",
+          verifyLink: "https://courses.cognitiveclass.ai/certificates/d0e2bddfe8ea4e6f9e065207c4ba8e02",
+          verifyLabel: "Thibitisha kwenye Cognitive Class"
+        },
+        {
+          id: "sailpoint-identity-security",
+          title: "Anzisha Taaluma ya Usalama wa Vitambulisho",
+          issuer: "SailPoint Identity University",
+          date: "Sept 21, 2026",
+          image: "/certificates/sailpoint-identity-security.svg",
+          description: "Uidhinishaji maalum wa Usalama wa Vitambulisho (Identity Security), Utawala wa Vitambulisho (IGA), udhibiti wa ufikiaji kulingana na majukumu (RBAC), na usalama wa zero-trust.",
+          category: "Usalama wa Mtandao",
+          verifyLink: "https://verify.skilljar.com/c/4633c5cex5io",
+          verifyLabel: "Thibitisha Cheti",
+          credentialId: "Nambari ya Cheti: 4633c5cex5io"
+        },
+        {
+          id: "aws-ml-terminology",
+          title: "Istilahi na Michakato ya Kujifunza kwa Mashine",
+          issuer: "AWS Training & Certification",
+          date: "Sept 19, 2026",
+          image: "/certificates/aws-machine-learning-terminology.svg",
+          description: "Uidhinishaji rasmi wa AWS unaothibitisha uelewa wa kina wa michakato ya Machine Learning: utayarishaji wa data, mafunzo ya modeli, tathmini, na upelekaji wa mifumo ya AI kwenye wingu.",
+          category: "Wingu na AI",
+          verifyLink: "https://aws.amazon.com/training/",
+          verifyLabel: "Thibitisha kwenye AWS"
+        },
         {
           id: "anthropic-ai-fluency",
           title: "Ustadi wa AI: Mfumo na Misingi",
@@ -870,6 +938,40 @@ export const TRANSLATIONS: Record<Language, Translation> = {
       },
       items: [
         {
+          id: "cognitiveclass-bigdata101",
+          title: "Iby'ibanze muri Big Data (Big Data 101)",
+          issuer: "IBM Developer Skills Network na Cognitive Class",
+          date: "Nzeri 22, 2026",
+          image: "/certificates/ibm-cognitiveclass-bigdata101.svg",
+          description: "Impamyabumenyi y'urufatiro igaragaza ubumenyi muri Big Data, urusobe rwa Hadoop, MapReduce, gucunga no gusesengura amakuru menshi mu buryo bwisumbuye bitanzwe na IBM Developer Skills Network.",
+          category: "Big Data",
+          verifyLink: "https://courses.cognitiveclass.ai/certificates/d0e2bddfe8ea4e6f9e065207c4ba8e02",
+          verifyLabel: "Emeza kuri Cognitive Class"
+        },
+        {
+          id: "sailpoint-identity-security",
+          title: "Gutangira Umwuga mu Mutekano w'Imyirondoro",
+          issuer: "SailPoint Identity University",
+          date: "Nzeri 21, 2026",
+          image: "/certificates/sailpoint-identity-security.svg",
+          description: "Amahugurwa y'umwihariko mu mutekano w'imyirondoro (Identity Security), Identity Governance (IGA), gucunga uburenganzira bw'abakoresha (RBAC), n'ubwirinzi bugezweho bwa Zero-Trust.",
+          category: "Umutekano wa Murandasi",
+          verifyLink: "https://verify.skilljar.com/c/4633c5cex5io",
+          verifyLabel: "Emeza Impamyabumenyi",
+          credentialId: "Nimero y'Impamyabumenyi: 4633c5cex5io"
+        },
+        {
+          id: "aws-ml-terminology",
+          title: "Amagambo n'Imikorere ya Machine Learning",
+          issuer: "AWS Training & Certification",
+          date: "Nzeri 19, 2026",
+          image: "/certificates/aws-machine-learning-terminology.svg",
+          description: "Impamyabumenyi yemewe ya AWS igaragaza ubumenyi busesuye ku miterere ya Machine Learning: gutegura amakuru, gutoza moderi, kubigenzura, no gukoresha AI kuri cloud.",
+          category: "Cloud na AI",
+          verifyLink: "https://aws.amazon.com/training/",
+          verifyLabel: "Emeza kuri AWS"
+        },
+        {
           id: "anthropic-ai-fluency",
           title: "Ubuhanga muri AI: Imiterere n'Urufatiro",
           issuer: "Anthropic",
@@ -1194,6 +1296,40 @@ export const TRANSLATIONS: Record<Language, Translation> = {
         close: "Fermer"
       },
       items: [
+        {
+          id: "cognitiveclass-bigdata101",
+          title: "Introduction au Big Data (Big Data 101)",
+          issuer: "IBM Developer Skills Network & Cognitive Class",
+          date: "22 Sep 2026",
+          image: "/certificates/ibm-cognitiveclass-bigdata101.svg",
+          description: "Certification fondamentale couvrant les concepts clés du Big Data, l'écosystème Hadoop, MapReduce, le stockage distribué et les architectures d'analyse volumique propulsées par IBM Developer Skills Network.",
+          category: "Big Data",
+          verifyLink: "https://courses.cognitiveclass.ai/certificates/d0e2bddfe8ea4e6f9e065207c4ba8e02",
+          verifyLabel: "Vérifier sur Cognitive Class"
+        },
+        {
+          id: "sailpoint-identity-security",
+          title: "Lancer sa Carrière en Sécurité des Identités",
+          issuer: "SailPoint Identity University",
+          date: "21 Sep 2026",
+          image: "/certificates/sailpoint-identity-security.svg",
+          description: "Accréditation spécialisée en sécurité des identités, gouvernance des accès (IGA), gestion des autorisations par rôles (RBAC) et modèles de sécurité Zero-Trust en entreprise.",
+          category: "Cybersécurité",
+          verifyLink: "https://verify.skilljar.com/c/4633c5cex5io",
+          verifyLabel: "Vérifier le Certificat",
+          credentialId: "N° de Certificat : 4633c5cex5io"
+        },
+        {
+          id: "aws-ml-terminology",
+          title: "Terminologie et Processus du Machine Learning",
+          issuer: "AWS Training & Certification",
+          date: "19 Sep 2026",
+          image: "/certificates/aws-machine-learning-terminology.svg",
+          description: "Certification officielle AWS attestant d'une maîtrise approfondie du cycle de vie du Machine Learning : cadrage de problème, préparation des données, entraînement, évaluation et déploiement cloud.",
+          category: "Cloud & IA",
+          verifyLink: "https://aws.amazon.com/training/",
+          verifyLabel: "Vérifier sur AWS"
+        },
         {
           id: "anthropic-ai-fluency",
           title: "Maîtrise de l'IA : Cadre et Fondations",

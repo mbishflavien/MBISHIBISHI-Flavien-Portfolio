@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" style="background:#FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Soft mint / lavender gradient header backdrop -->
+    <linearGradient id="awsBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8F5E9" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#F3E8FF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Clean Canvas with soft modern AWS background -->
+  <rect width="1200" height="800" fill="url(#awsBg)"/>
+  <rect x="1" y="1" width="1198" height="798" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- Top-left AWS Header -->
+  <g transform="translate(120, 150)">
+    <text x="0" y="0" font-size="24" font-weight="800" fill="#0F172A" letter-spacing="-0.3">AWS Training &amp; Certification</text>
+    <text x="0" y="32" font-size="22" font-weight="500" fill="#334155">Completion Certificate</text>
+  </g>
+
+  <!-- Main Course Title -->
+  <g transform="translate(120, 290)">
+    <text x="0" y="0" font-size="54" font-weight="700" fill="#111827" letter-spacing="-1">Machine Learning</text>
+    <text x="0" y="64" font-size="54" font-weight="700" fill="#111827" letter-spacing="-1">Terminology and Process</text>
+    
+    <text x="0" y="125" font-size="18" font-weight="500" fill="#475569">Completed: September 19, 2026</text>
+  </g>
+
+  <!-- Recipient Details -->
+  <g transform="translate(120, 520)">
+    <text x="0" y="0" font-size="17" font-weight="500" fill="#475569">Awarded to</text>
+    <text x="0" y="42" font-size="36" font-weight="800" fill="#0F172A" letter-spacing="-0.5">MBISHIBISHI Flavien</text>
+  </g>
+
+  <!-- AWS Official Logo Bottom Right -->
+  <g transform="translate(920, 640)">
+    <!-- AWS text -->
+    <text x="75" y="45" font-size="56" font-weight="900" fill="#1E293B" letter-spacing="-2">aws</text>
+    <!-- Iconic AWS Smile Arrow -->
+    <path d="M20 62 Q75 90, 140 64" fill="none" stroke="#FF9900" stroke-width="7" stroke-linecap="round"/>
+    <path d="M134 53 L144 65 L128 72" fill="#FF9900" stroke="#FF9900" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+</svg>

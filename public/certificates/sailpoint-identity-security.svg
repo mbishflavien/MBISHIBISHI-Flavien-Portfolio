@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" style="background:#FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Vibrant SailPoint Border Gradient (Cyan -> Electric Blue -> Magenta) -->
+    <linearGradient id="sailpointBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="30%" stop-color="#0077FF"/>
+      <stop offset="70%" stop-color="#7000FF"/>
+      <stop offset="100%" stop-color="#FF007A"/>
+    </linearGradient>
+
+    <!-- 3D decorative sphere gradients -->
+    <radialGradient id="sphereTopLeft" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="20%" stop-color="#FCE4EC"/>
+      <stop offset="60%" stop-color="#F48FB1"/>
+      <stop offset="100%" stop-color="#C2185B"/>
+    </radialGradient>
+    <radialGradient id="sphereBottomRight" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#E040FB"/>
+      <stop offset="40%" stop-color="#7C4DFF"/>
+      <stop offset="80%" stop-color="#00B0FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Clean Canvas -->
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+
+  <!-- High-impact SailPoint rounded gradient frame -->
+  <rect x="45" y="45" width="1110" height="710" rx="28" fill="none" stroke="url(#sailpointBorder)" stroke-width="22"/>
+
+  <!-- 3D Sphere in Top-Left (clipped inside border) -->
+  <g transform="translate(55, 55)">
+    <ellipse cx="40" cy="40" rx="70" ry="70" fill="url(#sphereTopLeft)" opacity="0.45"/>
+  </g>
+  <!-- 3D Sphere in Bottom-Right -->
+  <g transform="translate(1040, 640)">
+    <ellipse cx="60" cy="60" rx="90" ry="90" fill="url(#sphereBottomRight)" opacity="0.85"/>
+  </g>
+
+  <!-- Header: SailPoint Logo Centered Top -->
+  <g transform="translate(600, 150)" text-anchor="middle">
+    <!-- SailPoint logo mark (triangles) -->
+    <g transform="translate(-170, -22)">
+      <polygon points="0,28 20,0 20,28" fill="#002B49"/>
+      <polygon points="24,0 44,28 24,28" fill="#0077FF"/>
+      <polygon points="12,32 32,32 22,46" fill="#E91E63"/>
+    </g>
+    <text x="-25" y="10" font-size="42" font-weight="900" fill="#002B49" letter-spacing="-1.5">SailPoint</text>
+    <line x1="85" y1="-15" x2="85" y2="16" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="190" y="10" font-size="24" font-weight="600" fill="#002B49" letter-spacing="-0.2">Identity University</text>
+  </g>
+
+  <!-- Certification of Completion Title -->
+  <g transform="translate(600, 260)" text-anchor="middle">
+    <text x="0" y="0" font-size="48" font-weight="800" fill="#0047BA" letter-spacing="-0.5">
+      Certification of completion
+    </text>
+    <text x="0" y="58" font-size="21" font-weight="500" fill="#002B49">
+      This certificate is granted to
+    </text>
+  </g>
+
+  <!-- Recipient Name -->
+  <g transform="translate(600, 395)" text-anchor="middle">
+    <text x="0" y="0" font-size="50" font-weight="700" fill="#0F172A" letter-spacing="-0.5">
+      MBISHIBISHI Flavien
+    </text>
+    <text x="0" y="54" font-size="21" font-weight="500" fill="#002B49">
+      for the completion of
+    </text>
+    <text x="0" y="105" font-size="30" font-weight="700" fill="#0F172A">
+      Launch Your Identity Security Career
+    </text>
+  </g>
+
+  <!-- Bottom Left: QR Code + Credentials -->
+  <g transform="translate(120, 600)">
+    <rect x="-4" y="-4" width="86" height="86" fill="#FFFFFF" stroke="#E2E8F0" rx="6"/>
+    <g transform="scale(0.78)">
+      <path fill="#FFFFFF" d="M0 0h29v29H0z"/><path stroke="#0F172A" d="M0 0.5h7m3 0h1m3 0h2m3 0h1m2 0h7M0 1.5h1m5 0h1m2 0h2m1 0h2m1 0h1m4 0h1m1 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h1m2 0h2m3 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m3 0h3m1 0h3m2 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m2 0h1m3 0h3m1 0h2m3 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h1m1 0h4m1 0h6m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 7.5h2m1 0h1m1 0h1m1 0h2m1 0h1M0 8.5h1m2 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m2 0h1m1 0h1m1 0h1M0 9.5h2m1 0h1m3 0h1m2 0h1m3 0h1m1 0h2m2 0h3m2 0h1m2 0h1M1 10.5h2m1 0h1m1 0h1m1 0h2m3 0h2m1 0h6m1 0h5M1 11.5h1m3 0h1m1 0h1m1 0h1m3 0h2m3 0h2m1 0h2m1 0h1m1 0h2M1 12.5h1m3 0h3m3 0h1m1 0h2m2 0h1m1 0h4m2 0h1m1 0h2M0 13.5h2m1 0h1m6 0h1m3 0h1m1 0h1m2 0h2M0 14.5h1m1 0h1m1 0h1m1 0h1m5 0h1m1 0h1m8 0h1m1 0h4M0 15.5h4m1 0h1m2 0h2m3 0h2m2 0h4m2 0h1m1 0h1m1 0h1M3 16.5h1m1 0h2m1 0h2m2 0h1m3 0h2m2 0h1m2 0h1m3 0h1M1 17.5h1m1 0h3m1 0h2m1 0h1m1 0h1m1 0h1m2 0h1m3 0h3m1 0h1m2 0h1M0 18.5h1m1 0h1m1 0h4m2 0h1m3 0h1m1 0h1m4 0h1m1 0h2m2 0h2M7 19.5h1m1 0h2m3 0h1m2 0h2m2 0h1m5 0h2M0 20.5h1m2 0h1m1 0h3m3 0h1m1 0h2m3 0h7m1 0h1M8 21.5h4m7 0h2m3 0h1m1 0h3M0 22.5h7m5 0h1m4 0h1m2 0h1m1 0h1m1 0h1m2 0h1M0 23.5h1m5 0h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m3 0h5M0 24.5h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h1m2 0h1m2 0h5M0 25.5h1m1 0h3m1 0h1m1 0h1m7 0h2m1 0h2m1 0h6M0 26.5h1m1 0h3m1 0h1m3 0h1m2 0h1m4 0h1m1 0h2m2 0h3m1 0h1M0 27.5h1m5 0h1m3 0h2m1 0h2m1 0h6m1 0h2m2 0h1M0 28.5h7m1 0h1m3 0h4m1 0h2m1 0h5m2 0h1"/>
+
+    </g>
+    <g transform="translate(96, 16)">
+      <text x="0" y="0" font-size="14" font-weight="500" fill="#334155">Issued: Sept. 21, 2026</text>
+      <text x="0" y="22" font-size="14" font-weight="500" fill="#334155">Certificate No: <tspan font-family="monospace" font-weight="700" fill="#0F172A">4633c5cex5io</tspan></text>
+      <text x="0" y="44" font-size="13.5" font-weight="600" fill="#0047BA">View: https://verify.skilljar.com/c/4633c5cex5io</text>
+    </g>
+  </g>
+</svg>

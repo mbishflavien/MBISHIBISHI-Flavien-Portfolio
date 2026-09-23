@@ -1020,6 +1020,12 @@ export default function Portfolio() {
                           (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
                         } else if (award.id === 'anthropic-ai-fluency' || award.image.includes('anthropic')) {
                           (e.currentTarget as HTMLImageElement).src = '/certificates/anthropic-ai-fluency.svg';
+                        } else if (award.id === 'cognitiveclass-bigdata101' || award.image.includes('cognitiveclass')) {
+                          (e.currentTarget as HTMLImageElement).src = '/certificates/ibm-cognitiveclass-bigdata101.svg';
+                        } else if (award.id === 'sailpoint-identity-security' || award.image.includes('sailpoint')) {
+                          (e.currentTarget as HTMLImageElement).src = '/certificates/sailpoint-identity-security.svg';
+                        } else if (award.id === 'aws-ml-terminology' || award.image.includes('aws')) {
+                          (e.currentTarget as HTMLImageElement).src = '/certificates/aws-machine-learning-terminology.svg';
                         }
                       }}
                       referrerPolicy="no-referrer"
@@ -1449,6 +1455,12 @@ export default function Portfolio() {
                       (e.currentTarget as HTMLImageElement).src = '/certificates/uniathena-machine-learning.svg';
                     } else if (selectedAward.id === 'anthropic-ai-fluency' || selectedAward.image.includes('anthropic')) {
                       (e.currentTarget as HTMLImageElement).src = '/certificates/anthropic-ai-fluency.svg';
+                    } else if (selectedAward.id === 'cognitiveclass-bigdata101' || selectedAward.image.includes('cognitiveclass')) {
+                      (e.currentTarget as HTMLImageElement).src = '/certificates/ibm-cognitiveclass-bigdata101.svg';
+                    } else if (selectedAward.id === 'sailpoint-identity-security' || selectedAward.image.includes('sailpoint')) {
+                      (e.currentTarget as HTMLImageElement).src = '/certificates/sailpoint-identity-security.svg';
+                    } else if (selectedAward.id === 'aws-ml-terminology' || selectedAward.image.includes('aws')) {
+                      (e.currentTarget as HTMLImageElement).src = '/certificates/aws-machine-learning-terminology.svg';
                     }
                   }}
                   referrerPolicy="no-referrer"
