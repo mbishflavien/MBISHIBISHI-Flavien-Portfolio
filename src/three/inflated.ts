@@ -12,20 +12,19 @@ export function loadScriptFont() {
   return fontPromise;
 }
 
-const geometryCache = new Map<string, THREE.BufferGeometry>();
+const SIZE = 1;
+const glyphCache = new Map<string, THREE.BufferGeometry | null>();
 
-// A puffy word: extruded glyphs with a deep rounded bevel and smoothed normals so it reads as inflated.
-export function inflatedTextGeometry(font: Font, text: string) {
-  const key = text;
-  const cached = geometryCache.get(key);
-  if (cached) return cached;
-  let g: THREE.BufferGeometry = new TextGeometry(text, {
+// One puffy letter: a small flat face and a deep, many-step bevel read as a smooth round tube.
+function letterGeometry(font: Font, ch: string) {
+  if (glyphCache.has(ch)) return glyphCache.get(ch)!;
+  if (ch.trim() === '') { glyphCache.set(ch, null); return null; }
+  let g: THREE.BufferGeometry = new TextGeometry(ch, {
     font,
-    size: 1,
+    size: SIZE,
     depth: 0.02,
-    curveSegments: 12,
+    curveSegments: 14,
     bevelEnabled: true,
-    // a small flat face and a deep, many-step bevel read as a smooth round tube
     bevelThickness: 0.2,
     bevelSize: 0.1,
     bevelOffset: -0.012,
@@ -34,10 +33,31 @@ export function inflatedTextGeometry(font: Font, text: string) {
   g.deleteAttribute('uv');
   g = mergeVertices(g, 1e-3);
   g.computeVertexNormals();
-  g.center();
   g.computeBoundingBox();
-  geometryCache.set(key, g);
+  glyphCache.set(ch, g);
   return g;
+}
+
+export interface Letter { geometry: THREE.BufferGeometry; x: number; ch: string }
+
+// Lays a word out letter by letter with the font's own advances, centred on the origin.
+export function layoutWord(font: Font, text: string) {
+  const data = font.data as unknown as { resolution: number; glyphs: Record<string, { ha: number }>; boundingBox: { yMin: number; yMax: number } };
+  const scale = SIZE / data.resolution;
+  const letters: Letter[] = [];
+  let x = 0, minY = Infinity, maxY = -Infinity, minX = Infinity, maxX = -Infinity;
+  for (const ch of text) {
+    const g = letterGeometry(font, ch);
+    if (g?.boundingBox) {
+      letters.push({ geometry: g, x, ch });
+      minX = Math.min(minX, x + g.boundingBox.min.x); maxX = Math.max(maxX, x + g.boundingBox.max.x);
+      minY = Math.min(minY, g.boundingBox.min.y); maxY = Math.max(maxY, g.boundingBox.max.y);
+    }
+    x += (data.glyphs[ch]?.ha ?? data.glyphs['n']?.ha ?? 500) * scale;
+  }
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  for (const l of letters) l.x -= cx;
+  return { letters, width: maxX - minX, height: maxY - minY, offsetY: -cy };
 }
 
 // The cursor arrow as a pillowy extruded shape.
@@ -49,7 +69,7 @@ export function arrowGeometry() {
   s.lineTo(0.36, -0.98);
   s.closePath();
   let g: THREE.BufferGeometry = new THREE.ExtrudeGeometry(s, {
-    depth: 0.08, bevelEnabled: true, bevelThickness: 0.16, bevelSize: 0.1, bevelSegments: 12, curveSegments: 8,
+    depth: 0.08, bevelEnabled: true, bevelThickness: 0.18, bevelSize: 0.12, bevelSegments: 14, curveSegments: 8,
   });
   g = mergeVertices(g, 1e-3);
   g.computeVertexNormals();
@@ -57,7 +77,7 @@ export function arrowGeometry() {
   return g;
 }
 
-/* ---------- The material: glossy, clear-coated, a little iridescent, and alive ---------- */
+/* ---------- The material: glossy, clear-coated, glowing at its edges, and alive ---------- */
 export interface LivelyUniforms {
   uTime: { value: number };
   uPoke: { value: THREE.Vector3 };
@@ -66,9 +86,10 @@ export interface LivelyUniforms {
   uWaveTime: { value: number };
   uWaveAmp: { value: number };
   uWobble: { value: number };
+  uRim: { value: THREE.Color };
 }
 
-export function livelyMaterial(colour = '#2a40ff') {
+export function livelyMaterial(colour = '#2b44ff') {
   const uniforms: LivelyUniforms = {
     uTime: { value: 0 },
     uPoke: { value: new THREE.Vector3(999, 999, 999) },
@@ -77,13 +98,14 @@ export function livelyMaterial(colour = '#2a40ff') {
     uWaveTime: { value: 99 },
     uWaveAmp: { value: 0 },
     uWobble: { value: 1 },
+    uRim: { value: new THREE.Color('#5d7bff') },
   };
   const m = new THREE.MeshPhysicalMaterial({
     color: colour,
-    roughness: 0.2,
-    metalness: 0.0,
+    roughness: 0.18,
+    metalness: 0,
     clearcoat: 1,
-    clearcoatRoughness: 0.06,
+    clearcoatRoughness: 0.05,
     iridescence: 0.3,
     iridescenceIOR: 1.35,
     iridescenceThicknessRange: [180, 620],
@@ -104,19 +126,28 @@ export function livelyMaterial(colour = '#2a40ff') {
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
-        // slow jelly wobble
-        float wob = (sin(position.x * 3.1 + uTime * 1.9) + sin(position.y * 4.3 - uTime * 1.4)) * 0.012 * uWobble;
-        // the pointer presses a soft bulge into the surface
-        float dp = distance(position, uPoke);
-        float bulge = uPokeAmt * 0.09 * exp(-dp * dp * 7.0);
-        // a click sends a ripple outward
-        float dw = distance(position, uWaveOrigin);
-        float front = uWaveTime * 3.2;
-        float ring = sin((dw - front) * 9.0) * exp(-abs(dw - front) * 3.0) * exp(-uWaveTime * 1.4);
-        float wave = uWaveAmp * 0.07 * ring * step(dw, front + 0.4);
+        // Measured in world space so a poke or a ripple flows across separate letters.
+        vec3 wp = (modelMatrix * vec4(position, 1.0)).xyz;
+        float wob = (sin(wp.x * 1.6 + uTime * 1.9) + sin(wp.y * 2.2 - uTime * 1.4)) * 0.012 * uWobble;
+        float dp = distance(wp, uPoke);
+        float bulge = uPokeAmt * 0.1 * exp(-dp * dp * 2.2);
+        float dw = distance(wp, uWaveOrigin);
+        float front = uWaveTime * 4.0;
+        float ring = sin((dw - front) * 5.0) * exp(-abs(dw - front) * 1.6) * exp(-uWaveTime * 1.3);
+        float wave = uWaveAmp * 0.08 * ring * step(dw, front + 0.6);
         transformed += objectNormal * (wob + bulge + wave);`
       );
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+        uniform vec3 uRim;`)
+      .replace(
+        '#include <emissivemap_fragment>',
+        `#include <emissivemap_fragment>
+        // Light gathers at the edges, as in something soft and slightly translucent.
+        float fres = pow(1.0 - clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0), 2.6);
+        totalEmissiveRadiance += uRim * fres * 0.85;`
+      );
   };
-  m.customProgramCacheKey = () => 'lively-v1';
+  m.customProgramCacheKey = () => 'lively-v2';
   return { material: m, uniforms };
 }

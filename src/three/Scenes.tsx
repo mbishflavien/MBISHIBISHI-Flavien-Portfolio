@@ -1,29 +1,48 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree, ThreeEvent } from '@react-three/fiber';
-import { Environment, Lightformer } from '@react-three/drei';
+import { ContactShadows, Environment, Lightformer } from '@react-three/drei';
 import type { Font } from 'three/examples/jsm/loaders/FontLoader.js';
-import { loadScriptFont, inflatedTextGeometry, arrowGeometry, livelyMaterial } from './inflated';
+import { loadScriptFont, layoutWord, arrowGeometry, livelyMaterial } from './inflated';
 import { stickerAtlas } from './stickers';
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const now = () => performance.now() / 1000;
+const clamp01 = (x: number) => Math.min(Math.max(x, 0), 1);
+const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
+const easeInCubic = (x: number) => x * x * x;
+const easeOutBack = (x: number) => 1 + 2.4 * Math.pow(x - 1, 3) + 1.4 * Math.pow(x - 1, 2);
+const easeInBack = (x: number) => 2.4 * x * x * x - 1.4 * x * x;
+// 0 → 1 with a springy overshoot, settled by t ≈ 0.9 s
+const pop = (t: number) => (t <= 0 ? 0 : 1 - Math.exp(-6.5 * t) * Math.cos(11 * t));
 
-/* ---------- Pointer over the whole window, -1..1, shared by every scene ---------- */
+/* ---------- Pointer and scroll, shared by every scene ---------- */
 const pointer = new THREE.Vector2(0, 0);
+// v: smoothed scroll speed (screens per second, signed, down is positive)
+const scroll = { v: 0, lastY: 0, lastT: 0 };
 if (typeof window !== 'undefined') {
   window.addEventListener('pointermove', (e) => {
     pointer.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
   }, { passive: true });
+  scroll.lastY = window.scrollY;
+  scroll.lastT = performance.now();
+  const track = () => {
+    const t = performance.now(), y = window.scrollY;
+    const dt = Math.max(t - scroll.lastT, 1) / 1000;
+    const raw = (y - scroll.lastY) / window.innerHeight / dt;
+    scroll.v += (Math.max(-4, Math.min(4, raw)) - scroll.v) * 0.12;
+    scroll.lastY = y; scroll.lastT = t;
+    requestAnimationFrame(track);
+  };
+  requestAnimationFrame(track);
 }
 
-// A damped spring, for scale pops and squishes. Stepped in small slices of real time,
-// so it settles on schedule even when the frame rate is low.
+// A damped spring, stepped in small slices of real time so it settles at any frame rate.
 function spring(state: { x: number; v: number }, target: number, dt: number, k = 180, c = 12) {
   let left = Math.min(dt, 0.25);
   while (left > 0) {
     const h = Math.min(left, 1 / 120);
-    const a = -k * (state.x - target) - c * state.v;
-    state.v += a * h;
+    state.v += (-k * (state.x - target) - c * state.v) * h;
     state.x += state.v * h;
     left -= h;
   }
@@ -36,7 +55,6 @@ function Studio() {
     <>
       <ambientLight intensity={0.25} />
       <directionalLight position={[3, 5, 6]} intensity={1.8} />
-      <directionalLight position={[-6, -3, 2]} intensity={0.6} color="#6fd6ff" />
       <Environment resolution={256} frames={1}>
         <Lightformer form="rect" intensity={4} position={[0, 4, 4]} scale={[10, 2, 1]} />
         <Lightformer form="rect" intensity={2.5} position={[-6, 1, 2]} rotation-y={Math.PI / 2} scale={[8, 3, 1]} color="#9ec2ff" />
@@ -48,99 +66,196 @@ function Studio() {
   );
 }
 
+// A soft shadow cast back onto the blue, behind whatever floats in front of it.
+function Backdrop({ y = -0.25 }: { y?: number }) {
+  return (
+    <ContactShadows
+      rotation-x={Math.PI / 2}
+      position={[0.2, y, -1.6]}
+      scale={16}
+      far={3.2}
+      blur={2.8}
+      opacity={0.55}
+      resolution={512}
+      color="#000a45"
+      frames={Infinity}
+    />
+  );
+}
+
 function useFont() {
   const [font, setFont] = useState<Font | null>(null);
   useEffect(() => { loadScriptFont().then(setFont).catch(() => setFont(null)); }, []);
   return font;
 }
 
-/* ---------- The lively inflated word ---------- */
+/* ---------- The lively word, built from separate letters ---------- */
+interface Slot {
+  key: string; i: number; n: number; x: number; geometry: THREE.BufferGeometry; offsetY: number;
+  born: number; dying: number | null; seed: number; hop: { x: number; v: number };
+}
+
 function LivelyWord({
-  words, interval = 4800, width = 0.6, position = [0, 0, 0] as [number, number, number], onPress,
+  words, interval = 5200, width = 0.6, position = [0, 0, 0] as [number, number, number], onPress, track, introOnView = false,
 }: {
-  words: string[]; interval?: number; width?: number; position?: [number, number, number]; onPress?: () => void;
+  words: string[]; interval?: number; width?: number; position?: [number, number, number];
+  onPress?: () => void; track?: React.RefObject<HTMLElement | null>; introOnView?: boolean;
 }) {
   const font = useFont();
   const group = useRef<THREE.Group>(null);
-  const mesh = useRef<THREE.Mesh>(null);
+  const meshes = useRef(new Map<string, THREE.Mesh>());
   const { viewport } = useThree();
   const { material, uniforms } = useMemo(() => livelyMaterial('#2b44ff'), []);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const slotsRef = useRef<Slot[]>([]);
+  slotsRef.current = slots;
   const [index, setIndex] = useState(0);
-  const pop = useRef({ x: 0, v: 0 });
+  const [inView, setInView] = useState(!introOnView);
+  const fit = useRef(0);
+  const fitTarget = useRef(1);
   const squash = useRef({ x: 0, v: 0 });
-  const target = useRef(1);
   const hover = useRef(0);
   const still = reduced();
+  const gen = useRef(0);
 
-  // Deflate, swap, inflate.
+  // The footer word bounces in each time the section comes into view.
+  useEffect(() => {
+    if (!introOnView || !track?.current) return;
+    const io = new IntersectionObserver(([e]) => setInView(e.intersectionRatio > 0.35), { threshold: [0, 0.35, 0.6] });
+    io.observe(track.current);
+    return () => io.disconnect();
+  }, [introOnView, track]);
+
+  // Cycle through the words.
   useEffect(() => {
     if (words.length < 2 || still) return;
-    const id = window.setInterval(() => {
-      target.current = 0;
-      window.setTimeout(() => { setIndex((i) => (i + 1) % words.length); target.current = 1; }, 240);
-    }, interval);
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % words.length), interval);
     return () => window.clearInterval(id);
   }, [words, interval, still]);
 
-  const geometry = useMemo(() => (font ? inflatedTextGeometry(font, words[index % words.length]) : null), [font, words, index]);
-  const fit = useMemo(() => {
-    if (!geometry?.boundingBox) return 1;
-    const w = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-    return (viewport.width * width) / w;
-  }, [geometry, viewport.width, width]);
+  // Each change of word: the old letters tumble out one by one while the new ones bounce in.
+  useEffect(() => {
+    if (!font || !inView) return;
+    const word = words[index % words.length];
+    const { letters, width: w, offsetY } = layoutWord(font, word);
+    const t = now();
+    const g = ++gen.current;
+    fitTarget.current = (viewport.width * width) / w;
+    if (!fit.current || Math.abs(fit.current / fitTarget.current - 1) > 0.6) fit.current = fitTarget.current;
+    setSlots((prev) => [
+      ...prev.filter((s) => s.dying === null || t - s.dying < 1.2).map((s) => (s.dying === null ? { ...s, dying: t } : s)),
+      ...letters.map((l, i) => ({
+        key: `${g}-${i}`, i, n: letters.length, x: l.x, geometry: l.geometry, offsetY,
+        born: t + (still ? -5 : 0.22), dying: null, seed: Math.random() * 2 - 1, hop: { x: 0, v: 0 },
+      })),
+    ]);
+    const cleanup = window.setTimeout(() => setSlots((prev) => prev.filter((s) => s.dying === null)), 1400);
+    return () => window.clearTimeout(cleanup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [font, words, index, inView, viewport.width, width]);
 
   useFrame((state, dt) => {
-    const g = group.current;
-    if (!g) return;
-    const d = Math.min(dt, 1 / 30);
-    const t = state.clock.elapsedTime;
-    uniforms.uTime.value = t;
-    uniforms.uWaveTime.value += d;
+    const grp = group.current;
+    if (!grp) return;
+    const t = now();
+    const time = state.clock.elapsedTime;
+    uniforms.uTime.value = time;
+    uniforms.uWaveTime.value += Math.min(dt, 0.1);
     uniforms.uPokeAmt.value += (hover.current - uniforms.uPokeAmt.value) * 0.12;
     uniforms.uWobble.value = still ? 0 : 1;
-    const s = still ? 1 : spring(pop.current, target.current, dt, 240, 15);
+
+    // Scroll: how fast, and how far this section has travelled off the top of the screen.
+    const v = still ? 0 : Math.max(-1.5, Math.min(1.5, scroll.v));
+    let leave = 0;
+    if (track?.current && !introOnView) {
+      const r = track.current.getBoundingClientRect();
+      leave = clamp01(-r.top / r.height);
+    }
+
+    // ease towards the new word's size in real time, so slow frames don't leave it small
+    fit.current += (fitTarget.current - fit.current) * (1 - Math.exp(-Math.min(dt, 0.25) * 7));
     const q = spring(squash.current, 0, dt, 260, 9);
-    g.scale.set(fit * s * (1 + q * 0.18), fit * s * (1 - q * 0.22), fit * s * (1 + q * 0.1));
+    const stretch = Math.min(Math.abs(v), 1);
+    grp.scale.set(fit.current * (1 + q * 0.18 + stretch * 0.05), fit.current * (1 - q * 0.22 - stretch * 0.12), fit.current);
     if (!still) {
-      g.rotation.y += (pointer.x * 0.45 - g.rotation.y) * 0.06;
-      g.rotation.x += (-pointer.y * 0.3 - g.rotation.x) * 0.06;
-      g.rotation.z = Math.sin(t * 0.6) * 0.03;
-      g.position.y = position[1] + Math.sin(t * 1.1) * 0.08;
+      grp.rotation.y += (pointer.x * 0.4 - grp.rotation.y) * 0.06;
+      grp.rotation.x += (-pointer.y * 0.28 + v * 0.35 - grp.rotation.x) * 0.08;
+      grp.rotation.z = Math.sin(time * 0.6) * 0.03;
+      grp.position.set(position[0], position[1] + Math.sin(time * 1.1) * 0.08 + leave * viewport.height * 0.18, position[2] - leave * 2.5);
+    }
+
+    for (const s of slotsRef.current) {
+      const m = meshes.current.get(s.key);
+      if (!m) continue;
+      const hop = spring(s.hop, 0, dt, 120, 7);
+      const centre = s.i - (s.n - 1) / 2;
+      // letters drift apart and turn as the hero scrolls away
+      let x = s.x * (1 + leave * 0.55);
+      let y = s.offsetY + hop * 0.12 + Math.sin(time * 9 - s.i * 0.9) * stretch * 0.16;
+      let rx = 0, ry = leave * centre * 0.35, rz = 0, sc = 1;
+
+      if (s.dying === null) {
+        const lt = t - s.born - s.i * 0.075;
+        if (lt < 0) { m.visible = false; continue; }
+        m.visible = true;
+        sc = pop(lt);
+        const drop = 1 - easeOutBack(clamp01(lt / 0.7));
+        y += drop * 1.3;
+        ry += (1 - easeOutCubic(clamp01(lt / 0.8))) * Math.PI * 0.9 * (s.seed > 0 ? 1 : -1);
+        rz += (1 - easeOutCubic(clamp01(lt / 0.6))) * s.seed * 0.7;
+      } else {
+        const lt = t - s.dying - s.i * 0.05;
+        const e = clamp01(lt / 0.45);
+        if (e >= 1) { m.visible = false; continue; }
+        sc = 1 - easeInBack(e);
+        y -= easeInCubic(e) * 1.2;
+        rx += e * 2.6;
+        rz += s.seed * e * 1.6;
+        x += s.seed * e * 0.4;
+      }
+      m.position.set(x, y, 0);
+      m.rotation.set(rx, ry, rz);
+      m.scale.setScalar(Math.max(sc, 0.0001));
     }
   });
 
-  const toLocal = (e: ThreeEvent<PointerEvent | MouseEvent>) => mesh.current!.worldToLocal(e.point.clone());
+  const onDown = (e: ThreeEvent<PointerEvent>, s: Slot) => {
+    e.stopPropagation();
+    uniforms.uWaveOrigin.value.copy(e.point);
+    uniforms.uWaveTime.value = 0;
+    uniforms.uWaveAmp.value = 1;
+    squash.current.v += 7;
+    // the pressed letter jumps, its neighbours a little
+    for (const o of slotsRef.current) if (o.dying === null) o.hop.v += 22 / (1 + Math.abs(o.i - s.i) * 1.5);
+  };
 
-  if (!geometry) return null;
   return (
     <group ref={group} position={position}>
-      <mesh
-        ref={mesh}
-        geometry={geometry}
-        material={material}
-        onPointerMove={(e) => { e.stopPropagation(); uniforms.uPoke.value.copy(toLocal(e)); hover.current = 1; }}
-        onPointerOut={() => { hover.current = 0; document.body.style.cursor = ''; }}
-        onPointerOver={() => { if (onPress) document.body.style.cursor = 'pointer'; }}
-        onPointerDown={(e) => {
-          e.stopPropagation();
-          uniforms.uWaveOrigin.value.copy(toLocal(e));
-          uniforms.uWaveTime.value = 0;
-          uniforms.uWaveAmp.value = 1;
-          squash.current.v += 9;
-        }}
-        onClick={(e) => { e.stopPropagation(); onPress?.(); }}
-      />
+      {slots.map((s) => (
+        <mesh
+          key={s.key}
+          ref={(m) => { if (m) meshes.current.set(s.key, m); else meshes.current.delete(s.key); }}
+          geometry={s.geometry}
+          material={material}
+          visible={false}
+          onPointerMove={(e) => { e.stopPropagation(); uniforms.uPoke.value.copy(e.point); hover.current = 1; }}
+          onPointerOut={() => { hover.current = 0; document.body.style.cursor = ''; }}
+          onPointerOver={() => { if (onPress) document.body.style.cursor = 'pointer'; }}
+          onPointerDown={(e) => onDown(e, s)}
+          onClick={(e) => { e.stopPropagation(); onPress?.(); }}
+        />
+      ))}
     </group>
   );
 }
 
-/* ---------- The cursor arrow: floats and turns to point at the pointer ---------- */
+/* ---------- The cursor arrow: floats, points at the pointer, spins with the scroll ---------- */
 function LivelyArrow({ position, size = 0.9 }: { position: [number, number, number]; size?: number }) {
   const group = useRef<THREE.Group>(null);
-  const mesh = useRef<THREE.Mesh>(null);
   const geometry = useMemo(() => arrowGeometry(), []);
   const { material, uniforms } = useMemo(() => livelyMaterial('#3350ff'), []);
   const squash = useRef({ x: 0, v: 0 });
+  const spin = useRef(0);
   const hover = useRef(0);
   const { viewport } = useThree();
   const still = reduced();
@@ -148,20 +263,21 @@ function LivelyArrow({ position, size = 0.9 }: { position: [number, number, numb
   useFrame((state, dt) => {
     const g = group.current;
     if (!g) return;
-    const d = Math.min(dt, 1 / 30);
     const t = state.clock.elapsedTime;
     uniforms.uTime.value = t;
-    uniforms.uWaveTime.value += d;
+    uniforms.uWaveTime.value += Math.min(dt, 0.1);
     uniforms.uPokeAmt.value += (hover.current - uniforms.uPokeAmt.value) * 0.12;
     const q = spring(squash.current, 0, dt, 260, 9);
     g.scale.setScalar(size * (1 + q * 0.2));
     if (still) return;
-    // aim the tip (which points up-left in the shape) at the pointer
+    // scrolling spins it like a pinwheel; the spin bleeds off when the page stops
+    spin.current += scroll.v * Math.min(dt, 0.1) * 9;
+    spin.current *= 0.97;
     const px = (pointer.x * viewport.width) / 2 - position[0];
     const py = (pointer.y * viewport.height) / 2 - position[1];
-    const aim = Math.atan2(py, px) + Math.PI * 0.86;
-    g.rotation.z += (Math.atan2(Math.sin(aim - g.rotation.z), Math.cos(aim - g.rotation.z))) * 0.08;
-    g.rotation.x = Math.sin(t * 1.3) * 0.35 + pointer.y * 0.4;
+    const aim = Math.atan2(py, px) + Math.PI * 0.86 + spin.current;
+    g.rotation.z += Math.atan2(Math.sin(aim - g.rotation.z), Math.cos(aim - g.rotation.z)) * 0.08;
+    g.rotation.x = Math.sin(t * 1.3) * 0.35 + pointer.y * 0.4 + scroll.v * 0.6;
     g.rotation.y = Math.cos(t * 1.1) * 0.35 + pointer.x * 0.5;
     g.position.y = position[1] + Math.sin(t * 1.6) * 0.12;
   });
@@ -169,17 +285,17 @@ function LivelyArrow({ position, size = 0.9 }: { position: [number, number, numb
   return (
     <group ref={group} position={position}>
       <mesh
-        ref={mesh}
         geometry={geometry}
         material={material}
-        onPointerMove={(e) => { uniforms.uPoke.value.copy(mesh.current!.worldToLocal(e.point.clone())); hover.current = 1; }}
+        onPointerMove={(e) => { uniforms.uPoke.value.copy(e.point); hover.current = 1; }}
         onPointerOut={() => (hover.current = 0)}
         onPointerDown={(e) => {
           e.stopPropagation();
-          uniforms.uWaveOrigin.value.copy(mesh.current!.worldToLocal(e.point.clone()));
+          uniforms.uWaveOrigin.value.copy(e.point);
           uniforms.uWaveTime.value = 0;
           uniforms.uWaveAmp.value = 1.4;
           squash.current.v += 10;
+          spin.current += 1.2;
         }}
       />
     </group>
@@ -275,19 +391,24 @@ function StickerRain({ handle, ambient = 18, pool = 60, size = 1 }: { handle: Re
   useFrame((state, dt) => {
     const m = mesh.current;
     if (!m || !atlas) return;
-    const d = Math.min(dt, 1 / 30);
+    const d = Math.min(dt, 0.1);
     const t = state.clock.elapsedTime;
+    // scrolling down blows the stickers upward, like a gust
+    const gust = still ? 0 : Math.max(-2, Math.min(2, scroll.v)) * viewport.height * 0.9;
     const rectAttr = geometry.getAttribute('uvRect') as THREE.InstancedBufferAttribute;
     const top = viewport.height * 0.62, bottom = -viewport.height * 0.62;
     stickers.forEach((s, i) => {
       if (s.alive && !still) {
-        if (s.oneShot) { s.vy -= 6 * d; s.vx *= 0.99; } // thrown: gravity
-        s.p.y += s.vy * d;
+        if (s.oneShot) { s.vy -= 6 * d; s.vx *= 0.99; }
+        s.p.y += (s.vy + gust) * d;
         s.p.x += (s.vx + Math.sin(t * 0.9 + s.phase) * 0.35) * d;
-        s.rot += s.spin * d;
+        s.rot += (s.spin + Math.abs(gust) * 0.4 * Math.sign(s.spin)) * d;
         if (s.p.y < bottom - 1) {
           if (s.oneShot) s.alive = false;
           else spawn(s, (Math.random() - 0.5) * viewport.width * 1.05, top + Math.random(), -1 - Math.random() * 2, false);
+        } else if (!s.oneShot && s.p.y > top + 1.5) {
+          // blown off the top: come back in from below
+          s.p.y = bottom - 0.5;
         }
       }
       dummy.position.copy(s.p);
@@ -333,7 +454,8 @@ export function HeroScene({ words }: { words: string[] }) {
         <Positioned>
           {({ w, h, mobile }) => (
             <>
-              <LivelyWord words={words} width={mobile ? 0.84 : 0.5} position={[mobile ? 0 : -w * 0.01, mobile ? -h * 0.02 : h * 0.04, 0]} />
+              <Backdrop y={mobile ? -h * 0.05 : 0} />
+              <LivelyWord track={wrap} words={words} width={mobile ? 0.84 : 0.5} position={[mobile ? 0 : -w * 0.01, mobile ? -h * 0.02 : h * 0.04, 0]} />
               <LivelyArrow position={[mobile ? w * 0.3 : w * 0.36, mobile ? -h * 0.17 : -h * 0.17, 0.5]} size={mobile ? 0.6 : 0.95} />
             </>
           )}
@@ -369,7 +491,15 @@ export function ContactScene({ word, onPress }: { word: string; onPress: () => v
           {({ h, mobile }) => (
             <>
               <StickerRain handle={rain} ambient={mobile ? 6 : 18} size={mobile ? 0.7 : 1} />
-              <LivelyWord words={words} width={mobile ? 0.95 : 0.7} position={[0, mobile ? -h * 0.06 : -h * 0.1, 0]} onPress={onPress} />
+              <Backdrop y={mobile ? -h * 0.1 : -h * 0.14} />
+              <LivelyWord
+                track={wrap}
+                introOnView
+                words={words}
+                width={mobile ? 0.95 : 0.7}
+                position={[0, mobile ? -h * 0.06 : -h * 0.1, 0]}
+                onPress={onPress}
+              />
             </>
           )}
         </Positioned>
