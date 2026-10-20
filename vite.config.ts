@@ -22,8 +22,7 @@ export default defineConfig(({mode}) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-            'ui-vendor': ['motion/react', 'lucide-react'],
+            firebase: ['firebase/app', 'firebase/firestore'],
           },
         },
       },

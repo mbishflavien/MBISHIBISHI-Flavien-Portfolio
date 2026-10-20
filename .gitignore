@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# design review work files
+.taste-skill/

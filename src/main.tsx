@@ -4,6 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { initGA } from './lib/analytics';
 
+document.documentElement.classList.add('js');
 initGA();
 
 createRoot(document.getElementById('root')!).render(
