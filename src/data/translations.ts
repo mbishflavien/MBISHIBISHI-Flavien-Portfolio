@@ -60,7 +60,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           period: "Aug 2026 – Present",
           description: [
             "Architecting scalable backend services, asynchronous task pipelines, and high-performance RESTful APIs using Python, FastAPI, and PostgreSQL.",
-            "Developing, fine-tuning, and productionizing Machine Learning models with robust data ingestion, feature processing, and inference pipelines.",
+            "Developing, fine-tuning, and productionizing Machine Learning models with data ingestion, feature processing, and inference pipelines.",
             "Optimizing database schemas, indexing strategies, and caching layers (Redis) to ensure high concurrency and sub-millisecond query latency.",
             "Collaborating with cross-functional engineering teams to implement clean architecture, CI/CD automation, and rigorous testing suites."
           ]
@@ -171,12 +171,12 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           id: "rapidaid",
           title: "RapidAid AI",
           description: "An emergency AI voice assistant designed to provide immediate healthcare guidance and emergency response coordination.",
-          longDescription: "RapidAid AI is a cutting-edge emergency response system that leverages advanced Natural Language Processing to assist users during medical crises. It can identify symptoms, provide step-by-step first aid instructions, and automatically coordinate with local emergency services. Built with a focus on low-latency response and high accuracy in critical situations.",
+          longDescription: "RapidAid AI is an emergency response system that leverages advanced Natural Language Processing to assist users during medical crises. It can identify symptoms, provide step-by-step first aid instructions, and automatically coordinate with local emergency services. Built with a focus on low-latency response and high accuracy in critical situations.",
           tags: ["Python", "OpenAI API", "Speech Recognition", "Healthcare AI"],
           image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
           link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
           github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
-          color: "from-red-500/20 to-orange-500/20",
+          color: "",
           features: ["Real-time voice processing", "Emergency service integration", "Offline first-aid database", "Multi-language support"]
         },
         {
@@ -188,18 +188,18 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
           link: "https://kfh-hospital-1.onrender.com",
           github: "https://github.com/kezacardine/kfh_hospital",
-          color: "from-blue-500/20 to-teal-500/20",
+          color: "",
           features: ["Predictive risk modeling", "Patient data visualization", "Automated health reports", "Provider dashboard"]
         },
         {
           id: "careconnect",
           title: "CareConnect",
-          description: "A comprehensive Healthcare Management System designed with a robust relational database and optimized PL/SQL queries.",
+          description: "A comprehensive Healthcare Management System built on a relational database with optimized PL/SQL queries.",
           longDescription: "CareConnect is an enterprise-grade hospital management solution that streamlines clinical and administrative workflows. It features a highly optimized database architecture capable of handling millions of patient records with sub-second query times. The system includes modules for appointment scheduling, electronic health records (EHR), and billing.",
           tags: ["PL/SQL", "Oracle", "Database Design", "Healthcare"],
           image: "https://datasolutionsexperts.com/wp-content/uploads/2024/01/Healthcare-Database-1.jpg",
           github: "https://github.com/mbishflavien/mbishibishi_flavien_27857_plsql_capstone_project",
-          color: "from-emerald-500/20 to-cyan-500/20",
+          color: "",
           features: ["Optimized PL/SQL procedures", "Role-based access control", "Comprehensive EHR management", "Automated billing system"]
         }
       ]
@@ -538,7 +538,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
           link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
           github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
-          color: "from-red-500/20 to-orange-500/20",
+          color: "",
           features: ["Uchakataji wa sauti wa wakati halisi", "Muunganisho wa huduma za dharura", "Hifadhidata ya huduma ya kwanza bila intaneti", "Msaada wa lugha nyingi"]
         },
         {
@@ -550,7 +550,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
           link: "https://kfh-hospital-1.onrender.com",
           github: "https://github.com/kezacardine/kfh_hospital",
-          color: "from-blue-500/20 to-teal-500/20",
+          color: "",
           features: ["Miundo ya utabiri wa hatari", "Uonyeshaji wa data za mgonjwa", "Ripoti za afya za kiotomatiki", "Dashibodi ya mtoa huduma"]
         },
         {
@@ -561,7 +561,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           tags: ["PL/SQL", "Oracle", "Muundo wa Hifadhidata", "Afya"],
           image: "https://datasolutionsexperts.com/wp-content/uploads/2024/01/Healthcare-Database-1.jpg",
           github: "https://github.com/mbishflavien/mbishibishi_flavien_27857_plsql_capstone_project",
-          color: "from-emerald-500/20 to-cyan-500/20",
+          color: "",
           features: ["Mifumo ya PL/SQL iliyoboreshwa", "Udhibiti wa ufikiaji unaotegemea majukumu", "Usimamizi kamili wa EHR", "Mfumo wa ankara wa kiotomatiki"]
         }
       ]
@@ -900,7 +900,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
           link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
           github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
-          color: "from-red-500/20 to-orange-500/20",
+          color: "",
           features: ["Gusesengura ijwi mu gihe nyacyo", "Guhuza na serivisi z'ubutabazi", "Ububiko bw'ubutabazi budasaba interineti", "Gukorana n'indimi nyinshi"]
         },
         {
@@ -912,7 +912,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
           link: "https://kfh-hospital-1.onrender.com",
           github: "https://github.com/kezacardine/kfh_hospital",
-          color: "from-blue-500/20 to-teal-500/20",
+          color: "",
           features: ["Gusesengura ibyago by'uburwayi", "Gushushanya amakuru y'umurwayi", "Raporo z'ubuzima zikora zonyine", "Imbonerahamwe y'abaganga"]
         },
         {
@@ -923,7 +923,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           tags: ["PL/SQL", "Oracle", "Gushushanya Database", "Ubuvuzi"],
           image: "https://datasolutionsexperts.com/wp-content/uploads/2024/01/Healthcare-Database-1.jpg",
           github: "https://github.com/mbishflavien/mbishibishi_flavien_27857_plsql_capstone_project",
-          color: "from-emerald-500/20 to-cyan-500/20",
+          color: "",
           features: ["Uburyo bwa PL/SQL bwihuse", "Gucunga uburenganzira bw'abakozi", "Gucunga amadosiye y'abarwayi (EHR)", "Kwishyuza no gukora fagitire"]
         }
       ]
@@ -1262,7 +1262,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800",
           link: "https://rapid-aid-healthcare-ai-voice-assis.vercel.app/",
           github: "https://github.com/mbishflavien/RapidAid-Healthcare-AI-Voice-Assistant",
-          color: "from-red-500/20 to-orange-500/20",
+          color: "",
           features: ["Traitement vocal en temps réel", "Intégration des services d'urgence", "Base de premiers secours hors-ligne", "Support multilingue"]
         },
         {
@@ -1274,7 +1274,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           image: "https://www.healthvectors.ai/blog/storage/2025/05/chronic-disease-prevention-with-smart-report.jpg",
           link: "https://kfh-hospital-1.onrender.com",
           github: "https://github.com/kezacardine/kfh_hospital",
-          color: "from-blue-500/20 to-teal-500/20",
+          color: "",
           features: ["Modélisation prédictive des risques", "Visualisation des données patient", "Rapports médicaux automatisés", "Tableau de bord praticien"]
         },
         {
@@ -1285,7 +1285,7 @@ export const TRANSLATIONS: Record<Language, Translation> = {
           tags: ["PL/SQL", "Oracle", "Conception BDD", "Santé"],
           image: "https://datasolutionsexperts.com/wp-content/uploads/2024/01/Healthcare-Database-1.jpg",
           github: "https://github.com/mbishflavien/mbishibishi_flavien_27857_plsql_capstone_project",
-          color: "from-emerald-500/20 to-cyan-500/20",
+          color: "",
           features: ["Procédures PL/SQL optimisées", "Contrôle d'accès par rôles (RBAC)", "Gestion complète des dossiers EHR", "Système de facturation automatisé"]
         }
       ]
