@@ -160,15 +160,17 @@ function useWordLight(ref: React.RefObject<HTMLElement | null>, deps: unknown[])
 const splitWords = (text: string) => text.split(' ').map((w, i) => <span className="w" key={i}>{w} </span>);
 
 /* ---------- Entrances: [data-reveal] rises once when it enters ---------- */
+// The revealed state is a data attribute, not a class: React rewrites className on re-render
+// (opening an experience row did that) and would hide the element again.
 function useReveal(deps: unknown[]) {
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        if (e.isIntersecting) { (e.target as HTMLElement).dataset.in = ''; io.unobserve(e.target); }
       }),
       { rootMargin: '0px 0px -10% 0px' }
     );
-    document.querySelectorAll('[data-reveal]:not(.is-in)').forEach((el) => io.observe(el));
+    document.querySelectorAll('[data-reveal]:not([data-in])').forEach((el) => io.observe(el));
     return () => io.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
