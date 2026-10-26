@@ -112,9 +112,9 @@ interface Slot {
 }
 
 function LivelyWord({
-  words, interval = 5200, width = 0.6, position = [0, 0, 0] as [number, number, number], onPress, track, introOnView = false,
+  words, interval = 5200, width = 0.6, maxHeight = 1, position = [0, 0, 0] as [number, number, number], onPress, track, introOnView = false,
 }: {
-  words: string[]; interval?: number; width?: number; position?: [number, number, number];
+  words: string[]; interval?: number; width?: number; maxHeight?: number; position?: [number, number, number];
   onPress?: () => void; track?: React.RefObject<HTMLElement | null>; introOnView?: boolean;
 }) {
   const font = useFont();
@@ -153,10 +153,12 @@ function LivelyWord({
   useEffect(() => {
     if (!font || !inView) return;
     const word = words[index % words.length];
-    const { letters, width: w, offsetY } = layoutWord(font, word);
+    const { letters, width: w, height: hgt, offsetY } = layoutWord(font, word);
     const t = now();
     const g = ++gen.current;
-    fitTarget.current = (viewport.width * width) / w;
+    // Each word fills the width or the height it is allowed, whichever it reaches first,
+    // so long words grow as large as short ones instead of shrinking to the same width.
+    fitTarget.current = Math.min((viewport.width * width) / w, (viewport.height * maxHeight) / hgt);
     if (!fit.current || Math.abs(fit.current / fitTarget.current - 1) > 0.6) fit.current = fitTarget.current;
     setSlots((prev) => [
       ...prev.filter((s) => s.dying === null || t - s.dying < 1.2).map((s) => (s.dying === null ? { ...s, dying: t } : s)),
@@ -168,7 +170,7 @@ function LivelyWord({
     const cleanup = window.setTimeout(() => setSlots((prev) => prev.filter((s) => s.dying === null)), 1400);
     return () => window.clearTimeout(cleanup);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [font, words, index, inView, viewport.width, width]);
+  }, [font, words, index, inView, viewport.width, viewport.height, width, maxHeight]);
 
   useFrame((state, dt) => {
     const grp = group.current;
@@ -474,7 +476,7 @@ export function HeroScene({ words }: { words: string[] }) {
               <Backdrop y={mobile ? -h * 0.03 : h * 0.03} />
               <Sparkles
                 count={mobile ? 26 : 60}
-                scale={[w * (mobile ? 0.9 : 0.7), h * 0.42, 2.5]}
+                scale={[w * (mobile ? 0.95 : 0.88), h * 0.46, 2.5]}
                 position={[0, mobile ? 0 : h * 0.08, 0.6]}
                 size={mobile ? 2.2 : 3}
                 speed={0.35}
@@ -482,7 +484,7 @@ export function HeroScene({ words }: { words: string[] }) {
                 opacity={0.85}
                 color="#e6ecff"
               />
-              <LivelyWord track={wrap} words={words} width={mobile ? 0.92 : 0.66} position={[mobile ? 0 : -w * 0.02, mobile ? h * 0.01 : h * 0.08, 0]} />
+              <LivelyWord track={wrap} words={words} width={mobile ? 0.94 : 0.86} maxHeight={mobile ? 0.3 : 0.38} position={[mobile ? 0 : -w * 0.02, mobile ? h * 0.01 : h * 0.08, 0]} />
               <LivelyArrow position={[mobile ? w * 0.32 : w * 0.39, mobile ? -h * 0.18 : -h * 0.2, 0.5]} size={mobile ? 0.6 : 1.05} />
             </>
           )}
