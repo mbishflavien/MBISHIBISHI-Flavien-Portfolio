@@ -184,6 +184,8 @@ export default function Portfolio() {
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [certIndex, setCertIndex] = useState<number | null>(null);
+  const [certFull, setCertFull] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -191,6 +193,8 @@ export default function Portfolio() {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const contactRef = useRef<HTMLDialogElement>(null);
+  const certRef = useRef<HTMLDialogElement>(null);
+  const certStageRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLParagraphElement>(null);
   const manifestoRef = useRef<HTMLElement>(null);
   const speedRef = useRef(0);
@@ -351,6 +355,43 @@ export default function Portfolio() {
     }
   };
 
+  /* ---------- Certificate viewer ---------- */
+  const awards = t.awards.items;
+  const cert = certIndex !== null ? awards[certIndex] ?? null : null;
+
+  useEffect(() => {
+    const d = certRef.current;
+    if (!d) return;
+    if (cert && !d.open) d.showModal();
+    if (!cert && d.open) d.close();
+  }, [cert]);
+
+  const stepCert = (by: number) => setCertIndex((i) => (i === null ? i : (i + by + awards.length) % awards.length));
+
+  // Real full screen where the browser allows it (not on iPhone); otherwise the stage fills the window.
+  const toggleCertFull = async () => {
+    const stage = certStageRef.current;
+    if (!stage) return;
+    if (document.fullscreenElement) { await document.exitFullscreen().catch(() => {}); return; }
+    if (certFull) { setCertFull(false); return; }
+    if (stage.requestFullscreen) {
+      try { await stage.requestFullscreen(); return; } catch { /* fall through to the CSS version */ }
+    }
+    setCertFull(true);
+  };
+
+  useEffect(() => {
+    const onChange = () => setCertFull(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const closeCert = () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    setCertFull(false);
+    setCertIndex(null);
+  };
+
   const copyEmail = async () => {
     trackCTAClick('Footer - Copy email');
     try {
@@ -489,15 +530,15 @@ export default function Portfolio() {
 
         {/* ---------- Badges and certificates ---------- */}
         <section id="certificates" className="certs" data-track="Awards">
-          <h2 className="label" data-reveal>{s.certs_title} <span>({t.awards.items.length})</span></h2>
+          <h2 className="label" data-reveal>{s.certs_title} <span>({awards.length})</span></h2>
           <div className="certs__grid">
-            {t.awards.items.map((a) => (
-              <a
+            {awards.map((a, i) => (
+              <button
                 key={a.id}
+                type="button"
                 className="cert"
-                href={a.verifyLink ?? a.image}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => { setCertIndex(i); trackCTAClick(`Certificate - ${a.title}`); }}
+                aria-label={`${a.title}, ${a.issuer}`}
                 data-reveal
               >
                 <span className="cert__media">
@@ -517,8 +558,8 @@ export default function Portfolio() {
                   <span>{a.title}</span>
                   <span className="mono">{a.date}</span>
                 </span>
-                <span className="cert__issuer">{a.issuer}{a.verifyLink && <> · {s.verify} ↗</>}</span>
-              </a>
+                <span className="cert__issuer">{a.issuer}</span>
+              </button>
             ))}
           </div>
         </section>
@@ -578,6 +619,56 @@ export default function Portfolio() {
           </p>
         </section>
       </main>
+
+      {/* ---------- Certificate viewer ---------- */}
+      <dialog
+        ref={certRef}
+        className="dialog cert-viewer"
+        onClose={closeCert}
+        onClick={(e) => { if (e.target === e.currentTarget) closeCert(); }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowRight') { e.preventDefault(); stepCert(1); }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); stepCert(-1); }
+        }}
+        aria-labelledby="cert-viewer-title"
+      >
+        {cert && (
+          <>
+            {/* Focused on open, so the arrow keys work at once and no button shows a focus ring. */}
+            <div ref={certStageRef} className={`cert-viewer__stage${certFull ? ' is-full' : ''}`} tabIndex={-1} autoFocus>
+              <img
+                key={cert.id}
+                src={cert.image}
+                alt={`${cert.title}, ${cert.issuer}`}
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const fb = AWARD_FALLBACK[cert.id];
+                  if (fb && !e.currentTarget.src.endsWith(fb)) e.currentTarget.src = fb;
+                }}
+              />
+              <button className="cert-viewer__nav cert-viewer__nav--prev mono" onClick={() => stepCert(-1)} aria-label={s.prev}>←</button>
+              <button className="cert-viewer__nav cert-viewer__nav--next mono" onClick={() => stepCert(1)} aria-label={s.next}>→</button>
+              <div className="cert-viewer__tools mono">
+                <span>{(certIndex ?? 0) + 1} / {awards.length}</span>
+                <button onClick={toggleCertFull}>[{certFull ? s.exit_fullscreen : s.fullscreen}]</button>
+                {certFull && <button onClick={closeCert}>[{t.awards.modal.close}]</button>}
+              </div>
+            </div>
+            <div className="dialog__body cert-viewer__body">
+              <span className="tag">{cert.category}</span>
+              <h2 id="cert-viewer-title">{cert.title}</h2>
+              <p className="mono dialog__tags">{cert.issuer} · {cert.date}{cert.credentialId && <> · {cert.credentialId}</>}</p>
+              <p>{cert.description}</p>
+              <div className="dialog__actions">
+                {cert.verifyLink && (
+                  <a className="mono" href={cert.verifyLink} target="_blank" rel="noopener noreferrer">[{cert.verifyLabel || s.verify} ↗]</a>
+                )}
+                <button className="mono dialog__close" onClick={closeCert}>[{t.awards.modal.close}]</button>
+              </div>
+            </div>
+          </>
+        )}
+      </dialog>
 
       {/* ---------- Contact form ---------- */}
       <dialog
