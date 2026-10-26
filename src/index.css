@@ -226,10 +226,12 @@ img { display: block; max-width: 100%; }
 /* ---------- Certificates ---------- */
 .certs { position: relative; z-index: 2; padding: 80px var(--m) 200px; }
 .certs__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 56px 28px; }
-.cert { text-decoration: none; display: block; }
+.cert { display: block; width: 100%; text-align: left; cursor: zoom-in; }
 .cert__media { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--black); overflow: hidden; }
-.cert__media img { max-width: 78%; max-height: 78%; object-fit: contain; transition: transform 700ms var(--ease); }
-.cert:hover .cert__media img { transform: scale(1.06); }
+/* Kept blurred until hovered or focused: a preview, then the full view on click. */
+.cert__media img { max-width: 78%; max-height: 78%; object-fit: contain; filter: blur(12px) saturate(0.7); opacity: 0.75; transform: scale(1.02); transition: filter 500ms var(--ease), opacity 500ms ease, transform 700ms var(--ease); }
+.cert:hover .cert__media img, .cert:focus-visible .cert__media img { filter: none; opacity: 1; transform: scale(1.06); }
+@media (hover: none) { .cert__media img { filter: blur(6px) saturate(0.8); } }
 .cert__caption { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font: 600 14px/1.25 var(--sans); font-stretch: 108%; text-transform: uppercase; }
 .cert__caption .mono { font-size: 12px; color: var(--grey); white-space: nowrap; text-transform: none; }
 .cert__issuer { display: block; margin-top: 4px; font: 400 13px/1.4 var(--sans); color: var(--grey); transition: color 200ms ease; }
@@ -354,6 +356,36 @@ img { display: block; max-width: 100%; }
 .contact-form__status.is-success { color: var(--lime); }
 .contact-form__status.is-error { color: #ff8a7a; }
 .btn[disabled] { opacity: 0.6; cursor: wait; }
+
+/* ---------- Certificate viewer ---------- */
+.cert-viewer { width: min(1080px, calc(100vw - 2 * var(--m))); }
+.cert-viewer__stage { position: relative; display: flex; align-items: center; justify-content: center; height: min(66svh, 640px); padding: 28px 72px 40px; background: var(--black); outline: none; }
+.cert-viewer__stage img { display: block; max-width: 100%; max-height: 100%; min-height: 0; object-fit: contain; animation: cert-in 450ms var(--ease); }
+@keyframes cert-in { from { opacity: 0; transform: scale(0.97); } }
+.cert-viewer__nav {
+  position: absolute; top: 50%; width: 44px; height: 44px; margin-top: -22px; display: grid; place-items: center;
+  font-size: 20px; color: var(--white); border: 1px solid rgba(255, 255, 255, 0.25); transition: border-color 200ms ease, color 200ms ease, transform 140ms ease;
+}
+.cert-viewer__nav:hover { color: var(--lime); border-color: var(--lime); }
+.cert-viewer__nav:active { transform: scale(0.94); }
+.cert-viewer__nav--prev { left: 16px; }
+.cert-viewer__nav--next { right: 16px; }
+.cert-viewer__tools { position: absolute; left: 16px; right: 16px; bottom: 10px; display: flex; justify-content: flex-end; align-items: center; gap: 18px; font-size: 12px; text-transform: uppercase; color: var(--grey); }
+.cert-viewer__tools span { margin-right: auto; }
+.cert-viewer__tools button { text-transform: uppercase; color: var(--white); }
+.cert-viewer__tools button:hover { color: var(--lime); }
+.cert-viewer__body .tag { top: -11px; right: 36px; }
+/* Browser full screen, or the fallback that fills the window */
+.cert-viewer__stage:fullscreen { height: 100vh; padding: 48px 88px; }
+.cert-viewer__stage.is-full:not(:fullscreen) { position: fixed; inset: 0; z-index: 10; height: 100dvh; padding: 56px 16px; }
+@media (max-width: 700px) {
+  .cert-viewer__stage { height: 52svh; padding: 20px 12px 40px; }
+  .cert-viewer__nav { top: auto; bottom: 0; margin: 0; width: 40px; height: 36px; border: 0; }
+  .cert-viewer__nav--prev { left: auto; right: 52px; }
+  .cert-viewer__nav--next { right: 8px; }
+  .cert-viewer__tools { right: 100px; }
+  .cert-viewer__body .tag { right: auto; left: 20px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .hero__streaks i { animation: none; }
   .manifesto { height: auto; }

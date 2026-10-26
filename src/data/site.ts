@@ -24,6 +24,10 @@ export interface SiteCopy {
   live: string;
   code: string;
   verify: string;
+  fullscreen: string;
+  exit_fullscreen: string;
+  prev: string;
+  next: string;
 }
 
 export const SITE_COPY: Record<Language, SiteCopy> = {
@@ -49,6 +53,10 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     live: "Live",
     code: "Code",
     verify: "Verify",
+    fullscreen: "Full screen",
+    exit_fullscreen: "Exit full screen",
+    prev: "Previous",
+    next: "Next",
   },
   sw: {
     nav_work: "Kazi",
@@ -72,6 +80,10 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     live: "Hai",
     code: "Msimbo",
     verify: "Thibitisha",
+    fullscreen: "Skrini nzima",
+    exit_fullscreen: "Toka skrini nzima",
+    prev: "Iliyotangulia",
+    next: "Inayofuata",
   },
   rw: {
     nav_work: "Imishinga",
@@ -95,6 +107,10 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     live: "Irakora",
     code: "Kode",
     verify: "Genzura",
+    fullscreen: "Ecran yose",
+    exit_fullscreen: "Va kuri ecran yose",
+    prev: "Ibibanza",
+    next: "Ibikurikira",
   },
   fr: {
     nav_work: "Projets",
@@ -118,6 +134,10 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     live: "En ligne",
     code: "Code",
     verify: "Vérifier",
+    fullscreen: "Plein écran",
+    exit_fullscreen: "Quitter le plein écran",
+    prev: "Précédent",
+    next: "Suivant",
   },
 };
 
