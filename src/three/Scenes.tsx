@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree, ThreeEvent } from '@react-three/fiber';
-import { ContactShadows, Environment, Lightformer } from '@react-three/drei';
+import { ContactShadows, Environment, Lightformer, Sparkles } from '@react-three/drei';
 import type { Font } from 'three/examples/jsm/loaders/FontLoader.js';
 import { loadScriptFont, layoutWord, arrowGeometry, livelyMaterial } from './inflated';
 import { stickerAtlas } from './stickers';
@@ -81,6 +81,22 @@ function Backdrop({ y = -0.25 }: { y?: number }) {
       frames={Infinity}
     />
   );
+}
+
+// Every few seconds a soft key light sweeps across, so a highlight glides over the glossy letters.
+function SweepLight({ every = 6, span = 9 }: { every?: number; span?: number }) {
+  const light = useRef<THREE.DirectionalLight>(null);
+  const still = reduced();
+  useFrame((state) => {
+    const l = light.current;
+    if (!l) return;
+    if (still) { l.intensity = 0; return; }
+    const p = (state.clock.elapsedTime % every) / 2.2; // the sweep itself takes 2.2 s
+    if (p > 1) { l.intensity = 0; return; }
+    l.position.set(-span + p * span * 2, 2.5, 4);
+    l.intensity = Math.sin(p * Math.PI) * 2.6;
+  });
+  return <directionalLight ref={light} color="#ffffff" intensity={0} />;
 }
 
 function useFont() {
@@ -449,14 +465,25 @@ export function HeroScene({ words }: { words: string[] }) {
   const visible = useVisible(wrap);
   return (
     <div ref={wrap} className="scene scene--hero">
-      <Canvas dpr={[1, 1.75]} camera={{ fov: 30, position: [0, 0, 12] }} gl={{ antialias: true, alpha: true }} frameloop={visible ? 'always' : 'never'}>
+      <Canvas dpr={[1, 2]} camera={{ fov: 30, position: [0, 0, 12] }} gl={{ antialias: true, alpha: true }} frameloop={visible ? 'always' : 'never'}>
         <Studio />
+        <SweepLight />
         <Positioned>
           {({ w, h, mobile }) => (
             <>
-              <Backdrop y={mobile ? -h * 0.05 : 0} />
-              <LivelyWord track={wrap} words={words} width={mobile ? 0.84 : 0.5} position={[mobile ? 0 : -w * 0.01, mobile ? -h * 0.02 : h * 0.04, 0]} />
-              <LivelyArrow position={[mobile ? w * 0.3 : w * 0.36, mobile ? -h * 0.17 : -h * 0.17, 0.5]} size={mobile ? 0.6 : 0.95} />
+              <Backdrop y={mobile ? -h * 0.03 : h * 0.03} />
+              <Sparkles
+                count={mobile ? 26 : 60}
+                scale={[w * (mobile ? 0.9 : 0.7), h * 0.42, 2.5]}
+                position={[0, mobile ? 0 : h * 0.08, 0.6]}
+                size={mobile ? 2.2 : 3}
+                speed={0.35}
+                noise={1.2}
+                opacity={0.85}
+                color="#e6ecff"
+              />
+              <LivelyWord track={wrap} words={words} width={mobile ? 0.92 : 0.66} position={[mobile ? 0 : -w * 0.02, mobile ? h * 0.01 : h * 0.08, 0]} />
+              <LivelyArrow position={[mobile ? w * 0.32 : w * 0.39, mobile ? -h * 0.18 : -h * 0.2, 0.5]} size={mobile ? 0.6 : 1.05} />
             </>
           )}
         </Positioned>
