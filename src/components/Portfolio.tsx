@@ -10,6 +10,7 @@ import { SITE_COPY, EXTRA_PROJECTS, PROJECT_MEDIA, PROJECT_TAG, CLAPLOCK_DIAGRAM
 import { PuffyWord, PuffyArrow } from './Puffy';
 import { Scene3D } from './Scene3D';
 import { DotReveal } from './DotReveal';
+import { HoverFx } from './HoverFx';
 
 const HeroScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.HeroScene })));
 const ContactScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.ContactScene })));
@@ -414,7 +415,7 @@ export default function Portfolio() {
 
   const tile = (p: ProjectItem, i: number) => (
     <article key={p.id} className={`tile tile--${i}`} data-reveal>
-      <button className="tile__media" onClick={() => { setOpenProject(p.id); trackCTAClick(`Project - ${p.title}`); }} aria-label={`${p.title}: ${p.description}`}>
+      <button className="tile__media" data-tilt data-cursor="↗" onClick={() => { setOpenProject(p.id); trackCTAClick(`Project - ${p.title}`); }} aria-label={`${p.title}: ${p.description}`}>
         {p.id === 'claplock' ? (
           <pre aria-hidden="true">{CLAPLOCK_DIAGRAM}</pre>
         ) : (
@@ -436,23 +437,24 @@ export default function Portfolio() {
     <>
       <Loader />
       <GridLines />
+      <HoverFx />
 
       {/* ---------- Instrument bar ---------- */}
       <header className="hud">
-        <a className="hud__mark" href="#top">Mbishibishi</a>
+        <a className="hud__mark" href="#top" data-magnetic="0.2">Mbishibishi</a>
         <nav className="hud__nav" aria-label="Main">
-          <a href="#work" data-scramble>{s.nav_work}</a>
-          <a href="#contact" data-scramble>{s.nav_contact}</a>
-          <button onClick={nextLanguage} aria-label={`Language: ${language.toUpperCase()}. Change language`}>
+          <a href="#work" data-scramble data-magnetic>{s.nav_work}</a>
+          <a href="#contact" data-scramble data-magnetic>{s.nav_contact}</a>
+          <button onClick={nextLanguage} data-magnetic aria-label={`Language: ${language.toUpperCase()}. Change language`}>
             Lang[{language.toUpperCase()}]
           </button>
-          <a className="hud__cv" data-scramble href={CV} download onClick={() => trackCTAClick('Download CV - Nav')}>CV[↓]</a>
+          <a className="hud__cv" data-scramble data-magnetic href={CV} download onClick={() => trackCTAClick('Download CV - Nav')}>CV[↓]</a>
         </nav>
       </header>
       <div className="hud hud--foot" aria-hidden="true">
         <span>GMT+2 RW {time}{temp !== null && ` ${temp}°C`}</span>
         <Coordinates />
-        <button className="hud__globe" onClick={nextLanguage} tabIndex={-1} title="Change language">
+        <button className="hud__globe" data-magnetic="0.5" onClick={nextLanguage} tabIndex={-1} title="Change language">
           <svg viewBox="0 0 44 24"><ellipse cx="22" cy="12" rx="20" ry="10" /><ellipse cx="22" cy="12" rx="9" ry="10" /><path d="M2 12h40" /></svg>
         </button>
       </div>
@@ -487,7 +489,7 @@ export default function Portfolio() {
 
         {/* ---------- Intro ---------- */}
         <section className="intro" data-track="About" aria-label={t.about.title}>
-          <figure className="intro__photo" data-reveal>
+          <figure className="intro__photo" data-reveal data-tilt>
             <img src="/media/portrait-hoodie.png" alt="Flavien Mbishibishi" width={427} height={584} />
             <figcaption className="intro__sign" aria-hidden="true">Flavien</figcaption>
           </figure>
@@ -524,7 +526,7 @@ export default function Portfolio() {
           </ol>
           <p className="tools" data-reveal>
             <span className="label">{s.tools}</span>
-            {TOOLS.map((tool) => <span key={tool} className="tools__item">{tool}</span>)}
+            {TOOLS.map((tool) => <span key={tool} className="tools__item" data-magnetic="0.35">{tool}</span>)}
           </p>
         </section>
 
@@ -537,11 +539,12 @@ export default function Portfolio() {
                 key={a.id}
                 type="button"
                 className="cert"
+                data-cursor="⤢"
                 onClick={() => { setCertIndex(i); trackCTAClick(`Certificate - ${a.title}`); }}
                 aria-label={`${a.title}, ${a.issuer}`}
                 data-reveal
               >
-                <span className="cert__media">
+                <span className="cert__media" data-tilt>
                   <img
                     src={a.image}
                     alt=""
@@ -593,14 +596,14 @@ export default function Portfolio() {
           >
             <ContactScene word={talkWord} onPress={() => openContact('Lets talk 3D')} />
           </Scene3D>
-          <button className="contact__hint mono" onClick={() => openContact('Lets talk hint')}>[{s.write}]</button>
+          <button className="contact__hint mono" data-magnetic="0.3" onClick={() => openContact('Lets talk hint')}>[{s.write}]</button>
           <h2 className="contact__title">
             {s.footer_headline.map((line, i) => <span className="line" key={i}>{line}</span>)}
             <span className="line"><Scramble text={s.footer_lime} className="lime" every={5000} /></span>
           </h2>
           <div className="contact__foot">
             <div className="mono">
-              <button className="btn contact__btn" onClick={() => openContact('Footer button')}>{s.write} ↗</button>
+              <button className="btn contact__btn" data-magnetic="0.25" onClick={() => openContact('Footer button')}>{s.write} ↗</button>
               <br />
               <a href={`mailto:${EMAIL}`} onClick={() => trackCTAClick('Footer - Email')}>{EMAIL}</a>
               <button onClick={copyEmail}>{copied ? `[${s.copied}]` : '[Copy]'}</button>
@@ -609,7 +612,7 @@ export default function Portfolio() {
             </div>
             <nav className="mono" aria-label="Elsewhere">
               {SOCIAL.map((l) => (
-                <a key={l.name} data-scramble href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => trackCTAClick(`Footer Social - ${l.name}`)}>{l.name}</a>
+                <a key={l.name} data-scramble data-magnetic="0.25" href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => trackCTAClick(`Footer Social - ${l.name}`)}>{l.name}</a>
               ))}
               <a href={CV} download>CV</a>
             </nav>
@@ -646,8 +649,8 @@ export default function Portfolio() {
                   if (fb && !e.currentTarget.src.endsWith(fb)) e.currentTarget.src = fb;
                 }}
               />
-              <button className="cert-viewer__nav cert-viewer__nav--prev mono" onClick={() => stepCert(-1)} aria-label={s.prev}>←</button>
-              <button className="cert-viewer__nav cert-viewer__nav--next mono" onClick={() => stepCert(1)} aria-label={s.next}>→</button>
+              <button className="cert-viewer__nav cert-viewer__nav--prev mono" data-magnetic="0.3" onClick={() => stepCert(-1)} aria-label={s.prev}>←</button>
+              <button className="cert-viewer__nav cert-viewer__nav--next mono" data-magnetic="0.3" onClick={() => stepCert(1)} aria-label={s.next}>→</button>
               <div className="cert-viewer__tools mono">
                 <span>{(certIndex ?? 0) + 1} / {awards.length}</span>
                 <button onClick={toggleCertFull}>[{certFull ? s.exit_fullscreen : s.fullscreen}]</button>
