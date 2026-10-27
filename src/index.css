@@ -166,7 +166,7 @@ img { display: block; max-width: 100%; }
 .tile:nth-child(even) { grid-column: 7 / 13; top: clamp(80px, 11vw, 200px); }
 .work__grid:has(.tile:nth-child(even):last-child) { padding-bottom: clamp(80px, 11vw, 200px); }
 .tile__media { position: relative; display: block; width: 100%; aspect-ratio: 16 / 10; background: var(--black); overflow: hidden; text-align: left; }
-.tile__media { transform: perspective(900px) rotateX(calc(var(--curl, 0) * -9deg)) scaleY(calc(1 - var(--curl, 0) * var(--curl, 0) * 0.06)); transform-origin: 50% 50%; }
+.tile__media { transform: perspective(900px) rotateX(calc(var(--curl, 0) * -9deg + var(--rx, 0deg))) rotateY(var(--ry, 0deg)) scaleY(calc(1 - var(--curl, 0) * var(--curl, 0) * 0.06)); transform-origin: 50% 50%; }
 .dots { position: absolute; inset: 0; }
 .dots__base { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.15) brightness(0.9); transition: transform 900ms var(--ease); }
 .dots::after { content: ""; position: absolute; inset: 0; background: #1a2fd0; mix-blend-mode: multiply; opacity: 0.85; pointer-events: none; }
@@ -403,3 +403,116 @@ img { display: block; max-width: 100%; }
 }
 .contact .contact__hint:hover { color: var(--white); letter-spacing: 0.1em; }
 @media (max-width: 700px) { .contact .contact__hint { top: 61%; } }
+
+/* ---------- Hover life ---------- */
+/* Pointer ring: trails the pointer, swells over anything clickable and can carry a label. */
+.cursor { position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; mix-blend-mode: difference; transition: opacity 200ms ease; }
+.cursor.is-hidden { opacity: 0; }
+.cursor__ring {
+  position: absolute; left: -8px; top: -8px; width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid #fff; transition: transform 380ms var(--ease), background-color 200ms ease, border-color 200ms ease;
+}
+.cursor.is-hot .cursor__ring { transform: scale(2.6); border-color: var(--lime); }
+.cursor.has-label .cursor__ring { transform: scale(4.4); background: #fff; border-color: #fff; }
+.cursor.is-down .cursor__ring { transform: scale(1.6); transition-duration: 120ms; }
+.cursor.has-label.is-down .cursor__ring { transform: scale(3.6); }
+.cursor__label {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) scale(0.4); opacity: 0;
+  font: 500 18px/1 var(--mono); color: #000; transition: transform 300ms var(--ease), opacity 200ms ease;
+}
+.cursor.has-label .cursor__label { transform: translate(-50%, -50%); opacity: 1; }
+
+/* Magnetic pieces ease back when the pointer leaves. */
+[data-magnetic] { transition: translate 500ms cubic-bezier(0.2, 1.6, 0.4, 1); }
+.has-fx [data-magnetic]:hover { transition-duration: 120ms; transition-timing-function: linear; }
+.hud__nav a, .hud__nav button, .hud__mark { display: inline-block; }
+
+/* Tilt with a soft glare that follows the pointer. */
+[data-tilt] { --rx: 0deg; --ry: 0deg; }
+[data-tilt]::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.22), transparent 55%);
+  transition: opacity 300ms ease;
+}
+[data-tilt].is-tilting::after { opacity: 1; }
+.tile__media, .cert__media, .intro__photo { transition: transform 600ms var(--ease); }
+[data-tilt].is-tilting { transition-duration: 120ms; }
+.cert__media { transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)); }
+.intro__photo, .js .intro__photo[data-reveal][data-in] { transform: perspective(800px) rotateX(var(--rx)) rotateY(var(--ry)); }
+.js .intro__photo[data-reveal][data-in] { transition: opacity 900ms var(--ease), transform 600ms var(--ease); }
+.js .intro__photo[data-reveal][data-in].is-tilting { transition-duration: 900ms, 120ms; }
+
+/* Project captions: an arrow slides in after the name. */
+.tile__caption h3::after { content: " →"; display: inline-block; color: var(--lime); opacity: 0; transform: translateX(-8px); transition: opacity 250ms ease, transform 400ms var(--ease); }
+.tile:hover .tile__caption h3::after { opacity: 1; transform: none; }
+.tile:hover .tile__caption h3 { color: var(--lime); }
+.tile__caption h3 { transition: color 200ms ease; }
+
+/* Intro: hovered word hops and lights up, its neighbours follow a little (a small wave). */
+.intro__lead .w { position: relative; top: 0; transition: opacity 200ms linear, top 350ms cubic-bezier(0.2, 1.8, 0.4, 1), color 200ms ease; }
+.intro__lead .w:hover { top: -0.16em; color: var(--lime); opacity: 1 !important; }
+.intro__lead .w:has(+ .w:hover), .intro__lead .w:hover + .w { top: -0.08em; }
+.intro__lead .w:has(+ .w + .w:hover), .intro__lead .w:hover + .w + .w { top: -0.03em; }
+.intro__more a { display: inline-block; transition: text-decoration-color 200ms ease, color 200ms ease, transform 350ms cubic-bezier(0.2, 1.8, 0.4, 1); }
+.intro__more a:hover { transform: translateY(-3px) rotate(-1.5deg); }
+
+/* Portrait: the photo leans in and the signature wiggles. */
+.intro__photo img { transition: transform 700ms var(--ease), filter 400ms ease; }
+.intro__photo:hover img { transform: scale(1.05); filter: saturate(1.2) contrast(1.05); }
+.intro__photo:hover .intro__sign { animation: wiggle 700ms ease-in-out; }
+.intro__sign { z-index: 4; }
+@keyframes wiggle { 20% { rotate: 6deg; } 45% { rotate: -5deg; } 70% { rotate: 3deg; } 100% { rotate: 0deg; } }
+
+/* Section labels: the count does a little jump. */
+.label span { display: inline-block; transition: transform 400ms cubic-bezier(0.2, 1.8, 0.4, 1), color 200ms ease; }
+.label:hover span { transform: translateY(-4px) rotate(-8deg); color: var(--lime); }
+
+/* Experience: a lime rule sweeps in, the role slides, the plus turns. */
+.job__row { position: relative; }
+.job__row::before { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--lime); transform: scaleX(0); transform-origin: left; transition: transform 600ms var(--ease); }
+.job__row:hover::before { transform: scaleX(1); }
+.job__role, .job__org { transition: color 200ms ease, transform 500ms var(--ease); }
+.job__row:hover .job__role { transform: translateX(14px); }
+.job__row:hover .job__org { transform: translateX(8px); color: var(--white); }
+.job__toggle { transition: transform 500ms cubic-bezier(0.2, 1.6, 0.4, 1); }
+.job__row:hover .job__toggle { transform: rotate(180deg) scale(1.25); }
+
+/* Tool chips wobble like jelly. */
+.tools__item { display: inline-block; }
+.tools__item:hover { animation: jelly 600ms ease; }
+@keyframes jelly { 25% { scale: 1.12 0.9; } 50% { scale: 0.94 1.08; } 75% { scale: 1.03 0.98; } 100% { scale: 1; } }
+
+/* Certificates: caption arrow and a lifted card. */
+.cert__caption > span:first-child { transition: color 200ms ease; }
+.cert:hover .cert__caption > span:first-child { color: var(--lime); }
+.cert__media .tag { transition: transform 300ms var(--ease); }
+.cert:hover .cert__media .tag { transform: translateY(-3px); }
+
+/* Buttons: a white fill sweeps across. */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white); transform: translateX(-101%); transition: transform 450ms var(--ease); }
+.btn:hover { background: var(--lime); }
+.btn:hover::before { transform: none; }
+
+/* Big titles: lines spread apart a touch on hover. */
+/* (translate, not transform: the entrance animation holds transform) */
+.hero__title .line { transition: translate 600ms var(--ease); }
+.hero__title:hover .line:nth-child(2) { translate: 0.18em 0; }
+.hero__title:hover .line:nth-child(3) { translate: 0.36em 0; }
+.hero__title:hover .line:nth-child(4) { translate: 0.54em 0; }
+
+/* Manifesto notes light up. */
+.ring { transition: transform 900ms var(--ease), opacity 700ms ease, color 200ms ease; }
+.manifesto__rings.is-on .ring:hover { color: var(--lime); transform: scale(1.06); }
+
+/* Footer links and the mark lift. */
+.hud__mark { transition: letter-spacing 400ms var(--ease), translate 500ms cubic-bezier(0.2, 1.6, 0.4, 1); }
+.hud__mark:hover { letter-spacing: 0.08em; }
+.contact__foot a { display: inline-block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__lead .w:hover, .intro__lead .w:has(+ .w:hover), .intro__lead .w:hover + .w { top: 0; }
+  .tools__item:hover, .intro__photo:hover .intro__sign { animation: none; }
+  .hero__title:hover .line { translate: none; }
+  .job__row:hover .job__role, .job__row:hover .job__org { transform: none; }
+}
