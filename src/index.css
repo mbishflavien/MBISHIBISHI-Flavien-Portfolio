@@ -86,6 +86,9 @@ img { display: block; max-width: 100%; }
 .hero__streaks i:nth-child(2) { top: 46%; background: #0d1f9e; animation-delay: -5s; }
 .hero__streaks i:nth-child(3) { top: 70%; background: #2a44e6; opacity: 0.35; animation-delay: -9s; }
 @keyframes streak { to { transform: translateX(8%) scaleY(1.3); } }
+/* Liquid backdrop (LiquidBg); the streaks above stay as the fallback underneath. */
+.hero__liquid { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.6s ease; }
+.hero__liquid.is-on { opacity: 1; }
 
 .hero__top { position: absolute; top: 112px; left: var(--m); right: var(--m); display: grid; grid-template-columns: repeat(3, 1fr); }
 .hero__top p { margin: 0; padding-right: 24px; }
@@ -166,7 +169,7 @@ img { display: block; max-width: 100%; }
 .tile:nth-child(even) { grid-column: 7 / 13; top: clamp(80px, 11vw, 200px); }
 .work__grid:has(.tile:nth-child(even):last-child) { padding-bottom: clamp(80px, 11vw, 200px); }
 .tile__media { position: relative; display: block; width: 100%; aspect-ratio: 16 / 10; background: var(--black); overflow: hidden; text-align: left; }
-.tile__media { transform: perspective(900px) rotateX(calc(var(--curl, 0) * -9deg + var(--rx, 0deg))) rotateY(var(--ry, 0deg)) scaleY(calc(1 - var(--curl, 0) * var(--curl, 0) * 0.06)); transform-origin: 50% 50%; }
+.tile__media { transform: perspective(900px) rotateX(calc(var(--curl, 0) * -9deg)) scaleY(calc(1 - var(--curl, 0) * var(--curl, 0) * 0.06)); transform-origin: 50% 50%; }
 .dots { position: absolute; inset: 0; }
 .dots__base { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.15) brightness(0.9); transition: transform 900ms var(--ease); }
 .dots::after { content: ""; position: absolute; inset: 0; background: #1a2fd0; mix-blend-mode: multiply; opacity: 0.85; pointer-events: none; }
@@ -427,7 +430,7 @@ img { display: block; max-width: 100%; }
 .has-fx [data-magnetic]:hover { transition-duration: 120ms; transition-timing-function: linear; }
 .hud__nav a, .hud__nav button, .hud__mark { display: inline-block; }
 
-/* Tilt with a soft glare that follows the pointer. */
+/* Tilt (the portrait) with a soft glare that follows the pointer. */
 [data-tilt] { --rx: 0deg; --ry: 0deg; }
 [data-tilt]::after {
   content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0;
@@ -435,9 +438,8 @@ img { display: block; max-width: 100%; }
   transition: opacity 300ms ease;
 }
 [data-tilt].is-tilting::after { opacity: 1; }
-.tile__media, .cert__media, .intro__photo { transition: transform 600ms var(--ease); }
+.intro__photo { transition: transform 600ms var(--ease); }
 [data-tilt].is-tilting { transition-duration: 120ms; }
-.cert__media { transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)); }
 .intro__photo, .js .intro__photo[data-reveal][data-in] { transform: perspective(800px) rotateX(var(--rx)) rotateY(var(--ry)); }
 .js .intro__photo[data-reveal][data-in] { transition: opacity 900ms var(--ease), transform 600ms var(--ease); }
 .js .intro__photo[data-reveal][data-in].is-tilting { transition-duration: 900ms, 120ms; }

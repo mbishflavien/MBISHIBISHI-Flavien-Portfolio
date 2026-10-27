@@ -11,6 +11,7 @@ import { PuffyWord, PuffyArrow } from './Puffy';
 import { Scene3D } from './Scene3D';
 import { DotReveal } from './DotReveal';
 import { HoverFx } from './HoverFx';
+import { LiquidBg } from './LiquidBg';
 
 const HeroScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.HeroScene })));
 const ContactScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.ContactScene })));
@@ -415,7 +416,7 @@ export default function Portfolio() {
 
   const tile = (p: ProjectItem, i: number) => (
     <article key={p.id} className={`tile tile--${i}`} data-reveal>
-      <button className="tile__media" data-tilt data-cursor="↗" onClick={() => { setOpenProject(p.id); trackCTAClick(`Project - ${p.title}`); }} aria-label={`${p.title}: ${p.description}`}>
+      <button className="tile__media" data-cursor="↗" onClick={() => { setOpenProject(p.id); trackCTAClick(`Project - ${p.title}`); }} aria-label={`${p.title}: ${p.description}`}>
         {p.id === 'claplock' ? (
           <pre aria-hidden="true">{CLAPLOCK_DIAGRAM}</pre>
         ) : (
@@ -463,6 +464,7 @@ export default function Portfolio() {
         {/* ---------- Hero ---------- */}
         <section className="hero" data-track="Hero">
           <div className="hero__streaks" aria-hidden="true"><i /><i /><i /></div>
+          <LiquidBg className="hero__liquid" />
           <div className="hero__top">
             <p className="hero__kicker">{s.kicker[0]}<br />{s.kicker[1]}</p>
             <p className="mono">{s.motto[0]}<br />{s.motto[1]}</p>
@@ -544,7 +546,7 @@ export default function Portfolio() {
                 aria-label={`${a.title}, ${a.issuer}`}
                 data-reveal
               >
-                <span className="cert__media" data-tilt>
+                <span className="cert__media">
                   <img
                     src={a.image}
                     alt=""
