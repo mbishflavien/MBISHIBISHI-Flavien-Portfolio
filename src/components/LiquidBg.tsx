@@ -1,10 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { ShaderCanvas } from './ShaderCanvas';
 
 // Slow liquid-chrome backdrop for the hero: deep blue folds with a pastel, iridescent sheen on the ridges.
-// Plain WebGL (no three.js) so it can start before the 3D chunk loads. Renders at reduced resolution,
-// pauses off screen, and draws one still frame when motion is reduced. Without WebGL the CSS streaks stay.
-
-const VERT = `attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
+// Soft folds hide a low resolution well, so it renders at 0.4x to keep weak GPUs cool.
 
 const FRAG = `
 precision highp float;
@@ -67,85 +64,5 @@ void main() {
 }`;
 
 export function LiquidBg({ className }: { className?: string }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = ref.current!;
-    const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
-    if (!gl) return;
-
-    const shader = (type: number, src: string) => {
-      const s = gl.createShader(type)!;
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
-    };
-    const vs = shader(gl.VERTEX_SHADER, VERT), fs = shader(gl.FRAGMENT_SHADER, FRAG);
-    if (!vs || !fs) return;
-    const prog = gl.createProgram()!;
-    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
-    gl.useProgram(prog);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, 'p');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const uRes = gl.getUniformLocation(prog, 'uRes');
-    const uTime = gl.getUniformLocation(prog, 'uTime');
-    const uPtr = gl.getUniformLocation(prog, 'uPtr');
-
-    // Soft folds hide a low resolution well, and it keeps weak GPUs cool.
-    const scale = 0.4;
-    const resize = () => {
-      const w = Math.max(1, Math.round(canvas.clientWidth * scale));
-      const h = Math.max(1, Math.round(canvas.clientHeight * scale));
-      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
-      gl.uniform2f(uRes, w, h);
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-
-    let px = 0, py = 0, tx = 0, ty = 0;
-    const onMove = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      tx = (e.clientX - r.left - r.width / 2) / r.height;
-      ty = -(e.clientY - r.top - r.height / 2) / r.height;
-    };
-    window.addEventListener('pointermove', onMove, { passive: true });
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const start = performance.now() - 40000; // start mid-flow, not from a flat first frame
-    let raf = 0, visible = true;
-    const draw = (now: number) => {
-      px += (tx - px) * 0.04; py += (ty - py) * 0.04;
-      gl.uniform1f(uTime, (now - start) / 1000);
-      gl.uniform2f(uPtr, px, py);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    };
-    const loop = (now: number) => {
-      draw(now);
-      if (visible && !document.hidden) raf = requestAnimationFrame(loop);
-    };
-    const resume = () => { cancelAnimationFrame(raf); if (!reduced && visible && !document.hidden) raf = requestAnimationFrame(loop); };
-    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; resume(); });
-    io.observe(canvas);
-    document.addEventListener('visibilitychange', resume);
-
-    draw(performance.now());
-    canvas.classList.add('is-on');
-    resume();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect(); io.disconnect();
-      window.removeEventListener('pointermove', onMove);
-      document.removeEventListener('visibilitychange', resume);
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
-    };
-  }, []);
-
-  return <canvas ref={ref} className={className} aria-hidden="true" />;
+  return <ShaderCanvas frag={FRAG} scale={0.4} timeOffset={40} className={className} />;
 }

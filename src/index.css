@@ -86,7 +86,7 @@ img { display: block; max-width: 100%; }
 .hero__streaks i:nth-child(2) { top: 46%; background: #0d1f9e; animation-delay: -5s; }
 .hero__streaks i:nth-child(3) { top: 70%; background: #2a44e6; opacity: 0.35; animation-delay: -9s; }
 @keyframes streak { to { transform: translateX(8%) scaleY(1.3); } }
-/* Liquid backdrop (LiquidBg); the streaks above stay as the fallback underneath. */
+/* Shader backdrops (LiquidBg in the hero, HalftoneSun in the contact section); the streaks stay as the fallback underneath. */
 .hero__liquid { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.6s ease; }
 .hero__liquid.is-on { opacity: 1; }
 
