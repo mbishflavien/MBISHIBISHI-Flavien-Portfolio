@@ -12,6 +12,7 @@ import { Scene3D } from './Scene3D';
 import { DotReveal } from './DotReveal';
 import { HoverFx } from './HoverFx';
 import { LiquidBg } from './LiquidBg';
+import { HalftoneSun } from './HalftoneSun';
 
 const HeroScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.HeroScene })));
 const ContactScene = React.lazy(() => import('../three/Scenes').then((m) => ({ default: m.ContactScene })));
@@ -589,6 +590,7 @@ export default function Portfolio() {
         {/* ---------- Contact ---------- */}
         <section id="contact" className="contact" data-track="Contact">
           <div className="hero__streaks" aria-hidden="true"><i /><i /><i /></div>
+          <HalftoneSun className="hero__liquid" />
           <Scene3D
             fallback={
               <button className="contact__puffy" onClick={() => openContact('Lets talk')} aria-label={`${t.hero.cta_contact}: ${s.write}`}>
